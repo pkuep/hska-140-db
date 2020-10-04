@@ -1,0 +1,160 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;Einführung: Dateibasierte Speicherung - Herausforderungen&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="einfuehrung_datebasierte_speicherung"
+                  title="Lab &#34;Einführung: Dateibasierte Speicherung - Herausforderungen&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Einführung" duration="0">
+        <p>We now want to apply further &#34;classical&#34; big data technologies in the Hadoop context. Using MapReduce on top of HDFS is the second component of Hadoop that we want to get to know in more detail.</p>
+<h3 is-upgraded><strong>Goal</strong></h3>
+<p>Understanding how to execute a MapReduce job in the DataProc environment.</p>
+<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+<ul>
+<li>Use a big data-ready computation environment (Hadoop in the cloud) from the previous lab (HDFS)</li>
+<li>Submit a MapReduce job via the GCP cloud console</li>
+<li>Check the results in HDFS</li>
+</ul>
+<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+</aside>
+<aside class="warning"><p><strong>Important: </strong>It is important that there are no running PySpark connections before starting this lab. You might have a running connection from lab &#34;Batch Processing&#34; if you did not complete the shutdown of the running Jupyter notebooks. Please make sure that all notebooks are shut down as described here (and in the lab &#34;Batch Processing). Otherwise, your MapReduce job will block indefinitely.</p>
+</aside>
+<p>Open the Jupyter overview site and click on &#34;Running&#34;. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\82b1ad93e917634a.png"></p>
+<p>Click on &#34;Shutdown&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\daaa8edee6eda971.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Preparation - Inspecting and Uploading the MapReduce Code" duration="3">
+        <h2 is-upgraded><strong>Introduction</strong></h2>
+<p>We will not learn how to write MapReduce code in this course. MapReduce is especially not state-of-the-art in big data analytics anymore. However, big data analytics has its roots in MapReduce and many technologies still rely on or extend the fundamental ideas of parallel processing.</p>
+<h2 is-upgraded><strong>Provided code</strong></h2>
+<p>In the course&#39;s library folder, you&#39;ll find a file &#34;WordCount.java&#34;. This holds the source code of  a MapReduce program that counts the word occurrences in an input text file. This is the &#34;hello world&#34; of big data batch processing.</p>
+<h3 is-upgraded><strong>Map-Phase</strong></h3>
+<pre><code>public static class TokenizerMapper extends Mapper&lt;Object, Text, Text, IntWritable&gt; {
+
+                private final static IntWritable one = new IntWritable(1);
+                private Text word = new Text();
+
+                public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+                        StringTokenizer itr = new StringTokenizer(value.toString());
+                        while (itr.hasMoreTokens()) {
+                                word.set(itr.nextToken());
+                                context.write(word, one);
+                        }
+                }
+        }</code></pre>
+<p>The mapper iterates through all words (delimited by a space) in the input file and emits a &#34;one&#34; for each word.</p>
+<h3 is-upgraded><strong>Reduce-Phase</strong></h3>
+<pre><code>public static class IntSumReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+                private IntWritable result = new IntWritable();
+
+                public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context)
+                                throws IOException, InterruptedException {
+                        int sum = 0;
+                        for (IntWritable val : values) {
+                                sum += val.get();
+                        }
+                        result.set(sum);
+                        context.write(key, result);
+                }
+        }</code></pre>
+<p>The reduce class sums up all the &#34;ones&#34; for each key (i.e. word in the text file) and hence counts the number of occurrences.</p>
+<h2 is-upgraded><strong>Upload of the wordcount.jar to cloud storage</strong></h2>
+<p>The WordCount.java file has already been converted by me to binary Java code in the provided wordcount.jar. This jar-file needs to be accessible by DataProc (jar files are always shipped with job submission, &#34;moving the code to the data&#34;). The most simple way is to just put this file into the bucket &#34;pk-gcs&#34; (topmost folder). Perform this step.</p>
+<p>Your bucket should look like this afterwards:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\71e3f68efdaad4ad.png"></p>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You uploaded the necessary MapReduce code for word counting to cloud storage.</li>
+<li>You have a rough understanding of the MapReduce code for word counting.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Job Submission and Results Inspection" duration="4">
+        <h2 is-upgraded><strong>Job Submission</strong></h2>
+<p>Please go to the &#34;Jobs&#34; section in DataProc:</p>
+<p class="image-container"><img style="width: 219.50px" src="img\90677b5abb00ba44.png"></p>
+<p>Hit &#34;Submit job&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9ae6d887399abfd9.png"></p>
+<p>Set the following parameters (leave the default for all others):</p>
+<ul>
+<li><em>Cluster region</em>: us-central1 (should be the default of your cluster)</li>
+<li><em>Cluster</em>: should be automatically selected, otherwise choose your cluster</li>
+<li><em>Job type</em>: Hadoop (equivalent of MapReduce)</li>
+<li><em>Main class or jar</em>: WordCount (I called the main class in the wordcount.jar like this)</li>
+<li><em>Arguments</em>: you&#39;ll need to add two arguments subsequently</li>
+<li>/tmp/lorem_ipsum.txt   (this is the input file in HDFS!; you could also specify an HDFS folder)</li>
+<li>/tmp/output_wordcount   (this is the output folder; important: it must not exist in HDFS!)</li>
+<li><em>Jar files</em>: gs://pk-gcs/wordcount.jar   (see above)</li>
+</ul>
+<p>This is the job submission screen (in case yours looks different, please scroll down).</p>
+<p class="image-container"><img style="width: 329.38px" src="img\6e53d9d3a6d7e85c.png"></p>
+<p>If you receive a different job submission screen (when submitting the job directly from the cluster overview page), please fill it like this:</p>
+<p class="image-container"><img style="width: 315.45px" src="img\bae32879320971d0.png"></p>
+<p>Leave the rest as default and submit the job. Job execution should take around 30s and when finished, you should see a green arrow:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9e6878fcc6182f46.png"></p>
+<h2 is-upgraded>Results inspection</h2>
+<h3 is-upgraded><strong>Connecting to the NameNode&#39;s WebUI (identical to HDFS lab)</strong></h3>
+<p>Navigate in the GCP cloud console to the DataProc cluster&#39;s tab &#34;Web interfaces&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9a477d1e6510d9e6.png"></p>
+<p>Select HDFS NameNode. The WebUI of the NameNode is opened (which is running on the master node of our cluster). Under Utilities you&#39;ll find a (rudimentary) browsing tool for the HDFS filesystem.</p>
+<p>You should see a new folder &#34;output_wordcount&#34; in the /tmp folder:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\879b42e6e0157230.png"></p>
+<p>Within this folder, there are multiple results (part) files, one per &#34;reducer&#34; (depending on the cluster configuration the number of output files can differ). You can download and inspect one part-file:</p>
+<p class="image-container"><img style="width: 151.53px" src="img\f78e19080bbe90aa.png"></p>
+<aside class="warning"><p><strong>Please note: </strong>The word count job is not very sophisticated: dots and commas for example are not omitted. This job is however only executed for demonstration purposes and since we&#39;ll not go into further detail of MapReduce, we won&#39;t optimize the program.</p>
+</aside>
+<h2 is-upgraded><strong>Results</strong></h2>
+<ol type="1" start="1">
+<li>You learned how to start a Hadoop MapReduce job from the cloud console.</li>
+<li>You interacted with HDFS from the NameNode&#39;s WebUI and checked the results (partly).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Congratulations" duration="1">
+        <p>Congratulations, you now got in touch with a &#34;classical big data processing system&#34;, MapReduce. </p>
+<aside class="special"><p><strong>Please note: </strong>Please shut down your DataProc cluster to save some money. You can now close this lab.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
