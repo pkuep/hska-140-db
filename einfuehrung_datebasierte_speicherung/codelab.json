@@ -5,7 +5,7 @@
   "mainga": "UA-49880327-14",
   "updated": "2020-10-04T21:43:20Z",
   "id": "einfuehrung_datebasierte_speicherung",
-  "duration": 19,
+  "duration": 21,
   "title": "Lab \"Einführung: Dateibasierte Speicherung - Herausforderungen\"",
   "authors": "Peer Küppers",
   "summary": "In diesem Codelab werden Sie aus Python heraus eine Lagerverwaltungs-Anwendung simulieren: Aktualisierung von Lagerbeständen. Wir werden den parallelen Zugriff auf eine \"normale\" Datei aus zwei Jupyter Notebooks heraus simulieren und damit die Probleme dateibasierter Speicherung darstellen. Damit wird die Notwendigkeit von Datenbankmanagementsystemen motiviert",
