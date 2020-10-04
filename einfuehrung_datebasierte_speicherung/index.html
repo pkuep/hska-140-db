@@ -28,121 +28,172 @@
                   feedback-link="https://p-kueppers.com">
     
       <google-codelab-step label="Einführung" duration="0">
-        <p>We now want to apply further &#34;classical&#34; big data technologies in the Hadoop context. Using MapReduce on top of HDFS is the second component of Hadoop that we want to get to know in more detail.</p>
-<h3 is-upgraded><strong>Goal</strong></h3>
-<p>Understanding how to execute a MapReduce job in the DataProc environment.</p>
-<h2 is-upgraded><strong>What you&#39;ll implement</strong></h2>
+        <p>Wir möchten anhand eines einfachen Beispiels die Probleme der dateibasierten, je Anwendungsfall proprietären Speicherung und Persistierung von Daten verstehen.</p>
+<h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
 <ul>
-<li>Use a big data-ready computation environment (Hadoop in the cloud) from the previous lab (HDFS)</li>
-<li>Submit a MapReduce job via the GCP cloud console</li>
-<li>Check the results in HDFS</li>
+<li>Anlegen einer Jupyter Notebook-Umgebung, mit der Sie in der Cloud in Python programmieren können.</li>
+<li>Programmierung einer einfachen &#34;Lagerbestandsverwaltung&#34;, die zur Persistierung der Daten Dateien verwendet.</li>
+<li>Einen einfachen konkurrierenden Zugriff auf die Datei simulieren (durch zwei Notebooks) und damit eine Konfliktsituation bzw. Inkonsistente Daten herstellen</li>
 </ul>
-<aside class="warning"><p><strong>Please note:</strong> You&#39;ll need GCP access for this lab. The provided voucher needs to be redeemed.</p>
+<aside class="warning"><p><strong>Hinweis:</strong> Sie benötigen Zugriff auf das GCP Cloud-Angebot. Das entsprechende Guthaben erhalten Sie im Kurs.</p>
 </aside>
-<aside class="warning"><p><strong>Important: </strong>It is important that there are no running PySpark connections before starting this lab. You might have a running connection from lab &#34;Batch Processing&#34; if you did not complete the shutdown of the running Jupyter notebooks. Please make sure that all notebooks are shut down as described here (and in the lab &#34;Batch Processing). Otherwise, your MapReduce job will block indefinitely.</p>
-</aside>
-<p>Open the Jupyter overview site and click on &#34;Running&#34;. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\82b1ad93e917634a.png"></p>
-<p>Click on &#34;Shutdown&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\daaa8edee6eda971.png"></p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Preparation - Inspecting and Uploading the MapReduce Code" duration="3">
-        <h2 is-upgraded><strong>Introduction</strong></h2>
-<p>We will not learn how to write MapReduce code in this course. MapReduce is especially not state-of-the-art in big data analytics anymore. However, big data analytics has its roots in MapReduce and many technologies still rely on or extend the fundamental ideas of parallel processing.</p>
-<h2 is-upgraded><strong>Provided code</strong></h2>
-<p>In the course&#39;s library folder, you&#39;ll find a file &#34;WordCount.java&#34;. This holds the source code of  a MapReduce program that counts the word occurrences in an input text file. This is the &#34;hello world&#34; of big data batch processing.</p>
-<h3 is-upgraded><strong>Map-Phase</strong></h3>
-<pre><code>public static class TokenizerMapper extends Mapper&lt;Object, Text, Text, IntWritable&gt; {
-
-                private final static IntWritable one = new IntWritable(1);
-                private Text word = new Text();
-
-                public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-                        StringTokenizer itr = new StringTokenizer(value.toString());
-                        while (itr.hasMoreTokens()) {
-                                word.set(itr.nextToken());
-                                context.write(word, one);
-                        }
-                }
-        }</code></pre>
-<p>The mapper iterates through all words (delimited by a space) in the input file and emits a &#34;one&#34; for each word.</p>
-<h3 is-upgraded><strong>Reduce-Phase</strong></h3>
-<pre><code>public static class IntSumReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
-                private IntWritable result = new IntWritable();
-
-                public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context)
-                                throws IOException, InterruptedException {
-                        int sum = 0;
-                        for (IntWritable val : values) {
-                                sum += val.get();
-                        }
-                        result.set(sum);
-                        context.write(key, result);
-                }
-        }</code></pre>
-<p>The reduce class sums up all the &#34;ones&#34; for each key (i.e. word in the text file) and hence counts the number of occurrences.</p>
-<h2 is-upgraded><strong>Upload of the wordcount.jar to cloud storage</strong></h2>
-<p>The WordCount.java file has already been converted by me to binary Java code in the provided wordcount.jar. This jar-file needs to be accessible by DataProc (jar files are always shipped with job submission, &#34;moving the code to the data&#34;). The most simple way is to just put this file into the bucket &#34;pk-gcs&#34; (topmost folder). Perform this step.</p>
-<p>Your bucket should look like this afterwards:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\71e3f68efdaad4ad.png"></p>
-<h2 is-upgraded><strong>Results</strong></h2>
+      <google-codelab-step label="Vorbereitung - Anlegen der Jupyter Notebook Umgebung" duration="5">
+        <h2 is-upgraded><strong>Überblick</strong></h2>
+<p>Um direkt &#34;losprogrammieren&#34; zu können legen wir uns nun eine von Google Cloud leicht einzurichtende Data Science-Programmierumgebung an. Das &#34;Project Juypter&#34; (<a href="https://jupyter.org/" target="_blank">https://jupyter.org/</a>) bietet eine im Data Science-Umfeld vielfach verwendete Umgebung, mit der insbesondere in Python in einer Art &#34;Notizbuch&#34; programmiert werden kann. Wir können Text mit Code teilen und so gut lesbare Programme entwickeln. Achtung: diese eignen sich üblicherweise nicht für den produktiven Einsatz von Applikationen, sondern eher für die Datenexploration.</p>
+<h2 is-upgraded><strong>Anlegen eines Projekts</strong></h2>
+<p>Loggen Sie sich bitte unter <a href="https://console.cloud.google.com/" target="_blank">https://console.cloud.google.com</a> mit Ihrem Account ein. Sie sollten den bereitgestellten Voucher eingelöst und ein Projekt angelegt haben. Sollte das Projekt noch nicht existieren, so legen Sie dies bitte wie im Folgenden dargestellt an:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\acea4233653b5740.png"></p>
+<h2 is-upgraded><strong>Erstellung der Notebook-Instanz in der AI-Plattform</strong></h2>
+<p>Bitte klicken Sie auf das &#34;Burger-Menü&#34; oben links und öffnen Sie die &#34;AI-Plattform&#34; unter &#34;Artificial Intelligence&#34; und dann klicken Sie auf Notebooks:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\96496d7014a1a0dd.png"></p>
+<p>Bitte klicken Sie auf &#34;Enable API&#34;, damit Sie Zugriff auf diese GCP-Funktion &#34;Notebooks API&#34; haben. Dies kann einen Moment dauern. Ggf. werden Sie auf die API-Übersicht weitergeleitet; klicken Sie erneut auf AI Platform → Notebooks.</p>
+<p>Wir legen nun eine neue Instanz an. Eine Instanz ist in diesem Fall eine virtuelle Maschine, die gestartet wird, auf der Jupyter installiert wird und es wird eingestellt, dass wir auf extern auf die Jupyter Notebooks zugreifen können. Klicken Sie auf &#34;New Instance&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\be45e1b049252e75.png"></p>
+<p>Wählen Sie &#34;Python 2 and 3&#34; aus:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\943855e30814faf0.png"></p>
+<p>Benennen Sie die Instanz bspw. &#34;&lt;Ihre Initialien&gt;-notebook&#34;, in meinem Fall also bspw. &#34;Pk-notebook&#34;. Selektieren SIe die Region &#34;us-central1&#34; - dies ist in vielen GCP-Diensten die Standardregion, in der wir alle Funktionen laufen lassen möchten:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5769a2a83848836e.png"></p>
+<p>Warten Sie so lange, bis in der Übersicht der Zugriff auf das Web Interface angezeigt wird:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d83b5f87758ca39.png"></p>
+<p>Klicken Sie auf &#34;Open Jupyterlab&#34;.</p>
+<aside class="warning"><p><strong>Warnung: </strong>Der Betrieb der Notebook-Instanz ist kostenpflichtig und schmälert Ihr Budget. Lassen Sie die Instanz daher nur laufen, wenn Sie sie wirklich benötigen. Sie können sie im Anschluss an diese Übung löschen oder ausschalten. Wenn Sie den Quellcode später noch einmal wiederverwenden möchten, dann schalten Sie die Maschine nur aus (siehe letzter Schritt). Aber Achtung: nur wenn Sie die Maschine komplett löschen fallen gar keine Kosten mehr an. Auch ausgeschaltete Maschinen kosten etwas (aber nicht viel).</p>
+</aside>
+<h2 is-upgraded><strong>Zugriff auf das JupyterLab</strong></h2>
+<p>Wenn Sie auf &#34;Open Jupyterlab&#34; geklickt haben, sollte folgende Übersicht erscheinen. Bitte legen Sie ein neues &#34;Python 3&#34; Notebook an:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b5403da2c45b1c1d.png"></p>
+<p>Ein neues Tab sollte sich öffnen, in dem Sie nun mit der Programmierung loslegen können:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\643fe2185fb5098c.png"></p>
+<h2 is-upgraded><strong>Ergebnisse</strong></h2>
 <ol type="1" start="1">
-<li>You uploaded the necessary MapReduce code for word counting to cloud storage.</li>
-<li>You have a rough understanding of the MapReduce code for word counting.</li>
+<li>Sie haben durch die Verwendung eines GCP Dienstes eine einfache Data Science-Programmierumgebung angelegt.</li>
+<li>In dieser Programmierumgebung (JupyterLab) haben Sie ein neues Notebook zur Programmierung in Python (Version 3) erzeugt und können nun mit der Programmierung beginnen.</li>
 </ol>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Job Submission and Results Inspection" duration="4">
-        <h2 is-upgraded><strong>Job Submission</strong></h2>
-<p>Please go to the &#34;Jobs&#34; section in DataProc:</p>
-<p class="image-container"><img style="width: 219.50px" src="img\90677b5abb00ba44.png"></p>
-<p>Hit &#34;Submit job&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9ae6d887399abfd9.png"></p>
-<p>Set the following parameters (leave the default for all others):</p>
-<ul>
-<li><em>Cluster region</em>: us-central1 (should be the default of your cluster)</li>
-<li><em>Cluster</em>: should be automatically selected, otherwise choose your cluster</li>
-<li><em>Job type</em>: Hadoop (equivalent of MapReduce)</li>
-<li><em>Main class or jar</em>: WordCount (I called the main class in the wordcount.jar like this)</li>
-<li><em>Arguments</em>: you&#39;ll need to add two arguments subsequently</li>
-<li>/tmp/lorem_ipsum.txt   (this is the input file in HDFS!; you could also specify an HDFS folder)</li>
-<li>/tmp/output_wordcount   (this is the output folder; important: it must not exist in HDFS!)</li>
-<li><em>Jar files</em>: gs://pk-gcs/wordcount.jar   (see above)</li>
-</ul>
-<p>This is the job submission screen (in case yours looks different, please scroll down).</p>
-<p class="image-container"><img style="width: 329.38px" src="img\6e53d9d3a6d7e85c.png"></p>
-<p>If you receive a different job submission screen (when submitting the job directly from the cluster overview page), please fill it like this:</p>
-<p class="image-container"><img style="width: 315.45px" src="img\bae32879320971d0.png"></p>
-<p>Leave the rest as default and submit the job. Job execution should take around 30s and when finished, you should see a green arrow:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9e6878fcc6182f46.png"></p>
-<h2 is-upgraded>Results inspection</h2>
-<h3 is-upgraded><strong>Connecting to the NameNode&#39;s WebUI (identical to HDFS lab)</strong></h3>
-<p>Navigate in the GCP cloud console to the DataProc cluster&#39;s tab &#34;Web interfaces&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9a477d1e6510d9e6.png"></p>
-<p>Select HDFS NameNode. The WebUI of the NameNode is opened (which is running on the master node of our cluster). Under Utilities you&#39;ll find a (rudimentary) browsing tool for the HDFS filesystem.</p>
-<p>You should see a new folder &#34;output_wordcount&#34; in the /tmp folder:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\879b42e6e0157230.png"></p>
-<p>Within this folder, there are multiple results (part) files, one per &#34;reducer&#34; (depending on the cluster configuration the number of output files can differ). You can download and inspect one part-file:</p>
-<p class="image-container"><img style="width: 151.53px" src="img\f78e19080bbe90aa.png"></p>
-<aside class="warning"><p><strong>Please note: </strong>The word count job is not very sophisticated: dots and commas for example are not omitted. This job is however only executed for demonstration purposes and since we&#39;ll not go into further detail of MapReduce, we won&#39;t optimize the program.</p>
-</aside>
-<h2 is-upgraded><strong>Results</strong></h2>
+      <google-codelab-step label="Programmierung des Initialen Dateizugriffs" duration="6">
+        <h2 is-upgraded><strong>Notwendige Pakete importieren</strong></h2>
+<p>Wir werden eine Data Science-Bibliothek (pandas) nutzen, um eine ganz einfache &#34;Lagerbestandsverwaltung&#34; zu programmieren. Die entsprechende Bibliothek importieren wir wie folgt, so dass wir über den Bezeichner &#34;pd&#34; im gesamten Notebook darauf zugreifen können. Wir kommentieren mit vorangestelltem &#34;#&#34;-Zeichen:</p>
+<pre><code># notwendige Bibliotheken importieren
+import pandas as pd</code></pre>
+<p>Führen Sie die Zelle aus, indem Sie Strg-Enter drücken. Es sollte keine Fehlermeldung auftreten, sondern links in den eckigen Klammern eine &#34;1&#34; stehen: </p>
+<p class="image-container"><img style="width: 298.50px" src="img\3b4ee6071cfc1c2c.png"></p>
+<p>Anstelle von Strg-Enter können Sie auch auf den Pfeil-Button klicken:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\42f79e577d0ae2e0.png"></p>
+<p>Der Vorteil dabei ist, dass direkt die nächste Zelle angelegt wird (dies können Sie mit Umschalttaste-Enter auch erreichen).</p>
+<h2 is-upgraded><strong>Initiale Lagerbestände anlegen</strong></h2>
+<p>Wir simulieren zwei Produkte &#34;Apfel&#34; und &#34;Banane&#34;. Für beide speichern wir jeweils den Lagerbestand in einer einfachen Textdatei. Initial haben beide Produkte einen Lagerbestand von 50 Stück. Durch folgenden Code legen wir die Datenstruktur (einen sogenannten DataFrame, das ist so etwas wie eine Tabelle) im Hauptspeicher der Notebook-Instanz an und lassen sie uns anzeigen:</p>
+<pre><code># Anlegen der &#34;Tabelle&#34; (DataFrame) zur Speicherung der Lagerbestände. Wir haben zwei Spalten (Produkt und Lagerbestand) und zwei Zeilen
+lagerbestand = pd.DataFrame([[&#39;Apfel&#39;, 50], [&#39;Banane&#39;, 50]], columns=[&#39;Produkt&#39;, &#39;Lagerbestand&#39;])
+lagerbestand  # durch diesen Befehl lassen wir uns den Inhalt des DataFrames anzeigen</code></pre>
+<p>Dies sollte die Ausgabe sein, wenn Sie die Zelle ausführen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9055c4cae84f8f5f.png"></p>
+<h2 is-upgraded><strong>Initiale Lagerbestände speichern</strong></h2>
+<p>Durch folgenden Code speichern Sie die Inhalte des DataFrames auf der Festplatte der Notebook-Instanz und haben sie damit &#34;persistiert&#34;. Das heißt auch nach einem Neustart der Instanz stehen die Daten zur Verfügung.</p>
+<pre><code># Speichern der &#34;Tabelle&#34; auf der Festplatte
+lagerbestand.to_csv(&#34;lagerbestand.csv&#34;, index=False)  # die Bedeutung des das Arguments &#34;index=False&#34; ist an dieser Stelle für uns nicht relevant</code></pre>
+<p>Nach dem Ausführen dieser Zelle sollten Sie eine Datei im Datei-Browser sehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\e644ac5d62bd4e45.png"></p>
+<p>Mit einem Doppelklick auf die Datei werden die Inhalte angezeigt:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7b73d17277d62ddc.png"></p>
+<h2 is-upgraded><strong>Umbenennen und Speichern des Notebooks</strong></h2>
+<p>Wir simulieren, dass unser Notebook so etwas wie die &#34;Lagerverwaltungssoftware&#34; ist. Das heißt wir haben ein Programm, über das Benutzer eingeben können, wie viel von einem Produkt auf Lager liegt und Ein- sowie Auslagerungen vorgenommen werden können (d.h. der Lagerbestand erhöht bzw. reduziert wird).</p>
+<p>Klicken Sie mit der rechten Maustaste auf das Notebook &#34;Untitled.ipynb&#34; und selektieren Sie danach &#34;Rename Notebook&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4392e40aee390d7c.png"></p>
+<p>Nennen Sie das Notebook &#34;Lagerverwaltung (Initialisierung)&#34;:</p>
+<h2 is-upgraded>Ergebnisse</h2>
 <ol type="1" start="1">
-<li>You learned how to start a Hadoop MapReduce job from the cloud console.</li>
-<li>You interacted with HDFS from the NameNode&#39;s WebUI and checked the results (partly).</li>
+<li>Sie haben gelernt, wie ein Notebook in Juypter angelegt werden kann.</li>
+<li>Sie haben eine wichtige Datenstruktur aus dem Bereich Data Science kennengelernt: den Pandas DataFrame. Dieser ist vergleichbar mit einer Tabelle im Hauptspeicher.</li>
+<li>Sie haben einen DataFrame auf die Festplatte als einfache Textdatei geschrieben. Diese Textdatei enthält die Daten der Tabelle und trennt die Spalten mit einem Komma und die Zeilen mit einem Zeilenumbruch.</li>
 </ol>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Congratulations" duration="1">
-        <p>Congratulations, you now got in touch with a &#34;classical big data processing system&#34;, MapReduce. </p>
-<aside class="special"><p><strong>Please note: </strong>Please shut down your DataProc cluster to save some money. You can now close this lab.</p>
+      <google-codelab-step label="Programmierung eines konkurrierenden Dateizugriffs" duration="6">
+        <h2 is-upgraded><strong>Ziel</strong></h2>
+<p>Wir werden nun das Initialisierungs-Notebook zweimal duplizieren und so anpassen, dass ein Notebook Einlagerungen simuliert während das andere Notebook Auslagerungen simuliert. WIr werden die folgenden beiden Anwendungsfälle simulieren: ein Ablauf ohne Konflikt und ein Ablauf mit konkurrierendem Zugriff auf die Lagerbestand-Datei. Vergleiche dazu folgende Abbildung, die den Ablauf veranschaulicht:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ee8d06712507f106.png"></p>
+<h2 is-upgraded><strong>Programmierung einer Einlagerung</strong></h2>
+<h3 is-upgraded><strong>Notebook duplizieren</strong></h3>
+<p>Wir duplizieren nun das Initialisierungs-Notebook zweimal. </p>
+<p class="image-container"><img style="width: 453.00px" src="img\4918c7e680e6928e.png"></p>
+<p>Benennen Sie die Kopie &#34;Lagerverwaltung (Einlagerung)&#34;. Löschen Sie die zweite Zelle, so dass nur Zellen 1 und 3 übrig bleiben, indem Sie auf die zweite Zelle mit der rechten Maustaste klicken und diese löschen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\3c53290be9acb8b8.png"></p>
+<p>Klicken Sie auf die erste Zelle und fügen Sie eine weitere Zelle zwischen der ersten und jetzt zweiten ein:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\aaddfb6646400474.png"></p>
+<p>Fügen Sie den folgenden Code in die Zelle ein. Wir lesen die Lagerbestand-Datei ein und dann erhöhen wir den Bestand um 10.</p>
+<pre><code>lagerbestand = pd.read_csv(&#34;lagerbestand.csv&#34;)  # Einlesen der Lagerbestands-Datei
+lagerbestand.loc[lagerbestand.Produkt==&#39;Apfel&#39;, &#39;Lagerbestand&#39;] += 10  # Erhöhen des Apfel-Lagerbestands um +10
+lagerbestand</code></pre>
+<p>Die Ausgabe dieser Zelle sollte so aussehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8996d671ad87bcf9.png"></p>
+<p>Als nächstes führen wir die dritte Zelle aus, die so wie bei der Initialisierung die Lagerbestand-Tabelle (also den DataFrame lagerbestand) auf die Festplatte schreibt:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\3b118bff72ecaa71.png"></p>
+<p>Wenn wir die Datei &#34;lagerbestand.csv&#34; nun öffnen, sehen wir die erfolgreiche Einlagerung der Äpfel:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\95fc44f7d62e8f83.png"></p>
+<h2 is-upgraded>Programmierung einer Auslagerung</h2>
+<p>Duplizieren Sie die Datei &#34;Lagerverwaltung (Einlagerung)&#34; und nennen Sie das neue Notebook &#34;Lagerverwaltung (Auslagerung)&#34;. Führen Sie die erste Zelle aus. Ändern Sie die zweite Zelle, so dass wir nun die Auslagerung von 10 Bananen programmieren:</p>
+<pre><code>lagerbestand = pd.read_csv(&#34;lagerbestand.csv&#34;)  # Einlesen der Lagerbestands-Datei
+lagerbestand.loc[lagerbestand.Produkt==&#39;Banane&#39;, &#39;Lagerbestand&#39;] -= 10  # Verringern des Banane-Lagerbestands um 10
+lagerbestand</code></pre>
+<p>Führen Sie die Zelle aus. Die Ausgabe sollte so aussehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7eda0c5a946b0a05.png"></p>
+<p>Bei einem Blick auf die csv-Datei (schließen und neu öffnen) sehen wir, dass die Auslagerung erfolgreich war:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c9a294295c0b2b3b.png"></p>
+<h2 is-upgraded><strong>Simulation des konkurrierenden Zugriffs</strong></h2>
+<p>Bisher haben wir die ersten zwei Schritte des Ablaufs simuliert:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ee8d06712507f106.png"></p>
+<p>Jetzt möchten wir die nächsten beiden Schritte ausführen indem wir bei der Einlagerung simulieren, dass eine Verzögerung zwischen Einlesen, Berechnen und Datei-Schreiben auftritt.</p>
+<p>Öffnen Sie das Notebook Einlagerung. Führen Sie die zweite Zelle aus:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\1c98f834572a1a8a.png"></p>
+<p>Speichern Sie die Datei noch nicht, d.h. Führen Sie noch nicht die letzte Zelle aus (DIES IST NUN DIE VERZÖGERUNG). Wechseln Sie stattdessen in das Notebook &#34;Auslagerung&#34; und führen Sie alle Zellen aus:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6ecaa9d294fcf940.png"></p>
+<p>Wechseln Sie anschließend zurück in die &#34;Einlagerung&#34; und führen Sie die letzte Zelle aus (Speichern der Änderung)</p>
+<h2 is-upgraded><strong>Analyse der Ergebnisse </strong></h2>
+<p>Wenn Sie die csv-Datei nun öffnen werden Sie sehen, dass die 10 ausgelagerten Bananen nicht berücksichtigt wurden und immer noch ein Bestand von 40 angegeben wird:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2d4edd8a609db3d1.png"></p>
+<p>Dies ist der Konflikt, der durch den simulierten &#34;Mehrbenutzerbetrieb&#34; bei der Speicherung von Daten in einer Datei auftreten kann.</p>
+<aside class="warning"><p><strong>Wichtig</strong>: Auch wenn wir eine lange Verzögerung im Prozess &#34;Einlagerung&#34; manuell simuliert haben so ist dies durchaus ein realistisches Szenario. Denken Sie an ein großes automatisches Lager, bei dem pro Minute hunderte Ein- und Auslagerungen auftreten. Dann muss die Verzögerung gar nicht lang sein, damit ein Konflikt wie der dargestellte auftritt.</p>
+</aside>
+<aside class="special"><p><strong>Frage</strong>: Fällt Ihnen eine Möglichkeit ein, wie trotz der Verwendung einer Datei zur Speicherung ein derartiger Konflikt vermieden werden könnte?</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnisse</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben gesehen, wie in Python csv-Dateien geöffnet und geschrieben werden können</li>
+<li>Sie haben einen ersten Eindruck von Pandas DataFrames bekommen, die in diesem Fall zur Speicherung von Lagerbeständen und deren Manipulation (Ein- und Auslagerung) verwendet wurden.</li>
+<li>Sie haben eine Ausnahmesituation hergestellt, in der zwei Prozesse eine Datei gleichzeitig manipulieren. Dies hat zu einer Inkonsistenz geführt (Lagerbestand höher als er in der Realität wäre bei einem Produkt). Dies ist ein grundlegendes Problem beim &#34;Mehrbenutzerbetrieb&#34; und konkurrierend (nebenläufig) laufenden Prozessen.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Code sichern und aufräumen" duration="1">
+        <h2 is-upgraded><strong>Code-Sicherung</strong></h2>
+<p>Wenn Sie die AI Platform Notebook-Instanz löschen möchten können Sie den Code (also die Notebooks) wie folgt auf Ihren Rechner herunterladen: rechts klicken auf das Notebook und dann Download:</p>
+<p class="image-container"><img style="width: 460.00px" src="img\4f5cffe20ad56a3f.png"></p>
+<p>Hochladen von Notebooks in einer neuen Instanz können Sie über den Upload Files-Button:</p>
+<p class="image-container"><img style="width: 456.00px" src="img\1e52b7b4bdbeefb0.png"></p>
+<p>Wenn Sie die Instanz nur ausschalten (und geringe Kosten dafür in Kauf nehmen), dann müssen Sie die Notebooks nicht herunterladen.</p>
+<h2 is-upgraded><strong>Ausschalten oder Löschen der Instanz</strong></h2>
+<p>Gehen Sie zurück in die GCP Cloud Consol (dort wo Sie auf &#34;Open Jupyterlab&#34; geklickt haben). Wenn Sie die Instanz komplett löschen möchten, dann selektieren Sie die Instanz und klicken auf Delete:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ad455e17dcb733b4.png"></p>
+<p>Wenn Sie die Instanz nur ausschalten möchten, klicken Sie auf &#34;Stop&#34;. </p>
+<aside class="warning"><p><strong>Achtung</strong>: Wenn Sie die Instanz nur ausschalten, dann bleibt die daran angeschlossene Festplattenkapazität in der Google Cloud erhalten. Wenn Sie an den Einstellungen nichts geändert haben, dann handelt es sich um eine &#34;normale&#34; Festplatte mit 100GB, die 4$ pro Monat an Bereitstellungsgebühr verursacht. Vgl. hierzu <a href="https://cloud.google.com/products/calculator" target="_blank">https://cloud.google.com/products/calculator</a>.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Glückwunsch" duration="1">
+        <p>Herzlichen Glückwunsch, Sie haben die ersten Übungen in einer modernen Cloud-Umgebung absolviert und Python in einer aktuellen Data Science-Programmierumgebung verwendet. Wir haben zwar nur einen einfachen Anwendungsfall simuliert aber Sie sehen, die Hürde mit Python zu beginnen ist sehr niedrig.</p>
+<aside class="special"><p><strong>Hinweis: </strong>Sie können nun dieses Browser-Tab schließen.</p>
 </aside>
 
 
