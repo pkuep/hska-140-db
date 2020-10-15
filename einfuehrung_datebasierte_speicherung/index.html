@@ -55,7 +55,7 @@
 <p class="image-container"><img style="width: 624.00px" src="img\be45e1b049252e75.png"></p>
 <p>Wählen Sie &#34;Python 2 and 3&#34; aus:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\943855e30814faf0.png"></p>
-<p>Benennen Sie die Instanz bspw. &#34;&lt;Ihre Initialien&gt;-notebook&#34;, in meinem Fall also bspw. &#34;Pk-notebook&#34;. Selektieren SIe die Region &#34;us-central1&#34; - dies ist in vielen GCP-Diensten die Standardregion, in der wir alle Funktionen laufen lassen möchten:</p>
+<p>Benennen Sie die Instanz bspw. &#34;&lt;Ihre Initialien&gt;-notebook&#34;, in meinem Fall also bspw. &#34;pk-notebook&#34;. Selektieren SIe die Region &#34;us-central1&#34; - dies ist in vielen GCP-Diensten die Standardregion, in der wir alle Funktionen laufen lassen möchten:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\5769a2a83848836e.png"></p>
 <p>Warten Sie so lange, bis in der Übersicht der Zugriff auf das Web Interface angezeigt wird:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\d83b5f87758ca39.png"></p>
@@ -87,7 +87,8 @@ import pandas as pd</code></pre>
 <p class="image-container"><img style="width: 624.00px" src="img\42f79e577d0ae2e0.png"></p>
 <p>Der Vorteil dabei ist, dass direkt die nächste Zelle angelegt wird (dies können Sie mit Umschalttaste-Enter auch erreichen).</p>
 <h2 is-upgraded><strong>Initiale Lagerbestände anlegen</strong></h2>
-<p>Wir simulieren zwei Produkte &#34;Apfel&#34; und &#34;Banane&#34;. Für beide speichern wir jeweils den Lagerbestand in einer einfachen Textdatei. Initial haben beide Produkte einen Lagerbestand von 50 Stück. Durch folgenden Code legen wir die Datenstruktur (einen sogenannten DataFrame, das ist so etwas wie eine Tabelle) im Hauptspeicher der Notebook-Instanz an und lassen sie uns anzeigen:</p>
+<p>Wir simulieren zwei Produkte &#34;Apfel&#34; und &#34;Banane&#34;. Für beide speichern wir jeweils den Lagerbestand in einer einfachen Textdatei. Initial haben beide Produkte einen Lagerbestand von 50 Stück. Durch folgenden Code legen wir die Datenstruktur (einen sogenannten DataFrame, das ist so etwas wie eine Tabelle) im Hauptspeicher der Notebook-Instanz an und lassen sie uns anzeigen. </p>
+<p>Legen Sie zunächst eine neue Zelle an, indem Sie die erste Zelle entweder nochmals mit Shift-Enter ausführen (dann wird automatisch eine neue Zelle darunter angelegt) oder indem Sie auf das &#34;Plus&#34;-Zeichen drücken.</p>
 <pre><code># Anlegen der &#34;Tabelle&#34; (DataFrame) zur Speicherung der Lagerbestände. Wir haben zwei Spalten (Produkt und Lagerbestand) und zwei Zeilen
 lagerbestand = pd.DataFrame([[&#39;Apfel&#39;, 50], [&#39;Banane&#39;, 50]], columns=[&#39;Produkt&#39;, &#39;Lagerbestand&#39;])
 lagerbestand  # durch diesen Befehl lassen wir uns den Inhalt des DataFrames anzeigen</code></pre>
@@ -174,9 +175,198 @@ lagerbestand</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="Problem 2 (Integrität):" duration="6">
+      <google-codelab-step label="Problem 2 (Integrität): Fragen und Diskussion" duration="4">
         <h2 is-upgraded><strong>Ziel</strong></h2>
-<p>Wir werden nun das Ini</p>
+<p>Wir möchten unsere Datenhaltung nun erweitern. Es sollen Bestellungen von Kunden gespeichert werden. Pro Bestellung soll die Bestellnummer, der Vor- und Nachname des Kunden, das Bestelldatum und das bestellte Produkt sowie die Bestellmenge hinterlegt werden.</p>
+<h2 is-upgraded><strong>Erster Lösungsansatz</strong></h2>
+<p>Wir speichern die Bestellinformationen in einer csv-Datei, die so aussehen könnte:</p>
+<p class="image-container"><img style="width: 527.50px" src="img\1dfccf586d6ef57f.png"></p>
+<p>Diese Lösung ließe sich in Python wie folgt umsetzen: Legen Sie ein neues Notebook an und speichern Sie es unter dem Namen &#34;Bestellungen&#34;. Importieren Sie in einer Zelle die notwendige Bibliothek pandas, legen Sie den DataFrame (= die Bestelltabelle) an und lassen Sie diese anzeigen:</p>
+<pre><code>import pandas as pd
+
+# Bestellungen anlegen
+bestellungen = pd.DataFrame([[1, &#39;1.10.2020&#39;, &#39;Hans&#39;, &#39;Müller&#39;, &#39;Apfel&#39;, 5], \
+              [2, &#39;2.10.2020&#39;, &#39;Norbert&#39;, &#39;Meier&#39;, &#39;Banane&#39;, 7], \
+              [3, &#39;3.10.2020&#39;, &#39;Hans&#39;, &#39;Müller&#39;, &#39;Zitrone&#39;, 2]], \
+              columns=[&#39;Bestellnummer&#39;, &#39;Bestelldatum&#39;, &#39;Vorname&#39;, &#39;Nachname&#39;, &#39;Produkt&#39;, &#39;Bestellmenge&#39;])
+
+# Bestellungen anzeigen
+bestellungen</code></pre>
+<h2 is-upgraded><strong>Diskussion</strong></h2>
+<p>Das Mehrbenutzerproblem (siehe Problem 1) besteht auch in diesem Fall weiterhin! Aber es gibt noch weitere Herausforderungen.</p>
+<aside class="special"><p><strong>Frage</strong>: Welche weiteren Probleme erkennen Sie bei der Speicherung der Bestelldaten in dieser Form?</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnisse</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben eine Datenhaltung von Stamm- und Bewegungsdaten mit zahlreichen Herausforderungen aufgebaut.</li>
+<li>Wir haben bereits jetzt einige Herausforderungen in dieser Situation erkannt.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Problem 2 (Integrität): Beispielhafte Konflikte" duration="9">
+        <h2 is-upgraded><strong>Ziel</strong></h2>
+<p>Wir möchten nun die identifizierten Herausforderungen aufarbeiten.</p>
+<h2 is-upgraded><strong>Redundanzen</strong></h2>
+<h3 is-upgraded><strong>Problem</strong></h3>
+<p>Einige Informationen werden doppelt (=redundant) gespeichert: </p>
+<p class="image-container"><img style="width: 507.50px" src="img\71416e1a8099a3cb.png"></p>
+<h3 is-upgraded><strong>Konsequenzen</strong></h3>
+<ul>
+<li>Wir verbrauchen mehr Speicher als nötig.</li>
+<li>Wir laufen Gefahr, Inkonsistenzen zwischen Datensätzen herzustellen. Vielleicht speichert jemand &#34;Hans Müller&#34; ja bei einer Bestellung mal versehentlich als &#34;Hans Mueller&#34; ab. Ist dies dann dieselbe Person?</li>
+<li>Wenn wir etwas an den Stammdaten von einer Kunden ändern möchten, müssen wir alle Bestellungen durchsuchen und die Daten ändern (ineffizient)!</li>
+</ul>
+<h3 is-upgraded><strong>Lösungsansatz</strong></h3>
+<p>Wir geben jedem Kunden eine eindeutige Nummer (KundeID), speicher die KundeID, Vor- und Nachname nur einmal in einer Datei und referenzieren aus den Bestellungen darauf:</p>
+<pre><code># Kundenstamm anlegen
+kunden = pd.DataFrame([[1, &#39;Hans&#39;, &#39;Müller&#39;], [2, &#39;Norbert&#39;, &#39;Meier&#39;]], \
+                      columns=[&#39;KundeId&#39;, &#39;Vorname&#39;, &#39;Nachname&#39;])
+
+
+# Bestellungen mit Referenz auf Kundenstamm anlegen
+bestellungen = pd.DataFrame([[1, &#39;1.10.2020&#39;, 1, &#39;Apfel&#39;, 5], \
+              [2, &#39;2.10.2020&#39;, 2, &#39;Banane&#39;, 7], \
+              [3, &#39;3.10.2020&#39;, 1, &#39;Zitrone&#39;, 2]], \
+              columns=[&#39;Bestellnummer&#39;, &#39;Bestelldatum&#39;, &#39;KundeID&#39;, &#39;Produkt&#39;, &#39;Bestellmenge&#39;])</code></pre>
+<p>Wenn wir uns beide Tabellen anzeigen lassen, dann sind die Redundanzen schon weniger geworden:</p>
+<p class="image-container"><img style="width: 475.50px" src="img\ddebf076a8cb6957.png"></p>
+<h2 is-upgraded><strong>Inkonsistenzen zwischen Tabellen</strong></h2>
+<h3 is-upgraded><strong>Problem</strong></h3>
+<p>Ein Problem ist zum Beispiel, dass im Lagerbestand das Produkt Zitrone nicht existiert. Unsere Form der Datensicherung erlaubt uns also nicht, derartige Situationen wie die folgende ohne Weiteres zu vermeiden:</p>
+<pre><code># Einfügen einer inkonsistenten Referenz auf den Kundenstamm
+bestellungen = bestellungen.append(pd.DataFrame([[4, &#39;4.10.2020&#39;, 3, &#39;Apfel&#39;, 10]], columns=bestellungen.columns))
+bestellungen</code></pre>
+<h3 is-upgraded><strong>Konsequenzen</strong></h3>
+<p>Die Bestelltabelle enthält nun zwei Inkonsistenzen: ein Produkt, das im Lagerbestand nicht enthalten ist sowie eine KundeID, die im Kundestamm fehlt:</p>
+<p class="image-container"><img style="width: 486.50px" src="img\b4b3c3472fa56c2b.png"></p>
+<h3 is-upgraded><strong>Lösungsansatz</strong></h3>
+<p>Wir könnten nun in Python (also unserer Anwendung) programmieren, dass beim Einfügen einer Bestellung geprüft wird, ob das Produkt sowie der Kunde in den anderen Tabellen enthalten ist. Dies ist aufwändig und wäre für jeden Anwendungsfall neu zu entwickeln.</p>
+<p>Für u.a. dieses Problem gibt es relationale Datenbanken und wir werden später sehen, wie sie das Problem von Inkonsistenzen lösen (durch sogenannte <strong>Fremdschlüssel</strong>).</p>
+<h2 is-upgraded><strong>Inkonsistenzen innerhalb einer Tabelle</strong></h2>
+<h3 is-upgraded><strong>Problem</strong></h3>
+<p>Wir werden nicht daran gehindert, eine Situation wie die folgende herzustellen:</p>
+<pre><code># Einfügen einer inkonsistenten Zeile in den Bestellungen
+bestellungen = bestellungen.append(pd.DataFrame([[4, &#39;5.10.2020&#39;, 2, &#39;Apfel&#39;, &#39;zehn&#39;]], columns=bestellungen.columns))
+bestellungen</code></pre>
+<aside class="special"><p><strong>Frage</strong>: Welche Probleme haben wir nun zusätzlich eingefügt?</p>
+</aside>
+<h3 is-upgraded><strong>Konsequenzen</strong></h3>
+<p>Die Bestelltabelle enthält nun neben den Inkonsistenzen in Bezug auf andere Tabellen auch noch in sich Widersprüche:</p>
+<p class="image-container"><img style="width: 419.50px" src="img\125b7662a3b42591.png"></p>
+<p>Die Bestellnummer sollte eindeutig sein und der Datentyp der Bestellmenge sollte numerisch (und eventuell auch größer oder gleich 0) sein.</p>
+<h3 is-upgraded><strong>Lösungsansatz</strong></h3>
+<p>Wir könnten nun wiederum in unserer Anwendung programmieren, dass beim Einfügen einer Bestellung geprüft wird, ob die Bestellnummer schon existiert (das dauert eventuell lange, Laufzeitproblem!) sowie ob die Bestellmenge eine Zahl (und ggf. auch größer 0) ist. Dies ist aufwändig und wäre für jeden Anwendungsfall neu zu entwickeln.</p>
+<p>Für u.a. dieses Problem gibt es relationale Datenbanken und wir werden später sehen, wie sie das Problem von Inkonsistenzen und Widersprüchen in den Daten lösen (durch sogenannte <strong>Primärschlüssel und ein explizites Schema (=Spalten mit festgelegten Datentypen)</strong>).</p>
+<h2 is-upgraded><strong>Ergebnisse</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben im Rahmen der dateibasierten Datenhaltung von Stamm- und Bewegungsdaten nun zahlreiche Herausforderungen selbst erlebt (Redundanzen, Inkonsistenzen, fehlerhafte Datentypen).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Ausblick: Verwendung einer Datenbank" duration="13">
+        <h2 is-upgraded><strong>Ziel</strong></h2>
+<p>Wir möchten nun anhand eines sehr einfachen Datenbanksystems sehen, dass relationale Datenbankmanagementsysteme (RDBMS) uns helfen, eine konsistente Datenhaltung mit Mehrbenutzerbetrieb aufzubauen. (Mehrbenutzerbetrieb testen wir aber erst später)</p>
+<h2 is-upgraded><strong>Umsetzung mit SQLite</strong></h2>
+<p>Wir werden nun aus unserem Jupyter Notebook heraus mit einer Datenbank &#34;sprechen&#34;. </p>
+<h3 is-upgraded><strong>Import der Bibliothek</strong></h3>
+<p>Dazu importieren wir das notwendige Package &#34;sqlite3&#34;.</p>
+<pre><code>import sqlite3</code></pre>
+<p>SQLite ermöglicht es uns, eine Datenbank anzulegen, die dann einfach eine Datei auf dem Dateisystem ist (vgl. <a href="https://www.sqlite.org/index.html" target="_blank">https://www.sqlite.org/index.html</a>).</p>
+<h3 is-upgraded><strong>Anlegen einer Datenbank (inkl. Verbindung zu dieser)</strong></h3>
+<p>Mittels des folgenden Codes wird eine Datenbank &#34;shop.db&#34; angelegt und eine Verbindung zu ihr hergestellt (die Verbindung ist dann über die Variable <code>shop</code> verwendbar).</p>
+<pre><code># Datenbank &#34;shop&#34; anlegen
+conn = sqlite3.connect(&#39;shop.db&#39;)
+conn.execute(&#34;PRAGMA foreign_keys = 1&#34;)  # dies wird später erläutert
+conn.commit()</code></pre>
+<p>Wenn Sie diese Zelle ausführen, dann sollten Sie im Dateisystem eine neue Datei &#34;shop.db&#34; sehen. </p>
+<p class="image-container"><img style="width: 250.36px" src="img\669d870cbb925950.png"></p>
+<p>Dies ist die von SQLite angelegte Datei der Datenbank, in der unsere Daten gespeichert werden. &#34;Große&#34; RDBMS sind deutlich komplexer, aber das reicht uns zunächst.</p>
+<aside class="warning"><p><strong>Achtung</strong>: Sollten Sie aufgrund mehrmaliger Ausführung o.ä. Fehlermeldungen bekommen können Sie immer neu mit dem Anlegen der Datenbank beginnen. Löschen Sie dazu zunächst die Datei shop.db (rechte Maustaste und &#34;Delete&#34;).</p>
+</aside>
+<h3 is-upgraded><strong>Anlegen der Tabellen und Einfügen von Daten</strong></h3>
+<p>Wir gehen an dieser Stelle noch nicht ins Detail, sondern nutzen einfach folgenden Code, um die drei Tabellen <code>produkt</code>, <code>kunde</code> und <code>bestellung</code> mit ihren entsprechenden Spalten zu erzeugen sowie die Daten aus dem Beispiel oben einzufügen:</p>
+<pre><code>import sqlite3
+conn = sqlite3.connect(&#39;shop.db&#39;)
+
+c = conn.cursor()
+
+# Die Tabellen produkt, kunde und bestellung anlegen und die Spalten inkl. Datentypen definieren
+c.execute(&#34;&#34;&#34;CREATE TABLE produkt (Bezeichnung TEXT PRIMARY KEY, Lagerbestand INT)&#34;&#34;&#34;)
+c.execute(&#34;&#34;&#34;CREATE TABLE kunde (KundeID INT PRIMARY KEY, Vorname TEXT, Nachname TEXT)&#34;&#34;&#34;)
+c.execute(&#34;&#34;&#34;CREATE TABLE bestellung (Bestellnummer INT PRIMARY KEY, 
+             Bestelldatum DATE, 
+             KundeID INT REFERENCES kunde(KundeID), 
+             Produkt TEXT REFERENCES produkt(ProduktID),
+             Bestellmenge INT CHECK(TYPEOF(Bestellmenge) = &#39;integer&#39;)
+          )&#34;&#34;&#34;)
+
+# Beispieldaten in die drei Tabellen einfügen 
+c.execute(&#34;INSERT INTO produkt VALUES (&#39;Apfel&#39;, 50), (&#39;Banane&#39;, 50)&#34;)
+c.execute(&#34;INSERT INTO kunde VALUES (1, &#39;Hans&#39;, &#39;Müller&#39;), (2, &#39;Norbert&#39;, &#39;Meier&#39;)&#34;)
+c.execute(&#34;INSERT INTO bestellung VALUES (1, &#39;2020-10-01&#39;, 1, &#39;Apfel&#39;, 5), (2, &#39;2020-10-02&#39;, 2, &#39;Banane&#39;, 7)&#34;)
+
+# Speichern aller Änderungen
+conn.commit()</code></pre>
+<h3 is-upgraded><strong>Anzeigen der Daten in den Tabellen</strong></h3>
+<p>Der folgende Python-Code kann verwendet werden, um die Inhalte aller drei Tabellen anzuzeigen (Achtung: weder Python noch SQL haben wir bisher gelernt, d.h. dies ist nur zu Demo-Zwecken):</p>
+<pre><code># Anzeigen aller Inhalte der folgenden drei Tabellen
+tables = [&#39;produkt&#39;, &#39;kunde&#39;, &#39;bestellung&#39;]
+
+for table in tables:  # über alle drei Tabellen einzeln iterieren
+    print(f&#34;Inhalt von Tabelle {table:}&#34;)
+    for row in c.execute(f&#39;SELECT * FROM {table}&#39;):  # über alle Zeilen in der Tabelle iterieren
+        print(row)  # Zeile komplett ausgeben
+    print(&#34;----------------------------&#34;)</code></pre>
+<p>Folgendes sollte die Ausgabe sein:</p>
+<p class="image-container"><img style="width: 297.62px" src="img\8e61db3ad15b9cf.png"></p>
+<p>Wir haben derzeit also einen konsistenten Zustand unserer Daten. </p>
+<h3 is-upgraded><strong>Inkonsistenzen versuchen herzustellen (Teil 1 - Fremdschlüssel)</strong></h3>
+<p>Wir versuchen nun die Probleme, die wir in der dateibasierten Datenhaltung hatten in der Datenbank zu rekonstruieren. Wir starten mit dem &#34;fehlenden Produkt Zitrone&#34; sowie der &#34;fehlenden KundeID 3&#34;:</p>
+<p class="image-container"><img style="width: 486.50px" src="img\b4b3c3472fa56c2b.png"></p>
+<p>Wir versuchen zuerst, die Bestellung mit Bestellnummer 3 und dem fehlenden Produkt Zitrone einzufügen:</p>
+<pre><code># Versuch, eine Bestellung mit einem Produkt einzufügen, das im Artikelstamm nicht existiert
+c.execute(&#34;INSERT INTO bestellung VALUES (3, &#39;2020-10-03&#39;, 1, &#39;Zitrone&#39;, 7)&#34;)</code></pre>
+<p>Wir erhalten einen &#34;IntegrityError&#34; (also einen Fehler, dass die Datenintegrität nicht korrekt ist) mit einer Fehlermeldung &#34;FOREIGN KEY constraint failed&#34;. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\16242db5e389f603.png"></p>
+<p>Das bedeutet, dass in der Tabelle Produkt die &#34;Zitrone&#34; nicht gefunden wurde. Wenn Sie sich noch einmal alle Inhalte der Tabellen mit dem Statement oben anzeigen lassen werden Sie sehen, dass die Bestellung also nicht eingefügt werden konnte.</p>
+<p>Dieselbe Fehlermeldung erhalten wir, wenn wir versuchen, auf einen fehlenden Kunden zu referenzieren:</p>
+<pre><code># Versuch, eine Bestellung mit einem Kunden einzufügen, der im Kundenstamm nicht existiert
+c.execute(&#34;INSERT INTO bestellung VALUES (4, &#39;2020-10-04&#39;, 3, &#39;Apfel&#39;, 10)&#34;)</code></pre>
+<aside class="special"><p><strong>Vorgriff</strong>: Wir haben beim Anlegen der Tabellen über den Befehl &#34;REFERENCES&#34; der Datenbank beigebracht, dass von der Tabelle &#34;bestellung&#34; auf die Tabellen &#34;produkt&#34; und &#34;kunde&#34; referenziert wird (dies nennt man Fremdschlüssel). Damit stellt die Datenbank die Konsistenz über diese Verbindung sicher, so dass keine Bestellungen mit fehlenden Kunden und Produkten angelegt werden können. </p>
+</aside>
+<p>Wir ändern nun den Code, so dass die beiden INSERTs funktionieren:</p>
+<pre><code># Korrigierte Bestellung Nr. 3 (Produkt &#34;Banane&#34; existiert!) einfügen
+c.execute(&#34;INSERT INTO bestellung VALUES (3, &#39;2020-10-03&#39;, 2, &#39;Apfel&#39;, 10)&#34;)
+
+# Korrigierte Bestellung Nr. 4 (KundeID 2 existiert!) einfügen
+c.execute(&#34;INSERT INTO bestellung VALUES (4, &#39;2020-10-04&#39;, 2, &#39;Apfel&#39;, 10)&#34;)</code></pre>
+<p>Die Datenbank befindet sich nun also weiterhin in einem konsistenten Zustand.</p>
+<h3 is-upgraded><strong>Inkonsistenzen versuchen herzustellen (Teil 2 - Primärschlüssel und Datentypen)</strong></h3>
+<p>Wir versuchen nun die weiteren Probleme, die wir in der dateibasierten Datenhaltung provoziert haben, in der Datenbank herzustellen:</p>
+<p class="image-container"><img style="width: 419.50px" src="img\125b7662a3b42591.png"></p>
+<p>Zuerst probieren wir, eine doppelte Bestellnummer einzufügen (ohne das Datentypproblem &#34;zehn&#34;):</p>
+<pre><code># Versuch, eine Bestellung einzufügen, deren Bestellnummer schon existiert
+c.execute(&#34;INSERT INTO bestellung VALUES (4, &#39;2020-10-05&#39;, 2, &#39;Apfel&#39;, 10)&#34;)</code></pre>
+<p>Auch hier erhalten wir einen &#34;IntegrityError&#34; mit der Fehlermeldung &#34;UNIQUE constraint failed&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9a41d38f4110c3d4.png"></p>
+<p>Die Datenbank merkt also, dass wir eine doppelte Bestellung einfügen wollen und verhindert dies.</p>
+<aside class="special"><p><strong>Vorgriff</strong>: Wir haben beim Anlegen der Tabellen über den Befehl &#34;PRIMARY KEY&#34; der Datenbank beigebracht, dass in allen drei Tabellen eine Spalte dafür genutzt werden soll, Datensätze (also Zeilen ) eindeutig zu identifizieren (dies nennt man Primärschlüssel). Damit stellt die Datenbank die Konsistenz sicher indem sie doppelte Werte in den Spalten &#34;Bezeichnung&#34; (Tabelle produkt), &#34;KundeID&#34; (Tabelle kunde), sowie &#34;Bestellnummer&#34; (Tabelle bestellung) unterbindet.</p>
+</aside>
+<p>Nehmen wir an, dieses Problem hätten wir korrigiert, d.h. wir vergeben der neuen Bestellung Bestellnummer 5, jedoch versuchen wir dieses Mal den Text &#34;zehn&#34; anstelle des Datentyps INT (also einer Zahl) einzufügen:</p>
+<pre><code># Versuch, einen falschen Datentyp einzufügen
+c.execute(&#34;INSERT INTO bestellung VALUES (5, &#39;2020-10-05&#39;, 2, &#39;Apfel&#39;, &#39;zehn&#39;)&#34;)</code></pre>
+<p>Auch diese Inkonsistenz kann die Datenbank vermeiden.</p>
+<aside class="warning"><p><strong>Vorgriff</strong>: Bei SQLite sind die Datentyp-Prüfung sowie Fremdschlüssel-Prüfungen kompliziert umzusetzen (siehe Befehle oben). Bei &#34;richtigen&#34; RDBMS wie MySQL, SQL Server, oder PostgreSQL geht dies automatisch. Wir werden später in der Veranstaltung &#34;richtige&#34; RDBMS nutzen.</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnisse</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun aus Python heraus mit einer Datenbank interagiert. Die Datenbank ist zwar sehr einfach, aber die SQL-Befehle werden später bei &#34;richtigen&#34; Datenbanken identisch sein.</li>
+<li>Sie haben erkannt, dass die Datenbank gegenüber der dateibasierten Datenhaltung zahlreiche Vorteile im Hinblick auf die Sicherstellung der Konsistenz (und auch noch weitere Vorteile) hat.</li>
+</ol>
 
 
       </google-codelab-step>
@@ -184,12 +374,12 @@ lagerbestand</code></pre>
       <google-codelab-step label="Code sichern und aufräumen" duration="1">
         <h2 is-upgraded><strong>Code-Sicherung</strong></h2>
 <p>Wenn Sie die AI Platform Notebook-Instanz löschen möchten können Sie den Code (also die Notebooks) wie folgt auf Ihren Rechner herunterladen: rechts klicken auf das Notebook und dann Download:</p>
-<p class="image-container"><img style="width: 460.00px" src="img\4f5cffe20ad56a3f.png"></p>
+<p class="image-container"><img style="width: 324.27px" src="img\a6334067ddca0077.png"></p>
 <p>Hochladen von Notebooks in einer neuen Instanz können Sie über den Upload Files-Button:</p>
 <p class="image-container"><img style="width: 456.00px" src="img\1e52b7b4bdbeefb0.png"></p>
 <p>Wenn Sie die Instanz nur ausschalten (und geringe Kosten dafür in Kauf nehmen), dann müssen Sie die Notebooks nicht herunterladen.</p>
 <h2 is-upgraded><strong>Ausschalten oder Löschen der Instanz</strong></h2>
-<p>Gehen Sie zurück in die GCP Cloud Consol (dort wo Sie auf &#34;Open Jupyterlab&#34; geklickt haben). Wenn Sie die Instanz komplett löschen möchten, dann selektieren Sie die Instanz und klicken auf Delete:</p>
+<p>Gehen Sie zurück in die GCP Cloud Console (dort wo Sie auf &#34;Open Jupyterlab&#34; geklickt haben). Wenn Sie die Instanz komplett löschen möchten, dann selektieren Sie die Instanz und klicken auf Delete:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\ad455e17dcb733b4.png"></p>
 <p>Wenn Sie die Instanz nur ausschalten möchten, klicken Sie auf &#34;Stop&#34;. </p>
 <aside class="warning"><p><strong>Achtung</strong>: Wenn Sie die Instanz nur ausschalten, dann bleibt die daran angeschlossene Festplattenkapazität in der Google Cloud erhalten. Wenn Sie an den Einstellungen nichts geändert haben, dann handelt es sich um eine &#34;normale&#34; Festplatte mit 100GB, die 4$ pro Monat an Bereitstellungsgebühr verursacht. Vgl. hierzu <a href="https://cloud.google.com/products/calculator" target="_blank">https://cloud.google.com/products/calculator</a>.</p>
