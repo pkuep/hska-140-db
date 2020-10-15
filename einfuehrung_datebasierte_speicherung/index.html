@@ -76,7 +76,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Programmierung des Initialen Dateizugriffs" duration="6">
+      <google-codelab-step label="Problem 1 (Mehrbenutzerbetrieb): Initialer Dateizugriff" duration="6">
         <h2 is-upgraded><strong>Notwendige Pakete importieren</strong></h2>
 <p>Wir werden eine Data Science-Bibliothek (pandas) nutzen, um eine ganz einfache &#34;Lagerbestandsverwaltung&#34; zu programmieren. Die entsprechende Bibliothek importieren wir wie folgt, so dass wir über den Bezeichner &#34;pd&#34; im gesamten Notebook darauf zugreifen können. Wir kommentieren mit vorangestelltem &#34;#&#34;-Zeichen:</p>
 <pre><code># notwendige Bibliotheken importieren
@@ -116,7 +116,7 @@ lagerbestand.to_csv(&#34;lagerbestand.csv&#34;, index=False)  # die Bedeutung de
 
       </google-codelab-step>
     
-      <google-codelab-step label="Programmierung eines konkurrierenden Dateizugriffs" duration="6">
+      <google-codelab-step label="Problem 1 (Mehrbenutzerbetrieb): Konkurrierender Dateizugriff" duration="6">
         <h2 is-upgraded><strong>Ziel</strong></h2>
 <p>Wir werden nun das Initialisierungs-Notebook zweimal duplizieren und so anpassen, dass ein Notebook Einlagerungen simuliert während das andere Notebook Auslagerungen simuliert. WIr werden die folgenden beiden Anwendungsfälle simulieren: ein Ablauf ohne Konflikt und ein Ablauf mit konkurrierendem Zugriff auf die Lagerbestand-Datei. Vergleiche dazu folgende Abbildung, die den Ablauf veranschaulicht:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\ee8d06712507f106.png"></p>
@@ -170,6 +170,13 @@ lagerbestand</code></pre>
 <li>Sie haben einen ersten Eindruck von Pandas DataFrames bekommen, die in diesem Fall zur Speicherung von Lagerbeständen und deren Manipulation (Ein- und Auslagerung) verwendet wurden.</li>
 <li>Sie haben eine Ausnahmesituation hergestellt, in der zwei Prozesse eine Datei gleichzeitig manipulieren. Dies hat zu einer Inkonsistenz geführt (Lagerbestand höher als er in der Realität wäre bei einem Produkt). Dies ist ein grundlegendes Problem beim &#34;Mehrbenutzerbetrieb&#34; und konkurrierend (nebenläufig) laufenden Prozessen.</li>
 </ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Problem 2 (Integrität):" duration="6">
+        <h2 is-upgraded><strong>Ziel</strong></h2>
+<p>Wir werden nun das Ini</p>
 
 
       </google-codelab-step>
