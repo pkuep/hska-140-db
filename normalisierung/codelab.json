@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-09T12:47:49Z",
+  "id": "normalisierung",
+  "duration": 52,
+  "title": "Lab \"Normalisierung\"",
+  "authors": "Peer Küppers",
+  "summary": "In diesem Codelab werden Sie auf Basis eine Excel-Liste, die Ihnen gegeben ist, die Normalisierungsschritte bis zur dritten Normalform umsetzen. Sie werden weitere Herausforderungen in der Datenmodellierung erkennen und die Daten beispielhaft in einer Cloud-Umgebung (BigQuery) mit SQL analysieren.",
+  "source": "1hioxU7xB7fFCOs4erTB_qPnhIkjdLdenQtasXzVA3vE",
+  "theme": "einf-hrung",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Einführung"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "normalisierung"
+}
