@@ -3,13 +3,13 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-11-16T09:57:02Z",
+  "updated": "2020-11-16T18:07:13Z",
   "id": "normalisierung",
-  "duration": 77,
-  "title": "Lab \"Normalisierung\"",
+  "duration": 45,
+  "title": "Lab \"SQL - Tei\"",
   "authors": "Peer Küppers",
-  "summary": "In diesem Codelab werden Sie auf Basis eine Excel-Liste, die Ihnen gegeben ist, die Normalisierungsschritte bis zur dritten Normalform umsetzen. Sie werden weitere Herausforderungen in der Datenmodellierung erkennen und die Daten beispielhaft in Excel abbilden sowie mittels Pivottabelle analysieren..",
-  "source": "1hioxU7xB7fFCOs4erTB_qPnhIkjdLdenQtasXzVA3vE",
+  "summary": "In diesem Codelab werden Sie in Google Cloud Platform eine SQL-Instanz erstellen und erste Schritte zu dessen Nutzung mittels DDL und DML umsetzen.",
+  "source": "1rPoxRXQM5zCBwWC2q0XqeZViXZVRzFYpL6TNWvkqMJM",
   "theme": "einf-hrung",
   "status": [
     "published"
