@@ -146,7 +146,7 @@
 <p class="image-container"><img style="width: 555.00px" src="img\22915777019eecc3.png"></p>
 <p>Mit dem Befehl &#34;create table&#34; werden Tabellen angelegt. Wir schauen uns die Syntax, Datentypen und Einstellmöglichkeiten später noch genauer an und legen nun einfach mit folgendem Befehl die Tabelle &#34;Mitarbeiter&#34; an. </p>
 <pre><code>create table mitarbeiter (
-        MID integer primary key,  -- MID als Primärschlüssel setzen
+        MID int primary key,  -- MID als Primärschlüssel setzen
         name varchar(100)  -- maximal 100 Zeichen für Namen speichern
 );</code></pre>
 <ul>
@@ -156,9 +156,9 @@
 </ul>
 <p>Analog gehen wir in Tabelle Rechnung vor. In dieser Tabelle legen wir aber zusätzlich noch den Fremdschlüssel auf die Tabelle Mitarbeiter an:</p>
 <pre><code>create table rechnung (
-        RID integer primary key,  -- RID als Primärschlüssel setzen
+        RID int primary key,  -- RID als Primärschlüssel setzen
         rechnungsdatum date,  -- nur Datumswerte zulassen
-        betreuer_mid integer not null, -- Fremdschlüssel vorbereiten
+        betreuer_mid int not null, -- Fremdschlüssel vorbereiten
         foreign key (betreuer_mid) references mitarbeiter (MID)  -- Fremdschlüssel setzen
 );</code></pre>
 <ul>
