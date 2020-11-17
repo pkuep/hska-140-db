@@ -81,6 +81,11 @@
 <p class="image-container"><img style="width: 624.00px" src="img\60fa62c5cee5dcb4.png"></p>
 <aside class="special"><p><strong>Wichtig:</strong> Diesen Befehl müssen Sie <strong>nicht noch einmal ausführen</strong>. Sie haben nun Ihren Rechner auf das GCP-Projekt konfiguriert.</p>
 </aside>
+<h3 is-upgraded><strong>Cloud SQL Admin API aktivieren</strong></h3>
+<p>Geben Sie in der cloud console in der Suche &#34;Cloud SQL Admin API&#34; ein und selektieren Sie den entsprechenden Eintrag:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2438c322d4381b3f.png"></p>
+<p>Aktivieren Sie die Programmierschnittstelle (API):</p>
+<p class="image-container"><img style="width: 432.10px" src="img\3c399e1390411f69.png"></p>
 <h3 is-upgraded><strong>Verbindungsnamen zum MySQL-Server ermitteln</strong></h3>
 <p>Gehen Sie im Browser in der cloud console auf die noch offene Seite &#34;SQL - Overview&#34;. Dort finden Sie den Verbindungsnamen zu Ihrer MySQL-Instanz. Klicken Sie auf &#34;Copy&#34;, so dass dieser in der Zwischenablage ist.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\72765019fdbe114a.png"></p>
@@ -233,6 +238,14 @@
 <pre><code>delete from mitarbeiter where MID=1;</code></pre>
 <p>Dies ist das Ergebnis:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\6c3dfaa55ca717e4.png"></p>
+<h2 is-upgraded><strong>Integritätssicherung durch Constraints</strong></h2>
+<p>Beim Anlegen der Tabelle haben wir ein sogenanntes Constraint, also eine Nebenbedingung, gesetzt:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ba7a4e0f3f45692f.png"></p>
+<p>Mittels &#34;not null&#34; definieren wir, dass die betreuer_mid (der Fremdschlüssel) nicht leer sein darf. Damit stellen wir die min-Kardinalität von 1 für den Relationshiptypen &#34;Betreuer&#34; sicher.</p>
+<p>Die Datenbank lehnt somit das Einfügen von Werten ab, wenn kein Wert für &#34;betreuer_mid&#34; übergeben wird. Daher schlägt folgender Befehl fehl, bei dem wir nur für die Spalten RID und rechnungsdatum (gültige) Werte übergeben:</p>
+<pre><code>insert into rechnung (RID, rechnungsdatum) values (6, &#39;2020-11-16&#39;);</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b2ab1e782e70693b.png"></p>
 <h2 is-upgraded><strong>Ergebnis</strong></h2>
 <ol type="1" start="1">
 <li>Sie haben einige Konsistenzsicherungsmechanismen von RDBMS kennengelernt.</li>
@@ -292,7 +305,7 @@ order by anzahl_rechnungen desc;</code></pre>
 </aside>
 <p>Durch diese Maßnahme entstehen Ihnen nur Kosten für die SSD-Festplatte i.H.v. 1,70$ pro Monat (siehe Pricing Calculator, zu finden über &#34;Compute Engine&#34; und dort &#34;Zonal SSD&#34;). </p>
 <p class="image-container"><img style="width: 624.00px" src="img\a8de1f544a35c12f.png"></p>
-<aside class="warning"><p><strong>Wichtig: </strong>Am Ende des Semesters sollten Sie die gesamte Instanz löschen (über &#34;DELETE&#34;), damit auch keine Kosten für die Festplatte anfallen.</p>
+<aside class="warning"><p><strong>Wichtig: </strong>Am Ende des Semesters sollten Sie die gesamte Instanz löschen (über &#34;DELETE&#34;), damit auch keine Kosten für die Festplatte anfallen. Hinweis: der Name einer SQL-Instanz ist nach dem Löschen für eine Woche gesperrt. Es kann somit zu unerwarteten Fehlermeldungen kommen, wenn Sie eine neue Instanz mit demselben Namen anlegen möchten.</p>
 </aside>
 <h3 is-upgraded><strong>Ausschalten des Cloud SQL-Proxies</strong></h3>
 <p>Gehen Sie in die Konsole / das Terminal, in dem der Cloud SQL-Proxy läuft und drücken Sie Strg-c. Damit sollte das Programm beendet werden. Sie können die Konsole dann schließen. </p>
