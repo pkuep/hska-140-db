@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-17T11:01:06Z",
+  "id": "sql_dbsetup",
+  "duration": 45,
+  "title": "Lab \"SQL - Teil 1: Setup\"",
+  "authors": "Peer Küppers",
+  "summary": "In diesem Codelab werden Sie in Google Cloud Platform eine SQL-Instanz erstellen und erste Schritte zu dessen Nutzung mittels DDL und DML umsetzen.",
+  "source": "1rPoxRXQM5zCBwWC2q0XqeZViXZVRzFYpL6TNWvkqMJM",
+  "theme": "einf-hrung",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Einführung"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "sql_dbsetup"
+}

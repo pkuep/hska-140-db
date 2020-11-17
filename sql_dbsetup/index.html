@@ -1,0 +1,330 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;SQL - Teil 1: Setup&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="sql_dbsetup"
+                  title="Lab &#34;SQL - Teil 1: Setup&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Einführung" duration="2">
+        <p>Wir werden nun in der Google Cloud Platform (GCP) Umgebung eine Instanz eines relationalen Datenbankmanagementsystems (RDBMS) starten und den Umgang damit kennenlernen. Wir werden beispielhaft eine Datenbank anlegen, ein Schema erzeugen und erste Tabellen definieren. Zusätzlich werden wir erstmals Daten in die Datenbank einfügen und einfache Abfragen kennenlernen.</p>
+<h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
+<ul>
+<li>Erzeugung einer Cloud SQL-Instanz in GCP (MySQL)</li>
+<li>Verbindungsherstellung zum RDBMS mittels cloud-sql-proxy und DBeaver</li>
+<li>Anlegen einer Datenbank.</li>
+<li>Anlegen von Tabellen und Einfügen beispielhafter Daten</li>
+<li>Einfache SQL Abfragen</li>
+<li>Herunterfahren der Instanz, um Kosten zu sparen</li>
+</ul>
+<aside class="warning"><p><strong>Hinweis:</strong> Sie benötigen Zugriff auf das GCP Cloud-Angebot. Das entsprechende Guthaben erhalten Sie im Kurs.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Erzeugung Cloud SQL-Instanz und Verbinden mit DBeaver" duration="16">
+        <h2 is-upgraded><strong>Erzeugen der Cloud SQL-Instanz</strong></h2>
+<p>Gehen Sie in der GCP-Console (also dem Webinterface erreichbar unter <a href="https://console.cloud.google.com" target="_blank">https://console.cloud.google.com</a>) auf &#34;SQL&#34; im Bereich &#34;Databases&#34;:</p>
+<p class="image-container"><img style="width: 388.69px" src="img\82dee2ce070a9652.png"></p>
+<p>Klicken Sie auf &#34;Create Instance&#34; und wählen Sie dann &#34;MySQL&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\39bea5e2b9be8804.png"></p>
+<p>Benennen Sie Ihre Instanz und setzen Sie ein Passwort für den Administrator-User (root). Merken Sie sich dieses Passwort unbedingt!</p>
+<p class="image-container"><img style="width: 349.49px" src="img\3ff40f4fa4bd388c.png"></p>
+<p>Die anderen Einstellungen können Sie alle im Standard belassen.</p>
+<aside class="special"><p><strong>Hinweis:</strong> Es wird in GCP nun eine virtuelle Maschine hochgefahren (Infrastructure as a Service), auf der der MySQL-Server installiert ist. Der MySQL-Server wird entsprechend konfiguriert (insb. root-Passwort). Die Einrichtung dauert ein paar Minuten.</p>
+</aside>
+<aside class="warning"><p><strong>Wichtig:</strong> Denken Sie unbedingt daran, die Instanz am Ende der Übung/Vorlesung herunterzufahren (also immer dann, wenn Sie nicht mehr aktiv damit arbeiten). Ansonsten entstehen Ihnen zu hohe laufende Kosten und Ihr Guthaben wird zu schnell verbraucht.</p>
+</aside>
+<h2 is-upgraded><strong>Verbindung herstellen: Vorbereitung mit cloud-sql-proxy</strong></h2>
+<h3 is-upgraded><strong>Überblick</strong></h3>
+<p>GCP sorgt zunächst einmal für Sicherheit der Datenbank, so dass man sich nicht ohne Weiteres mit der Datenbank verbinden kann. Um eine verschlüsselte Verbindung in die Cloud-Umgebung herzustellen bietet GCP das Tool &#34;cloud-sql-proxy&#34; an (vgl. <a href="https://cloud.google.com/sql/docs/mysql/sql-proxy" target="_blank">https://cloud.google.com/sql/docs/mysql/sql-proxy</a>). Dieses und auch das Google Cloud SDK (<a href="https://cloud.google.com/sdk/docs/install" target="_blank">https://cloud.google.com/sdk/docs/install</a>) benötigen Sie für die folgenden Schritte. Bitte laden Sie - falls noch nicht geschehen - beide Tools herunter und installieren Sie diese.</p>
+<p>Der cloud-sql-proxy sorgt für eine sichere Verbindung von Ihrem Rechner (&#34;Client Machine&#34;) zum MySQL-Server (&#34;Instance&#34;), wie im Folgenden dargestellt.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5f2f42253e09f338.png"></p>
+<p>Wir möchten nicht den MySQL-Server für das gesamte Internet zugänglich machen, d.h. Den &#34;TCP standard port&#34; der MySQL-Instanz möchten wir nicht öffnen. Es sollen nur verschlüsselte Verbindungen (&#34;TCP secure tunnel&#34;) von autorisierten Usern zugelassen werden. Dazu nutzen wir den &#34;Proxy Client&#34; auf Ihrem Rechner, der sich im Hintergrund mit seinem &#34;Gegenstück&#34; in Ihrem Cloud-Projekt verbindet (&#34;Proxy Server&#34;). Der Proxy Client gibt vor, ein echter RDBMS-Server zu sein und nimmt Verbindungen lokal auf Ihrem Rechner an (&#34;Local connection&#34;). Diese Verbindungen werden umgeleitet über das Internet zu Ihrer MySQL-Instanz (über den &#34;Proxy Server&#34;). </p>
+<p>Wir werden uns nachher mit unserem Datenbanktool also einfach mit unserem lokalen Rechner (localhost) verbinden, obwohl wir eigentlich mit einer Datenbank in der Cloud arbeiten.</p>
+<h3 is-upgraded><strong>Google Cloud SDK mit dem Projekt verbinden</strong></h3>
+<p>Starten Sie eine Kommandozeile (in Windows &#34;Eingabeaufforderung&#34;, auf Mac &#34;Terminal&#34;):</p>
+<p class="image-container"><img style="width: 329.50px" src="img\20e37b82fe2bea2a.png"></p>
+<p>Geben Sie den Befehl &#34;gcloud init&#34; ein, um das Google Cloud SDK zu initialisieren. Wählen Sie die Zahl vor &#34;Create a new configuration&#34; und drücken Sie Enter (bei Ihnen wird es anders aussehen):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\bbab04dbb10f80e.png"></p>
+<p>Geben Sie einen Namen für die anzulegende Konfiguration an, also beispielsweise &#34;hska-dscb140&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\e8f3060497275853.png"></p>
+<p>Wählen Sie im folgenden Schritt entweder Ihren Account, falls Sie schon eingeloggt sind, oder &#34;Log in with a new account&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4d544d0ba9b7459f.png"></p>
+<p>Folgen Sie dem angezeigten Link, melden Sie sich an und geben Sie dem Cloud SDK die notwendigen Rechte, indem Sie auf &#34;Zulassen&#34; klicken:</p>
+<p class="image-container"><img style="width: 354.89px" src="img\45f525c2b0c534e5.png"></p>
+<p>Gehen Sie zurück zum Terminal und wählen Sie im nächsten Schritt die Zahl Ihres Projekts aus, in meinem Fall 8:</p>
+<p class="image-container"><img style="width: 470.50px" src="img\93fb031280bc2b3d.png"></p>
+<p>Im folgenden Schritt können Sie mit &#34;n&#34; antworten, so dass Sie folgende Meldung sehen, die die erfolgreiche Konfiguration darstellt:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\60fa62c5cee5dcb4.png"></p>
+<aside class="special"><p><strong>Wichtig:</strong> Diesen Befehl müssen Sie <strong>nicht noch einmal ausführen</strong>. Sie haben nun Ihren Rechner auf das GCP-Projekt konfiguriert.</p>
+</aside>
+<h3 is-upgraded><strong>Verbindungsnamen zum MySQL-Server ermitteln</strong></h3>
+<p>Gehen Sie im Browser in der cloud console auf die noch offene Seite &#34;SQL - Overview&#34;. Dort finden Sie den Verbindungsnamen zu Ihrer MySQL-Instanz. Klicken Sie auf &#34;Copy&#34;, so dass dieser in der Zwischenablage ist.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\72765019fdbe114a.png"></p>
+<h3 is-upgraded><strong>Cloud-SQL-Proxy starten</strong></h3>
+<p>Navigieren Sie in der Eingabeaufforderung (bzw. Terminal) dorthin, wo Sie das Programm  &#34;Cloud-SQL-Proxy&#34; gespeichert haben (es sollte umbenannt worden sein zu &#34;cloud_sql_proxy&#34;). Mittels Befehl &#34;cd&#34; können Sie zum Beispiel in das Downloads-Verzeichnis wechseln:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2f0073de35d9aa00.png"></p>
+<p>Geben Sie folgenden Befehl ein. Sie können Ihren Verbindungsnamen aus der Zwischenablage anstelle von &#34;pk-dscb140:us-central1:dscb140&#34; einfügen:</p>
+<pre><code>cloud_sql_proxy.exe -instances=pk-dscb140:us-central1:dscb140=tcp:3306</code></pre>
+<p>Denken Sie daran, am Ende noch &#34;=tcp:3306&#34; einzugeben:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\48a362edb95704ae.png"></p>
+<p>Wenn Sie folgende Ausgabe erhalten, dann steht die verschlüsselte Verbindung, so dass wir uns als nächstes mit der Datenbank verbinden können:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c0e784a7d66955cc.png"></p>
+<aside class="special"><p><strong>Wichtig:</strong> Diesen Befehl müssen Sie <strong>erneut ausführen</strong>, wenn Sie sich neu verbinden möchten (also bspw. wenn der PC heruntergefahren wurde).</p>
+</aside>
+<h2 is-upgraded><strong>Verbindung herstellen: DBeaver konfigurieren</strong></h2>
+<p>Als nächstes möchten wir unseren Datenbank-Client so einstellen, dass er sich mit der in GCP laufenden MySQL-Datenbank mittels des Cloud SQL-Proxies verbindet. Starten Sie das Programm DBeaver. Klicken SIe auf &#34;Neue Verbindung&#34;:</p>
+<p class="image-container"><img style="width: 366.50px" src="img\4ae24286d9a03618.png"></p>
+<p>Wählen Sie MySQL aus und klicken Sie auf &#34;Weiter&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b2373c1e7dca24fe.png"></p>
+<p>Wenn Sie gefragt werden, ob Sie den passenden Datenbanktreiber herunterladen möchten, klicken Sie auf &#34;Download&#34;.</p>
+<p>Geben Sie danach das root-Kennwort ein und klicken Sie dann auf &#34;Verbindung testen&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\87c23121f1f6dcdd.png"></p>
+<p>Die Verbindung sollte hergestellt worden sein:</p>
+<p class="image-container"><img style="width: 452.35px" src="img\944af6c26168072b.png"></p>
+<p>Klicken Sie auf fertigstellen. Die Verbindung sollte nun unter dem Reiter &#34;Datenbanken&#34; auftauchen:</p>
+<p class="image-container"><img style="width: 321.64px" src="img\2784c997f30be495.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun ein RDBMS (MySQL) in der Cloud gestartet und konfiguriert (root-Passwort gesetzt).</li>
+<li>Sie haben Ihren lokalen Rechner so eingerichtet, dass dieser mit den Cloud-Systemen umgehen kann. Das Google Cloud SDK haben Sie auf Ihr Projekt eingestellt und danach den Cloud SQL-Proxy genutzt, um einen verschlüsselten Tunnel zu Ihrer laufenden MySQL-Instanz aufzubauen.</li>
+<li>Über diesen verschlüsselten Tunnel haben Sie im Anschluss das Programm DBeaver, das wir als Datenbank-Management-Tool nutzen, mit der Cloud MySQL-Instanz verbunden.</li>
+<li>Sie haben nun alle Schritte vorgenommen, um mit einem RDBMS zu arbeiten.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Anlegen einer Datenbank &#34;Kartenverkauf&#34;" duration="6">
+        <aside class="special"><p><strong>Hinweis: </strong>Alle SQL-Befehle in diesem Codelab werden noch einmal in der Vorlesung wiederholt!</p>
+</aside>
+<h2 is-upgraded><strong>Überblick</strong></h2>
+<p>Wir möchten im Folgenden die drei Abstraktions- bzw. Gliederungsebenen von relationalen Datenbanken kennenlernen. Wir betreiben ein RDBMS &#34;MySQL&#34; in GCP. Darin möchten wir eine beispielhafte Datenbank &#34;Kartenverkauf&#34; anlegen. Ein Teil des Kartenverkaufs ist das &#34;Rechnungswesen&#34;. Dies könnten wir als ein Schema anlegen, um die darin befindlichen Tabellen von anderen Tabellen logisch zu trennen (bspw. von der Abteilungszuordnung). Innerhalb dieses Schemas legen wir dann die Tabellen an, bspw. Mitarbeiter und Rechnung:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\535fd81be0ba7595.png"></p>
+<aside class="warning"><p><strong>Achtung:</strong> MySQL erlaubt das Anlegen von Schemata im Gegensatz zu zum Beispiel PostgreSQL nicht. Wir verzichten daher im Folgenden auf diese Strukturierungsmöglichkeit und legen nur die Datenbank und danach die Tabellen an. Dass es diese Strukturierungsmöglichkeit in vielen RDBMS gibt sollten Sie sich aber merken!</p>
+</aside>
+<p>Wenn Sie in der DBeaver-Datenbankübersicht die Pfeile vor &#34;localhost&#34; und &#34;Databases&#34; anklicken, dann sehen Sie, dass bisher ein paar MySQL-Systemdatenbanken bereits enthalten sind (&#34;information_schema&#34;, &#34;mysql&#34;, &#34;performance_schema&#34;, &#34;sys&#34;):</p>
+<p class="image-container"><img style="width: 263.24px" src="img\354d5bb196e31f80.png"></p>
+<aside class="warning"><p><strong>Achtung:</strong> Sie sind derzeit als root-User angemeldet. Damit haben Sie vollen Zugriff auf alle Datenbanktabellen. Löschen oder verändern Sie niemals die Systemdatenbanken. Als &#34;normaler&#34; User hätten Sie dafür auch keine Rechte. User Management behandeln wir an dieser Stelle nicht.</p>
+</aside>
+<p>Klicken Sie mit der rechten Maustaste auf &#34;localhost&#34; und dann auf &#34;SQL-Editor&#34;. Danach sollte sich rechts ein Editor öffnen, mit dem wir nun SQL-Befehle eingeben können.</p>
+<p class="image-container"><img style="width: 397.50px" src="img\1aba0c2a761c1af.png"></p>
+<h2 is-upgraded><strong>Anlegen der Datenbank &#34;Kartenverkauf&#34;</strong></h2>
+<p>Mit dem Befehl &#34;create database&#34; wird eine Datenbank angelegt. Wir möchten eine Datenbank für den Kartenverkauf kreieren:</p>
+<pre><code>create database kartenverkauf;</code></pre>
+<p>Führen Sie den Befehl aus, indem Sie auf die &#34;orange Play-Tast&#34; klicken oder Strg-Enter eingeben (die Zeile muss markiert sein). Sie sollten im Ergebnisfenster unten im Feld &#34;Updated Rows&#34; das Ergebnis 1 sehen.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d5a07ae3237f773f.png"></p>
+<p>Wenn Sie mit der rechten Maustaste auf &#34;localhost&#34; klicken und Aktualisieren auswählen, dann sollte die Datenbank auch in der Hierarchie auftauchen.</p>
+<p class="image-container"><img style="width: 307.04px" src="img\e3949de77d28791f.png"></p>
+<p>Um in den folgenden Befehlen diese Datenbank auch zu verwenden, müssen wir dies noch per SQL mitteilen:</p>
+<pre><code>use kartenverkauf;</code></pre>
+<h2 is-upgraded><strong>Anlegen der Tabellen &#34;Mitarbeiter&#34; und &#34;Rechnung&#34;</strong></h2>
+<p>Die folgenden beiden Tabellen aus dem ERM möchten wir nun umsetzen:</p>
+<p class="image-container"><img style="width: 555.00px" src="img\22915777019eecc3.png"></p>
+<p>Mit dem Befehl &#34;create table&#34; werden Tabellen angelegt. Wir schauen uns die Syntax, Datentypen und Einstellmöglichkeiten später noch genauer an und legen nun einfach mit folgendem Befehl die Tabelle &#34;Mitarbeiter&#34; an. </p>
+<pre><code>create table mitarbeiter (
+        MID integer primary key,  -- MID als Primärschlüssel setzen
+        name varchar(100)  -- maximal 100 Zeichen für Namen speichern
+);</code></pre>
+<ul>
+<li>Mit &#34;integer&#34; definieren wir, dass die Spalte &#34;MID&#34; ganzzahlige Werte aufnehmen soll.</li>
+<li>Mit &#34;varchar(100)&#34; definieren wir, dass die Spalte &#34;name&#34; Zeichenketten mit maximaler Länge 100 aufnehmen soll.</li>
+<li>Mit &#34;primary key&#34; definieren wir den Primärschlüssel der Tabelle (MID).</li>
+</ul>
+<p>Analog gehen wir in Tabelle Rechnung vor. In dieser Tabelle legen wir aber zusätzlich noch den Fremdschlüssel auf die Tabelle Mitarbeiter an:</p>
+<pre><code>create table rechnung (
+        RID integer primary key,  -- RID als Primärschlüssel setzen
+        rechnungsdatum date,  -- nur Datumswerte zulassen
+        betreuer_mid integer not null, -- Fremdschlüssel vorbereiten
+        foreign key (betreuer_mid) references mitarbeiter (MID)  -- Fremdschlüssel setzen
+);</code></pre>
+<ul>
+<li>Mit &#34;date&#34; definieren wir, dass die Spalte &#34;rechnungsdatum&#34; nur Datumswerte aufnehmen kann.</li>
+<li>Mit &#34;foreign key ...&#34; definieren wir, dass die Spalte &#34;betreuer_mid&#34; auf die Spalte &#34;MID&#34; aus Tabelle &#34;mitarbeiter&#34; zeigt.</li>
+</ul>
+<h2 is-upgraded>Ergebnis</h2>
+<ol type="1" start="1">
+<li>Sie haben nun eine Datenbank für den Kartenverkauf angelegt. → CREATE DATABASE</li>
+<li>In dieser Datenbank haben Sie zwei Tabellen erzeugt. → CREATE TABLE</li>
+<li>Sie haben erste Datentypen kennengelernt. → INTEGER, VARCHAR, DATE</li>
+<li>Sie haben Befehle zur Definition von Schlüsseln verwendet. → PRIMARY KEY, FOREIGN KEY (...) REFERENCES</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Einfügen von Daten" duration="4">
+        <h2 is-upgraded>Einfügen von Mitarbeitern</h2>
+<p>Mittels des Befehls &#34;INSERT INTO&#34; können Werte (Tupel) in eine Tabelle (Relation) eingefügt werden:</p>
+<pre><code>insert into mitarbeiter values 
+(1, &#39;Müller&#39;), (2, &#39;Meier&#39;), (3, &#39;Schulz&#39;);</code></pre>
+<p>Im Ergebnisfenster sollte nun in &#34;Updated Rows&#34; eine &#34;3&#34; stehen. Sie können zusätzlich prüfen, ob die Mitarbeiter korrekt eingefügt wurden, indem Sie den folgenden SELECT-Befehl eingeben und ausführen:</p>
+<pre><code>select * from mitarbeiter;</code></pre>
+<p>Dies sollte das Ergebnis sein:</p>
+<p class="image-container"><img style="width: 332.99px" src="img\2bf83313d8963179.png"></p>
+<h2 is-upgraded><strong>Einfügen von Rechnungen</strong></h2>
+<p>Wir verfahren analog mit den Rechnungen:</p>
+<pre><code>insert into rechnung values 
+(1, &#39;2020-11-16&#39;, 1),
+(2, &#39;2020-11-17&#39;, 1),
+(3, &#39;2020-11-17&#39;, 2),
+(4, &#39;2020-11-18&#39;, 1),
+(5, &#39;2020-11-18&#39;, 3);</code></pre>
+<p>Mittels dieses SELECT-Befehls sollten Sie alle Rechnungen in der Tabelle angezeigt bekommen:</p>
+<pre><code>select * from rechnung;</code></pre>
+<p>Dies sollte das Ergebnis sein:</p>
+<p class="image-container"><img style="width: 514.50px" src="img\900cca12b57d9799.png"></p>
+<aside class="special"><p><strong>Frage: </strong>Was wurde fachlich in den Daten umgesetzt? Vergleichen Sie die Daten mit dem ERM.</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie die Datenbank für den Kartenverkauf nun mit Daten befüllt. → INSERT INTO</li>
+<li>Sie haben sich die kompletten Inhalte einzelner Tabellen anzeigen lassen. → SELECT</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Vorteile der Datenbankverwendung: Integritätssicherung" duration="5">
+        <p>Das Relationenschema der Tabellen in der Datenbank sorgt dafür, dass wir Konsistenz und Integrität sicherstellen. Dass wir ein normalisiertes Schema angelegt haben sorgt dafür, Redundanzen nicht auftauchen.</p>
+<h2 is-upgraded><strong>Integritätssicherung durch Datentypen</strong></h2>
+<p>Wir können keine Daten in den Spalten der einzelnen Tabellen speichern, die nicht dem vorgegebenen Datentyp entsprechen. Folgender Befehl schlägt fehl, da die MID vom Typ Integer sein soll:</p>
+<pre><code>insert into mitarbeiter values (&#39;abc&#39;, &#39;Merck&#39;);</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ce3970cb64b7f9f0.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Lernen Sie, die SQL-Fehlermeldung zu interpretieren. Dies hilft Ihnen bei der Fehlersuche sehr.</p>
+</aside>
+<h2 is-upgraded><strong>Integritätssicherung durch Primärschlüssel</strong></h2>
+<p>Die Datenbank lehnt die mehrfache Speicherung von Primärschlüssel-Werten ab. Jede Zeile muss durch den Primärschlüssel eindeutig identifiziert werden können. Daher schlägt folgender Befehl fehl (MID 1 ist schon vergeben):</p>
+<pre><code>insert into mitarbeiter values (1, &#39;Merck&#39;);</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8b313d9ba944cf8e.png"></p>
+<h2 is-upgraded><strong>Integritätssicherung durch Fremdschlüssel</strong></h2>
+<h3 is-upgraded><strong>Einfügen von fehlerhaften Referenzen</strong></h3>
+<p>Die Datenbank lehnt das Einfügen von Werte für einen Fremdschlüssel ab, wenn dieser Wert nicht als Primärschlüssel in der referenzierten Tabelle gefunden wird. Daher schlägt folgender Befehl fehl (MID 10 ist nicht vorhanden):</p>
+<pre><code>insert into rechnung values (6, &#39;2020-11-16&#39;, 10);</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\2518c137a31554fa.png"></p>
+<h3 is-upgraded><strong>Löschen von Tupeln, auf die referenziert wird</strong></h3>
+<p>Die Datenbank lehnt das Löschen von Werten ab, wenn auf diese noch von einer anderen Tabelle referenziert wird. Daher schlägt folgender Befehl fehl (auf MID 1 wird aus Tabelle &#34;rechnung&#34; von den RIDs 1, 2 und 4 referenziert):</p>
+<pre><code>delete from mitarbeiter where MID=1;</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\6c3dfaa55ca717e4.png"></p>
+<h2 is-upgraded><strong>Integritätssicherung durch Constraints</strong></h2>
+<p>Beim Anlegen der Tabelle haben wir ein sogenanntes Constraint, also eine Nebenbedingung, gesetzt:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\ba7a4e0f3f45692f.png"></p>
+<p>Mittels &#34;not null&#34; definieren wir, dass die betreuer_mid (der Fremdschlüssel) nicht leer sein darf. Damit stellen wir die min-Kardinalität von 1 für den Relationshiptypen &#34;Betreuer&#34; sicher.</p>
+<p>Die Datenbank lehnt somit das Einfügen von Werten ab, wenn kein Wert für &#34;betreuer_mid&#34; übergeben wird. Daher schlägt folgender Befehl fehl, bei dem wir nur für die Spalten RID und rechnungsdatum (gültige) Werte übergeben:</p>
+<pre><code>insert into rechnung (RID, rechnungsdatum) values (6, &#39;2020-11-16&#39;);</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b2ab1e782e70693b.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben einige Konsistenzsicherungsmechanismen von RDBMS kennengelernt.</li>
+<li>Sie haben einen weiteren Befehl der DML benutzt (Löschen von Datensätzen) → DELETE</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Vorteile der Datenbankverwendung: Auswertung mit SQL" duration="5">
+        <p>Mittels SQL können wir sehr elegant Analysefragestellungen durch die Datenbank verarbeiten lassen. Zum Beispiel könnte es interessant sein, wie viele Rechnungen pro Tag augstellt wurden oder wie viele Rechnungen von welchem Mitarbeiter bearbeitet werden.</p>
+<h2 is-upgraded><strong>Auswertung &#34;Rechnungen pro Tag&#34;</strong></h2>
+<p>Mittels der Gruppierung können wir die Anzahl der Rechnungen pro Rechnungsdatum ermitteln lassen:</p>
+<pre><code>-- berechne Anzahl Rechnungen pro Tag, sortiere aufsteigend nach Datum
+select rechnungsdatum, count(RID) as anzahl_rechnungen
+from rechnung
+group by rechnungsdatum 
+order by rechnungsdatum asc;</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 419.50px" src="img\6caaeef12679f70b.png"></p>
+<h2 is-upgraded><strong>Auswertung &#34;Rechnungen pro Mitarbeiter&#34;</strong></h2>
+<p>Wenn wir die Anzahl betreuter Rechnungen pro Mitarbeiter ermitteln möchte, müssen wir aufgrund des normalisierten Datenmodells zwei Tabellen miteinander verbinden:</p>
+<p class="image-container"><img style="width: 399.50px" src="img\22915777019eecc3.png"></p>
+<h3 is-upgraded><strong>ERM aus Datenbank generieren</strong></h3>
+<p>Ein ERM (bzw. ER-Diagramm) der Tabellen können Sie sich im DBeaver anzeigen lassen, da sich aus der Fremdschlüsseldefinition die Beziehungen zwischen den Tabellen (ungefähr) ableiten lässt. Navigieren Sie dazu in der Datenbankhierarchie zu einer der beiden Tabellen (&#34;mitarbeiter&#34; oder &#34;rechnung&#34;), klicken Sie darauf mit der rechten Maustaste und wählen Sie &#34;Diagramm anzeigen&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\76a2f6fb6c341e9a.png"></p>
+<p>Man erkennt im Diagramm, dass beide Tabellen miteinander verknüpft sind. Das Pfeilsymbol and &#34;betreuer_mid&#34; deutet an, dass es sich dabei um den Fremdschlüssel handeln muss:</p>
+<p class="image-container"><img style="width: 395.31px" src="img\c1b339b36f50dff8.png"></p>
+<h3 is-upgraded>Tabellen verknüpfen</h3>
+<p>Die Verknüpfung von Tabellen erfolgt über sogenanntes &#34;Joins&#34;. Diesen Mechanismus werden wir noch im Detail kennenlernen . Folgende Abfrage ergibt je Mitarbeiter die Anzahl betreuter Rechnung (absteigend danach sortiert):</p>
+<pre><code>-- berechne Anzahl Rechnungen pro Mitarbeiter, sortiere danach absteigend
+select name, count(RID) as anzahl_rechnungen
+from mitarbeiter m
+inner join rechnung r on m.MID=r.betreuer_mid -- verknüpfe Fremd- und Primärschlüssel
+group by name
+order by anzahl_rechnungen desc;</code></pre>
+<p>Dies ist das Ergebnis:</p>
+<p class="image-container"><img style="width: 341.96px" src="img\8071ad137eee16bc.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben erste Auswertungen mittels SQL definiert und dabei einige fortgeschrittene Befehle verwendet. → GROUP BY, COUNT, ORDER BY</li>
+<li>Sie haben zwei Tabellen miteinander verbunden. → INNER JOIN ... ON ...</li>
+<li>Diese Befehle sind die Grundlage für komplexe Abfragen und Data Science mit SQL. Wir werden dieses Thema dementsprechend noch im Detail behandeln.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cloud SQL-Instanz herunterfahren" duration="6">
+        <h3 is-upgraded><strong>Überblick</strong></h3>
+<p>Um die Kosten im Rahmen zu halten werden wir nun die Instanz herunterfahren, solange bis wir sie wieder benötigen. Ließen wir die jetzige Instanz laufen würden Kosten i.H.v. 51 $ pro Monat entstehen. Dies können Sie selbst unter <a href="https://cloud.google.com/products/calculator" target="_blank">https://cloud.google.com/products/calculator</a> prüfen (der Standard-Instanztyp ist db-n1-standard-1):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\49f07ecd55d9db88.png"></p>
+<h3 is-upgraded><strong>Herunterfahren der virtuellen Maschine</strong></h3>
+<p>Sie müssen die Instanz nicht komplett löschen, um den größten Kostenblock zu sparen. Stattdessen können Sie sie herunterfahren, denn dann fallen nur Kosten für das Vorhalten der &#34;Festplatte&#34; an. Gehen Sie dazu im Bereich &#34;SQL&#34; in der Cloud Konsole auf Ihre Instanz und drücken Sie &#34;Stop&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7825778de6fbdd77.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Schalten Sie die Instanz über &#34;START&#34; wieder ein (vor den Vorlesungen/Übungen bzw.  wenn Sie üben möchten).</p>
+</aside>
+<p>Durch diese Maßnahme entstehen Ihnen nur Kosten für die SSD-Festplatte i.H.v. 1,70$ pro Monat (siehe Pricing Calculator, zu finden über &#34;Compute Engine&#34; und dort &#34;Zonal SSD&#34;). </p>
+<p class="image-container"><img style="width: 624.00px" src="img\a8de1f544a35c12f.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Am Ende des Semesters sollten Sie die gesamte Instanz löschen (über &#34;DELETE&#34;), damit auch keine Kosten für die Festplatte anfallen. Hinweis: der Name einer SQL-Instanz ist nach dem Löschen für eine Woche gesperrt. Es kann somit zu unerwarteten Fehlermeldungen kommen, wenn Sie eine neue Instanz mit demselben Namen anlegen möchten.</p>
+</aside>
+<h3 is-upgraded><strong>Ausschalten des Cloud SQL-Proxies</strong></h3>
+<p>Gehen Sie in die Konsole / das Terminal, in dem der Cloud SQL-Proxy läuft und drücken Sie Strg-c. Damit sollte das Programm beendet werden. Sie können die Konsole dann schließen. </p>
+<aside class="special"><p><strong>Wichtig: </strong>Merken Sie sich die Schritte zum Starten der Cloud SQL-Instanz sowie des Cloud SQL-Proxys, da Sie diese jedes Mal zum Üben bzw. Vor den Vorlesungen umsetzen müssen.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Glückwunsch" duration="1">
+        <p>Herzlichen Glückwunsch, Sie haben nun die ersten Schritte zum Betreiben und Verwenden eines relationalen Datenbankmanagementsystems erfolgreich umgesetzt. Erste Datenanalysen haben Sie ebenfalls kennengelernt und verfügen nun über eine eigene Übungsumgebung, die Sie im Rahmen dieses Kurses einsetzen werden.</p>
+<aside class="special"><p><strong>Hinweis: </strong>Sie können nun dieses Browser-Tab schließen.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
