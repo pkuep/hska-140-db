@@ -94,7 +94,7 @@
 <h4 is-upgraded><strong>Verbindungsnamen zum MySQL-Server ermitteln</strong></h4>
 <p>Gehen Sie im Browser in der cloud console auf die noch offene Seite &#34;SQL - Overview&#34;. Dort finden Sie den Verbindungsnamen zu Ihrer MySQL-Instanz. Klicken Sie auf &#34;Copy&#34;, so dass dieser in der Zwischenablage ist.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\72765019fdbe114a.png"></p>
-<h4 is-upgraded>Cloud-SQL-Proxy starten</h4>
+<h4 is-upgraded><strong>Cloud-SQL-Proxy starten</strong></h4>
 <p>Navigieren Sie in der Eingabeaufforderung (bzw. Terminal) dorthin, wo Sie das Programm  &#34;Cloud-SQL-Proxy&#34; gespeichert haben (es sollte umbenannt worden sein zu &#34;cloud_sql_proxy&#34;). Mittels Befehl &#34;cd&#34; können Sie zum Beispiel in das Downloads-Verzeichnis wechseln:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\2f0073de35d9aa00.png"></p>
 <p>Geben Sie folgenden Befehl ein. Sie können Ihren Verbindungsnamen aus der Zwischenablage anstelle von &#34;pk-dscb140:us-central1:dscb140&#34; einfügen:</p>
@@ -130,11 +130,11 @@
 <h3 is-upgraded><strong>Anmeldedaten in Variante 2 (Freigabe einer IP-Adresse)</strong></h3>
 <aside class="special"><p><strong>Wichtiger Hinweis zu Variante 2 (IP-Adresse freigeben):</strong> Die folgenden beiden Befehle müssen Sie <strong>erneut ausführen</strong>, wenn Sie sich neu verbinden möchten und die Cloud SQL Instanz zwischenzeitlich heruntergefahren wurde (dann bekommt sie eine neue IP-Adresse).</p>
 </aside>
-<h4 is-upgraded>Herausfinden der Cloud SQL Server IP-Adresse</h4>
+<h4 is-upgraded><strong>Herausfinden der Cloud SQL Server IP-Adresse</strong></h4>
 <p>Da in Variante 2 auf Ihrem lokalen Rechner nicht der Cloud SQL Proxy läuft müssen wir nun die IP-Adresse des Cloud SQL Servers herausfinden. Diese sehen Sie in der Cloud Console unter SQL - Overview:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\4d90f6c1cbe9c727.png"></p>
 <p>Kopieren Sie die IP-Adresse in die Zwischenablage und fügen Sie sie in DBeaver im Feld &#34;Server-Host&#34; ein (siehe nächster Schritt). </p>
-<h4 is-upgraded>Verbindungseinstellungen anpassen</h4>
+<h4 is-upgraded><strong>Verbindungseinstellungen anpassen</strong></h4>
 <p>Fügen Sie die IP-Adresse in DBeaver im Feld &#34;Server-Host&#34; ein. Geben Sie danach das root-Kennwort, das Sie beim Erstellen der Instanz vergeben haben, ein und klicken Sie dann auf &#34;Verbindung testen&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\e429f7c13536c2c7.png"></p>
 <p>Denken Sie daran, dass sich die IP-Adresse nach jedem Neustart der Cloud SQL-Instanz ändert und hier angepasst werden muss.</p>
@@ -144,11 +144,23 @@
 <p class="image-container"><img style="width: 452.35px" src="img\944af6c26168072b.png"></p>
 <p>Klicken Sie auf fertigstellen. Die Verbindung sollte nun unter dem Reiter &#34;Datenbanken&#34; auftauchen:</p>
 <p class="image-container"><img style="width: 321.64px" src="img\2784c997f30be495.png"></p>
+<h2 is-upgraded><strong>Weitere Möglichkeit der Verbindungsherstellung: Cloud Shell</strong></h2>
+<p>Sie können &#34;auf die Schnelle&#34; sich auch direkt aus der Cloud Console mit der Datenbank verbinden. Alle Einrichtungsschritte von oben sind dann nicht nötig, aber die Umgebung ist auch viel weniger komfortabel.</p>
+<p>Klicken Sie dazu in der Cloud Console im Bereich SQL/Overview auf &#34;Connect using Cloud Shell&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7cfc48f53847c5da.png"></p>
+<p>Im unteren Bereich öffnet sich die sogenannte &#34;Cloud Shell&#34;, eine Kommandozeile direkt in Ihrem Google Projekt, in der nun automatisch der Befehl zur Verbindung mit der Datenbank eingetragen wird. Drücken Sie Enter:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\447e7631b79a9046.png"></p>
+<p>Sie müssen dann noch den Button &#34;Authorize&#34; drücken und kurz warten, dass die Cloud Shell zugelassen wird (&#34;Allowlisting&#34;). Danach können Sie das root-Kennwort (s.o.) eingeben und sind verbunden.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b8a560bee780b543.png"></p>
+<p>Sie könnten hier nun auch die Befehle, die wir unten im DBeaver eingeben ausführen. Allerdings ist diese Umgebung nicht so komfortabel, z.B. können Sie keine SQL-Dateien speichern und laden.</p>
+<p>Geben Sie den Befehl &#34;quit&#34; ein, wenn Sie die mysql-Umgebung verlassen möchten. Die Cloud Shell können Sie über &#34;Close terminal&#34; schließen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7ccf072f02d88f55.png"></p>
 <h2 is-upgraded><strong>Ergebnis</strong></h2>
 <ol type="1" start="1">
 <li>Sie haben nun ein RDBMS (MySQL) in der Cloud gestartet und konfiguriert (root-Passwort gesetzt).</li>
-<li>Sie haben Ihren lokalen Rechner so eingerichtet, dass dieser mit den Cloud-Systemen umgehen kann. Das Google Cloud SDK haben Sie auf Ihr Projekt eingestellt und danach den Cloud SQL-Proxy genutzt, um einen verschlüsselten Tunnel zu Ihrer laufenden MySQL-Instanz aufzubauen.</li>
-<li>Über diesen verschlüsselten Tunnel haben Sie im Anschluss das Programm DBeaver, das wir als Datenbank-Management-Tool nutzen, mit der Cloud MySQL-Instanz verbunden.</li>
+<li>In Variante 1 haben Sie Ihren lokalen Rechner so eingerichtet, dass dieser mit den Cloud-Systemen umgehen kann. Das Google Cloud SDK haben Sie auf Ihr Projekt eingestellt und danach den Cloud SQL-Proxy genutzt, um einen verschlüsselten Tunnel zu Ihrer laufenden MySQL-Instanz aufzubauen. In Variante 2 haben Sie eine direkte Verbindung von Ihrem Rechner zur Cloud SQL-Instanz zugelassen und eingerichtet.</li>
+<li>Über diesen verschlüsselten Tunnel (Variante 1) bzw. eine direkte Verbindung (Variante 2) haben Sie im Anschluss das Programm DBeaver, das wir als Datenbank-Management-Tool nutzen, mit der Cloud MySQL-Instanz verbunden.</li>
+<li>Ggf. haben Sie die cloud shell verwendet, um sich direkt mit der Datenbank zu verbinden.</li>
 <li>Sie haben nun alle Schritte vorgenommen, um mit einem RDBMS zu arbeiten.</li>
 </ol>
 
