@@ -57,14 +57,21 @@
 </aside>
 <aside class="warning"><p><strong>Wichtig:</strong> Denken Sie unbedingt daran, die Instanz am Ende der Übung/Vorlesung herunterzufahren (also immer dann, wenn Sie nicht mehr aktiv damit arbeiten). Ansonsten entstehen Ihnen zu hohe laufende Kosten und Ihr Guthaben wird zu schnell verbraucht.</p>
 </aside>
-<h2 is-upgraded><strong>Verbindung herstellen: Vorbereitung mit cloud-sql-proxy</strong></h2>
-<h3 is-upgraded><strong>Überblick</strong></h3>
+<h2 is-upgraded><strong>Verbindung herstellen: Vorbereitung</strong></h2>
+<p>Es gibt zwei Varianten, über die Sie sich mit Ihrer Datenbank und im Anschluss DBeaver verbinden können.</p>
+<ul>
+<li>Variante 1: Verwendung von Cloud SQL Proxy (am sichersten, aber auch einmalig komplex in der Einrichtung, danach einfach in der Verwendung)</li>
+<li>Variante 2: Öffnen der Datenbank für eine bestimmte IP-Adresse (einfacher, aber nach jedem Neustart der Datenbank neu einzustellen)</li>
+</ul>
+<p>Darüber hinaus gibt es auch noch die Möglichkeit, komplett auf DBeaver zu verzichten und aus der Cloud-Konsole sich mit der Datenbank zu verbinden. Dies wird weiter unten unter &#34;Verbindung herstellen: Cloud Console&#34; beschrieben. Dann benötigen Sie DBeaver und den Cloud SQL Proxy nicht.</p>
+<h3 is-upgraded><strong>Variante 1: Cloud SQL Proxy (empfohlen)</strong></h3>
+<h4 is-upgraded>Überblick</h4>
 <p>GCP sorgt zunächst einmal für Sicherheit der Datenbank, so dass man sich nicht ohne Weiteres mit der Datenbank verbinden kann. Um eine verschlüsselte Verbindung in die Cloud-Umgebung herzustellen bietet GCP das Tool &#34;cloud-sql-proxy&#34; an (vgl. <a href="https://cloud.google.com/sql/docs/mysql/sql-proxy" target="_blank">https://cloud.google.com/sql/docs/mysql/sql-proxy</a>). Dieses und auch das Google Cloud SDK (<a href="https://cloud.google.com/sdk/docs/install" target="_blank">https://cloud.google.com/sdk/docs/install</a>) benötigen Sie für die folgenden Schritte. Bitte laden Sie - falls noch nicht geschehen - beide Tools herunter und installieren Sie diese.</p>
 <p>Der cloud-sql-proxy sorgt für eine sichere Verbindung von Ihrem Rechner (&#34;Client Machine&#34;) zum MySQL-Server (&#34;Instance&#34;), wie im Folgenden dargestellt.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5f2f42253e09f338.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\66084d4ae935f171.png"></p>
 <p>Wir möchten nicht den MySQL-Server für das gesamte Internet zugänglich machen, d.h. Den &#34;TCP standard port&#34; der MySQL-Instanz möchten wir nicht öffnen. Es sollen nur verschlüsselte Verbindungen (&#34;TCP secure tunnel&#34;) von autorisierten Usern zugelassen werden. Dazu nutzen wir den &#34;Proxy Client&#34; auf Ihrem Rechner, der sich im Hintergrund mit seinem &#34;Gegenstück&#34; in Ihrem Cloud-Projekt verbindet (&#34;Proxy Server&#34;). Der Proxy Client gibt vor, ein echter RDBMS-Server zu sein und nimmt Verbindungen lokal auf Ihrem Rechner an (&#34;Local connection&#34;). Diese Verbindungen werden umgeleitet über das Internet zu Ihrer MySQL-Instanz (über den &#34;Proxy Server&#34;). </p>
 <p>Wir werden uns nachher mit unserem Datenbanktool also einfach mit unserem lokalen Rechner (localhost) verbinden, obwohl wir eigentlich mit einer Datenbank in der Cloud arbeiten.</p>
-<h3 is-upgraded><strong>Google Cloud SDK mit dem Projekt verbinden</strong></h3>
+<h4 is-upgraded>Google Cloud SDK mit dem Projekt verbinden</h4>
 <p>Starten Sie eine Kommandozeile (in Windows &#34;Eingabeaufforderung&#34;, auf Mac &#34;Terminal&#34;):</p>
 <p class="image-container"><img style="width: 329.50px" src="img\20e37b82fe2bea2a.png"></p>
 <p>Geben Sie den Befehl &#34;gcloud init&#34; ein, um das Google Cloud SDK zu initialisieren. Wählen Sie die Zahl vor &#34;Create a new configuration&#34; und drücken Sie Enter (bei Ihnen wird es anders aussehen):</p>
@@ -81,10 +88,10 @@
 <p class="image-container"><img style="width: 624.00px" src="img\60fa62c5cee5dcb4.png"></p>
 <aside class="special"><p><strong>Wichtig:</strong> Diesen Befehl müssen Sie <strong>nicht noch einmal ausführen</strong>. Sie haben nun Ihren Rechner auf das GCP-Projekt konfiguriert.</p>
 </aside>
-<h3 is-upgraded><strong>Verbindungsnamen zum MySQL-Server ermitteln</strong></h3>
+<h4 is-upgraded>Verbindungsnamen zum MySQL-Server ermitteln</h4>
 <p>Gehen Sie im Browser in der cloud console auf die noch offene Seite &#34;SQL - Overview&#34;. Dort finden Sie den Verbindungsnamen zu Ihrer MySQL-Instanz. Klicken Sie auf &#34;Copy&#34;, so dass dieser in der Zwischenablage ist.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\72765019fdbe114a.png"></p>
-<h3 is-upgraded><strong>Cloud-SQL-Proxy starten</strong></h3>
+<h4 is-upgraded>Cloud-SQL-Proxy starten</h4>
 <p>Navigieren Sie in der Eingabeaufforderung (bzw. Terminal) dorthin, wo Sie das Programm  &#34;Cloud-SQL-Proxy&#34; gespeichert haben (es sollte umbenannt worden sein zu &#34;cloud_sql_proxy&#34;). Mittels Befehl &#34;cd&#34; können Sie zum Beispiel in das Downloads-Verzeichnis wechseln:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\2f0073de35d9aa00.png"></p>
 <p>Geben Sie folgenden Befehl ein. Sie können Ihren Verbindungsnamen aus der Zwischenablage anstelle von &#34;pk-dscb140:us-central1:dscb140&#34; einfügen:</p>
@@ -93,7 +100,18 @@
 <p class="image-container"><img style="width: 624.00px" src="img\48a362edb95704ae.png"></p>
 <p>Wenn Sie folgende Ausgabe erhalten, dann steht die verschlüsselte Verbindung, so dass wir uns als nächstes mit der Datenbank verbinden können:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\c0e784a7d66955cc.png"></p>
-<aside class="special"><p><strong>Wichtig:</strong> Diesen Befehl müssen Sie <strong>erneut ausführen</strong>, wenn Sie sich neu verbinden möchten (also bspw. wenn der PC heruntergefahren wurde).</p>
+<aside class="special"><p><strong>Wichtiger Hinweis zu Variante 1 (Cloud SQL-Proxy):</strong> Diesen Befehl müssen Sie <strong>erneut ausführen</strong>, wenn Sie sich neu verbinden möchten (also bspw. wenn Ihr PC heruntergefahren wurde).</p>
+</aside>
+<h2 is-upgraded><strong>Variante 2: Zulassen einer IP-Adresse</strong></h2>
+<p>Alternativ können wir uns den Cloud SQL Proxy sparen (und damit auch die Einrichtung des Google Cloud SDK). Da in der Standardeinstellung die Datenbank keine Verbindungen &#34;von außen&#34; zulässt, müssen Sie den &#34;TCP standard port&#34; für Ihren eigenen Rechner &#34;öffnen&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\f81bdf4645ad3a9b.png"></p>
+<p>Um nicht allen Rechnern im Internet die Verbindung zu erlauben möchten wir nur Ihren Rechner zulassen. Dazu müssen wir die aktuelle IP-Adresse Ihres Rechners herausfinden. Geben Sie dazu zum Beispiel in Google &#34;what&#39;s my ip&#34; ein. Kopieren Sie die IP-Adresse in die Zwischenablage:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\e80fdbc53af49f08.png"></p>
+<p>Gehen Sie danach in der Cloud Konsole unter &#34;SQL&#34; auf &#34;Connections&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\465b79a3a4ef2872.png"></p>
+<p>Klicken SIe auf &#34;Add network&#34; und fügen Sie Ihre IP-Adresse im Feld &#34;Network&#34; ein. Danach auf &#34;Done&#34; und &#34;Save&#34; klicken:</p>
+<p class="image-container"><img style="width: 400.50px" src="img\96b3fec5fcd5370b.png"></p>
+<aside class="special"><p><strong>Wichtiger Hinweis zu Variante 2 (IP-Adresse freigeben):</strong> Diesen Befehl müssen Sie <strong>erneut ausführen</strong>, wenn Sie sich neu verbinden möchten (also bspw. wenn Ihr PC heruntergefahren wurde).</p>
 </aside>
 <h2 is-upgraded><strong>Verbindung herstellen: DBeaver konfigurieren</strong></h2>
 <p>Als nächstes möchten wir unseren Datenbank-Client so einstellen, dass er sich mit der in GCP laufenden MySQL-Datenbank mittels des Cloud SQL-Proxies verbindet. Starten Sie das Programm DBeaver. Klicken SIe auf &#34;Neue Verbindung&#34;:</p>
@@ -101,8 +119,24 @@
 <p>Wählen Sie MySQL aus und klicken Sie auf &#34;Weiter&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\b2373c1e7dca24fe.png"></p>
 <p>Wenn Sie gefragt werden, ob Sie den passenden Datenbanktreiber herunterladen möchten, klicken Sie auf &#34;Download&#34;.</p>
-<p>Geben Sie danach das root-Kennwort ein und klicken Sie dann auf &#34;Verbindung testen&#34;:</p>
+<h3 is-upgraded><strong>Anmeldedaten in Variante 1 (Cloud SQL-Proxy)</strong></h3>
+<p>Belassen Sie die Einstellung &#34;Server-Host&#34; auf localhost. Der Cloud SQL-Proxy läuft ja auf Ihrem Rechner und gibt vor, dass auf Ihrem Rechner eine Datenbankinstanz betrieben wird.</p>
+<p>Geben Sie danach das root-Kennwort, das Sie beim Erstellen der Instanz vergeben haben, ein und klicken Sie dann auf &#34;Verbindung testen&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\87c23121f1f6dcdd.png"></p>
+<p>Fahren Sie fort mit dem Punkt &#34;Erfolgreiche Verbindung speichern&#34;.</p>
+<h3 is-upgraded><strong>Anmeldedaten in Variante 2 (Freigabe einer IP-Adresse)</strong></h3>
+<aside class="special"><p><strong>Wichtiger Hinweis zu Variante 2 (IP-Adresse freigeben):</strong> Die folgenden beiden Befehle müssen Sie <strong>erneut ausführen</strong>, wenn Sie sich neu verbinden möchten und die Cloud SQL Instanz zwischenzeitlich heruntergefahren wurde (dann bekommt sie eine neue IP-Adresse).</p>
+</aside>
+<h4 is-upgraded>Herausfinden der Cloud SQL Server IP-Adresse</h4>
+<p>Da in Variante 2 auf Ihrem lokalen Rechner nicht der Cloud SQL Proxy läuft müssen wir nun die IP-Adresse des Cloud SQL Servers herausfinden. Diese sehen Sie in der Cloud Console unter SQL - Overview:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4d90f6c1cbe9c727.png"></p>
+<p>Kopieren Sie die IP-Adresse in die Zwischenablage und fügen Sie sie in DBeaver im Feld &#34;Server-Host&#34; ein (siehe nächster Schritt). </p>
+<h4 is-upgraded>Verbindungseinstellungen anpassen</h4>
+<p>Fügen Sie die IP-Adresse in DBeaver im Feld &#34;Server-Host&#34; ein. Geben Sie danach das root-Kennwort, das Sie beim Erstellen der Instanz vergeben haben, ein und klicken Sie dann auf &#34;Verbindung testen&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\e429f7c13536c2c7.png"></p>
+<p>Denken Sie daran, dass sich die IP-Adresse nach jedem Neustart der Cloud SQL-Instanz ändert und hier angepasst werden muss.</p>
+<p>Fahren Sie fort mit dem nächsten Punkt &#34;Erfolgreiche Verbindung speichern&#34;.</p>
+<h3 is-upgraded><strong>Erfolgreiche Verbindung speichern</strong></h3>
 <p>Die Verbindung sollte hergestellt worden sein:</p>
 <p class="image-container"><img style="width: 452.35px" src="img\944af6c26168072b.png"></p>
 <p>Klicken Sie auf fertigstellen. Die Verbindung sollte nun unter dem Reiter &#34;Datenbanken&#34; auftauchen:</p>
