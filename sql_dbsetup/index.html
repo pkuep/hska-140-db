@@ -65,13 +65,13 @@
 </ul>
 <p>Darüber hinaus gibt es auch noch die Möglichkeit, komplett auf DBeaver zu verzichten und aus der Cloud-Konsole sich mit der Datenbank zu verbinden. Dies wird weiter unten unter &#34;Verbindung herstellen: Cloud Console&#34; beschrieben. Dann benötigen Sie DBeaver und den Cloud SQL Proxy nicht.</p>
 <h3 is-upgraded><strong>Variante 1: Cloud SQL Proxy (empfohlen)</strong></h3>
-<h4 is-upgraded>Überblick</h4>
+<h4 is-upgraded><strong>Überblick</strong></h4>
 <p>GCP sorgt zunächst einmal für Sicherheit der Datenbank, so dass man sich nicht ohne Weiteres mit der Datenbank verbinden kann. Um eine verschlüsselte Verbindung in die Cloud-Umgebung herzustellen bietet GCP das Tool &#34;cloud-sql-proxy&#34; an (vgl. <a href="https://cloud.google.com/sql/docs/mysql/sql-proxy" target="_blank">https://cloud.google.com/sql/docs/mysql/sql-proxy</a>). Dieses und auch das Google Cloud SDK (<a href="https://cloud.google.com/sdk/docs/install" target="_blank">https://cloud.google.com/sdk/docs/install</a>) benötigen Sie für die folgenden Schritte. Bitte laden Sie - falls noch nicht geschehen - beide Tools herunter und installieren Sie diese.</p>
 <p>Der cloud-sql-proxy sorgt für eine sichere Verbindung von Ihrem Rechner (&#34;Client Machine&#34;) zum MySQL-Server (&#34;Instance&#34;), wie im Folgenden dargestellt.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\66084d4ae935f171.png"></p>
 <p>Wir möchten nicht den MySQL-Server für das gesamte Internet zugänglich machen, d.h. Den &#34;TCP standard port&#34; der MySQL-Instanz möchten wir nicht öffnen. Es sollen nur verschlüsselte Verbindungen (&#34;TCP secure tunnel&#34;) von autorisierten Usern zugelassen werden. Dazu nutzen wir den &#34;Proxy Client&#34; auf Ihrem Rechner, der sich im Hintergrund mit seinem &#34;Gegenstück&#34; in Ihrem Cloud-Projekt verbindet (&#34;Proxy Server&#34;). Der Proxy Client gibt vor, ein echter RDBMS-Server zu sein und nimmt Verbindungen lokal auf Ihrem Rechner an (&#34;Local connection&#34;). Diese Verbindungen werden umgeleitet über das Internet zu Ihrer MySQL-Instanz (über den &#34;Proxy Server&#34;). </p>
 <p>Wir werden uns nachher mit unserem Datenbanktool also einfach mit unserem lokalen Rechner (localhost) verbinden, obwohl wir eigentlich mit einer Datenbank in der Cloud arbeiten.</p>
-<h4 is-upgraded>Google Cloud SDK mit dem Projekt verbinden</h4>
+<h4 is-upgraded><strong>Google Cloud SDK mit dem Projekt verbinden</strong></h4>
 <p>Starten Sie eine Kommandozeile (in Windows &#34;Eingabeaufforderung&#34;, auf Mac &#34;Terminal&#34;):</p>
 <p class="image-container"><img style="width: 329.50px" src="img\20e37b82fe2bea2a.png"></p>
 <p>Geben Sie den Befehl &#34;gcloud init&#34; ein, um das Google Cloud SDK zu initialisieren. </p>
@@ -91,7 +91,7 @@
 <p class="image-container"><img style="width: 624.00px" src="img\60fa62c5cee5dcb4.png"></p>
 <aside class="special"><p><strong>Wichtig:</strong> Diesen Befehl müssen Sie <strong>nicht </strong>noch einmal ausführen. Sie haben nun Ihren Rechner auf das GCP-Projekt konfiguriert und dies bleibt so, solange Sie gcloud init nicht erneut ausführen.</p>
 </aside>
-<h4 is-upgraded>Verbindungsnamen zum MySQL-Server ermitteln</h4>
+<h4 is-upgraded><strong>Verbindungsnamen zum MySQL-Server ermitteln</strong></h4>
 <p>Gehen Sie im Browser in der cloud console auf die noch offene Seite &#34;SQL - Overview&#34;. Dort finden Sie den Verbindungsnamen zu Ihrer MySQL-Instanz. Klicken Sie auf &#34;Copy&#34;, so dass dieser in der Zwischenablage ist.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\72765019fdbe114a.png"></p>
 <h4 is-upgraded>Cloud-SQL-Proxy starten</h4>
