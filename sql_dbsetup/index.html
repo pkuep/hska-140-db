@@ -137,16 +137,21 @@
 <h4 is-upgraded><strong>Verbindungseinstellungen anpassen</strong></h4>
 <p>Fügen Sie die IP-Adresse in DBeaver im Feld &#34;Server-Host&#34; ein. Geben Sie danach das root-Kennwort, das Sie beim Erstellen der Instanz vergeben haben, ein und klicken Sie dann auf &#34;Verbindung testen&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\e429f7c13536c2c7.png"></p>
-<p>Denken Sie daran, dass sich die IP-Adresse nach jedem Neustart der Cloud SQL-Instanz ändert und hier angepasst werden muss.</p>
+<p>Denken Sie daran, dass sich die IP-Adresse nach jedem Neustart der Cloud SQL-Instanz ändert und hier angepasst werden muss (s.u.).</p>
 <p>Fahren Sie fort mit dem nächsten Punkt &#34;Erfolgreiche Verbindung speichern&#34;.</p>
 <h3 is-upgraded><strong>Erfolgreiche Verbindung speichern</strong></h3>
 <p>Die Verbindung sollte hergestellt worden sein:</p>
 <p class="image-container"><img style="width: 452.35px" src="img\944af6c26168072b.png"></p>
 <p>Klicken Sie auf fertigstellen. Die Verbindung sollte nun unter dem Reiter &#34;Datenbanken&#34; auftauchen:</p>
 <p class="image-container"><img style="width: 321.64px" src="img\2784c997f30be495.png"></p>
+<aside class="special"><p><strong>Wichtiger Hinweis zu Variante 2 (IP-Adresse der SQL-Instanz aktualisieren):</strong> Zum ändern der IP-Adresse klicken Sie mit der rechten Maustaste auf die Verbindung und wählen Sie &#34;Bearbeiten Verbindung&#34; (siehe Screenshot unten). Dort können Sie dann die IP-Adresse vom Host anpassen, wenn sich diese geändert hat.</p>
+</aside>
+<p class="image-container"><img style="width: 349.50px" src="img\9d04b814b92ab31a.png"></p>
 <h2 is-upgraded><strong>Weitere Möglichkeit der Verbindungsherstellung: Cloud Shell</strong></h2>
 <p>Sie können &#34;auf die Schnelle&#34; sich auch direkt aus der Cloud Console mit der Datenbank verbinden. Alle Einrichtungsschritte von oben sind dann nicht nötig, aber die Umgebung ist auch viel weniger komfortabel.</p>
-<p>Klicken Sie dazu in der Cloud Console im Bereich SQL/Overview auf &#34;Connect using Cloud Shell&#34;:</p>
+<p>Zunächst müssen Sie die sogenannte &#34;Cloud SQL Admin API&#34; aktivieren. Geben Sie dies in der Cloud Console in die Suche ein und wählen Sie den entsprechenden Eintrag:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\dfb5811cf4fd8821.png"></p>
+<p>Klicken Sie in der sich öffnenden Seite auf &#34;Aktivieren&#34; und gehen Sie dann zurück zum Bereich SQL/Overview in der Cloud Console. Dort klicken Sie dann auf &#34;Connect using Cloud Shell&#34;:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\7cfc48f53847c5da.png"></p>
 <p>Im unteren Bereich öffnet sich die sogenannte &#34;Cloud Shell&#34;, eine Kommandozeile direkt in Ihrem Google Projekt, in der nun automatisch der Befehl zur Verbindung mit der Datenbank eingetragen wird. Drücken Sie Enter:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\447e7631b79a9046.png"></p>
