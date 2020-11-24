@@ -11,6 +11,6 @@
 ### Allgemein
 [Setup der Übungsumgebung](https://pkuep.github.io/hska-140-db/sql_dbsetup){:target="_blank" rel="noopener"}
 
-## Data Definition Language
+### Data Definition Language
 [Fallstudie Webshop - Tabellenerzeugung](https://pkuep.github.io/hska-140-db/sql_ddl_webshop){:target="_blank" rel="noopener"}
 
