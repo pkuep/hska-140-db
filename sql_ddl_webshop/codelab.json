@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-24T13:25:37Z",
+  "id": "sql_ddl_webshop",
+  "duration": 53,
+  "title": "Lab \"SQL - DDL: Fallstudie Webshop\"",
+  "authors": "Peer Küppers",
+  "summary": "In diesem Codelab werden Sie die für die Fallstudie Webshop die notwendigen Relationen anlegen und miteinander verknüpfen.",
+  "source": "1dmmsZRLmM3yTZ9UpOIEOTMopprK_65osp5tdWxIpvd0",
+  "theme": "einf-hrung",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Einführung"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "sql_ddl_webshop"
+}

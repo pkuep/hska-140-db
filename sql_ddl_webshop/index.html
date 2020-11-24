@@ -1,0 +1,363 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;SQL - DDL: Fallstudie Webshop&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="sql_ddl_webshop"
+                  title="Lab &#34;SQL - DDL: Fallstudie Webshop&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Einführung" duration="2">
+        <p>Wir werden nun in unserer GCP Cloud SQL-Instanz die entsprechenden Tabellen für folgendes ERM unter Verwendung der DDL und MySQL definieren:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b03c499f2cacae5f.png"></p>
+<h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
+<ul>
+<li>Erzeugung einer Datenbank &#34;webshop&#34;.</li>
+<li>Erzeugung von Tabellen und Definition von Datentypen für Spalten.</li>
+<li>Erzeugung von Constraints: Primärschlüssel, Fremdschlüssel, UNIQUE, NOT NULL sowie automatisch hochzählender Attribute mit AUTO_INCREMENT.</li>
+<li>Einfügen beispielhafter Daten.</li>
+</ul>
+<aside class="warning"><p><strong>Hinweis:</strong> Bitte denken Sie daran, die Cloud SQL-Instanz nun hochzufahren, sich mit dieser zu verbinden (Variante 1 Cloud SQL Proxy oder Variante 2 direkter Zugriff mittels IP-Freigabe) und am Ende der Übung wieder herunterzufahren!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Vorgaben aus dem Relationalen Modell und Anlegen der Datenbank" duration="4">
+        <h2 is-upgraded><strong>Vorgaben</strong></h2>
+<p>Folgende Hinweise stehen Ihnen zusätzlich zum ERM zur Verfügung:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8f7f9ab0f7d3a6f1.png"></p>
+<p>Zusätzlich benötigen Sie die MySQL-DDL Dokumentation: <a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a> </p>
+<h2 is-upgraded><strong>Anlegen der Datenbank</strong></h2>
+<p>Verbinden Sie sich in DBeaver mit der MySQL-Instanz (siehe Codelab &#34;SQL - Teil 1: Setup&#34;) und erzeugen Sie ein neues SQL-Skript (bspw. &#34;DSCB140 - SQL1 - DDL Webshop.sql&#34;).</p>
+<p>Mit den folgenden beiden Befehlen wird die Datenbank erzeugt und im SQL-Skript für weitere Befehle verwendet.</p>
+<pre><code>create database webshop;  -- Datenbank anlegen
+use webshop;  -- Datenbank verwenden</code></pre>
+<h2 is-upgraded><strong>Erarbeitung eines Vorgehens zum Tabellenaufbau</strong></h2>
+<p>Betrachten Sie das relationale Schema und überlegen Sie sich nun ein geschicktes bzw. notwendiges Vorgehen zum Anlegen der Tabellen. Die Reihenfolge ist entscheidend und muss insbesondere aufgrund der Fremdschlüsselbeziehungen gut überlegt sein.</p>
+<h2 is-upgraded><strong>Ergebnis </strong></h2>
+<ol type="1" start="1">
+<li>Sie kennen nun alle Vorgaben und können unter Verwendung der MySQL-Dokumentation die jeweiligen Tabellen anlegen.</li>
+<li>Im Folgenden Schritt wird das vorgeschlagene Vorgehen für den Tabellenentwurf (also die Reihenfolge der Tabellen) vorgestellt, bevor die konkreten Tabellendefinitionen in der DDL spezifiziert werden.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Vorgehen: Reihenfolge der Tabellenerstellung" duration="3">
+        <h2 is-upgraded><strong>Hinweis</strong></h2>
+<p>Da Fremdschlüsselbeziehungen auf andere Tabellen verweisen ist es wichtig, dass die Tabellen in der entsprechenden Reihenfolge angelegt werden. Grundsätzlich sollte mit Tabellen begonnen werden, die keine Fremdschlüssel enthalten.</p>
+<p>Zur Wiederholung hier noch einmal das relationale Modell des Webshops. Die Datentypen und Constraints ignorieren wir zunächst und betrachten nur die Fremdschlüssel, um eine passende Reihenfolge zu erarbeiten.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4d50e52e24f0195b.png"></p>
+<h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
+<p>Folgende Reihenfolge wird empfohlen:</p>
+<ol type="1" start="1">
+<li>Tabellen ohne Fremdschlüssel: <strong>Status</strong>, <strong>Kategorie, Benutzer</strong></li>
+<li>Tabelle <strong>Produkt</strong>: Der Fremdschlüssel auf Kategorie muss berücksichtigt werden.</li>
+<li>Tabelle <strong>Abteilung</strong>: Hierbei ist die Hierarchie abzubilden (Fremdschlüssel auf den Primärschlüssel derselben Tabelle).</li>
+<li>Tabellen <strong>Kunde </strong>und <strong>Mitarbeiter</strong>: Besonderheit dabei ist, dass der Primärschlüssel (email) gleichzeitig Fremdschlüssel auf die Tabelle Benutzer ist.</li>
+<li>Nun existieren alle Tabellen, auf die Fremdschlüssel in der Tabelle <strong>Bestellung </strong>zeigen. Somit kann nun die Tabelle Bestellung nun spezifiziert werden.</li>
+<li>Im Anschluss sollten Sie alle Tabellen umsetzen, die für die Abbildung von N-M-Beziehungen nötig sind (<strong>WarenkorbPosition</strong>, <strong>BestellPosition</strong>, <strong>GemeinsamerKauf</strong>). Denken Sie daran, dass hier zusammengesetzte Schlüssel, die gleichzeitig Fremdschlüssel sind, existieren.</li>
+</ol>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun ein geeignetes Vorgehen zum Anlegen der Webshop-Datenbank erarbeitet.</li>
+<li>Als nächstes sollten Sie unter Berücksichtigung der Constraints alle Tabellen in dieser Reihenfolge mittels DDL spezifizieren. Entsprechende Lösungsvorschläge finden Sie auf den folgenden Seiten.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tabellen Status, Kategorie und Benutzer" duration="9">
+        <h2 is-upgraded><strong>Tabelle Status</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Status: (statusid INT, bearbeitungsstatus  VARCHAR(50))</code></pre>
+<p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) zeigt, dass wir für das Anlegen dieser Tabelle nur wenige Teile der möglichen CREATE-Statements verwenden werden:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\86a716917ee758bf.png"></p>
+<p>Es ergibt sich folgende DDL-Spezifikation der Tabelle Status:</p>
+<pre><code>create table status (
+statusid int primary key,
+bearbeitungsstatus varchar(50)
+);</code></pre>
+<aside class="special"><p><strong>Hinweis:</strong> Sollten Sie an der Tabellendefinition etwas ändern wollen, so können Sie eine erzeugte Tabelle mittels &#34;DROP TABLE tabellenname&#34; löschen und danach mittels &#34;CREATE TABLE ...&#34; erneut anlegen.</p>
+</aside>
+<p>Wir fügen mittels folgenden Statements einen Beispieldatensatz ein:</p>
+<pre><code>insert into status values (1, &#39;Offen&#39;);</code></pre>
+<p>Mit &#34;select * from status&#34; können Sie sich alle Inhalte dieser Tabelle anzeigen lassen.</p>
+<h2 is-upgraded><strong>Tabelle Kategorie</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Kategorie: (katid INT, bezeichnung VARCHAR(50))</code></pre>
+<p>Die Tabelle Kategorie bedient sich somit derselben Konzepte wie die Tabelle Status. Es ergibt sich folgende DDL-Spezifikation:</p>
+<pre><code>create table kategorie (
+katid int primary key,
+bezeichnung varchar(50)
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements zwei Beispieldatensätze ein:</p>
+<pre><code>insert into kategorie values 
+(1, &#39;Molkereiprodukte&#39;),
+(2, &#39;Eier&#39;);</code></pre>
+<h2 is-upgraded><strong>Tabelle Benutzer</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Benutzer: (email VARCHAR(100), passwort VARCHAR(50) (NOT NULL), vorname VARCHAR(50) (NOT NULL), nachname VARCHAR(50) (NOT NULL) )</code></pre>
+<p>Bei dieser Tabelle nutzen wir zusätzlich zu den bereits bekannten Konzepten das NOT NULL-Constraint um zu verhindern, dass für bestimmte Spalten kein Wert übergeben wird:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\9c5aa37a616569f2.png"></p>
+<pre><code>create table benutzer (
+email varchar(100) primary key,
+passwort varchar(50) not null,
+vorname varchar(50) not null,
+nachname varchar(50) not null
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements zwei Beispieldatensätze ein:</p>
+<pre><code>insert into benutzer values
+(&#39;peter.schulz@ab.de&#39;, &#39;geheim&#39;, &#39;Peter&#39;, &#39;Schulz&#39;),
+(&#39;julia.meier@ab.de&#39;, &#39;geheim&#39;, &#39;Julia&#39;, &#39;Meier&#39;);</code></pre>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun Tabellen ohne Fremdschlüssel und mit einem einfachen Constraint (NOT NULL) angelegt. </li>
+<li>Als nächstes legen wir Tabellen mit Fremdschlüsseln an.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tabelle Produkt" duration="6">
+        <p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Produkt: (pnr INT, bezeichnung VARCHAR(50), angelegt_am TIMESTAMP, verfuegbarkeit INT (NOT NULL), #katid ??? (NOT NULL) )</code></pre>
+<p>Wie angedeutet (???) müssen wir den Datentyp für den Fremdschlüssel noch herausfinden. Wir wissen natürlich, dass es INT ist, da wir die Tabelle gerade angelegt haben. Sollte dies nicht bekannt sein, dann kann bspw. über die DBeaver-Hierarchie der Datentyp einzelner Spalten leicht ermittelt werden:</p>
+<p class="image-container"><img style="width: 315.11px" src="img\17c46039e2601606.png"></p>
+<p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) ist in diesem Fall etwas komplexer. </p>
+<p class="image-container"><img style="width: 624.00px" src="img\d0fb582708ba0c7f.png"></p>
+<p>Wir benötigen eine Zeile für die Definition der Fremdschlüsselspalte (katid). Zusätzlich benötigen wir eine Zeile für die FOREIGN KEY-Definition um festzulegen, auf welche Tabelle der Fremdschlüssel zeigen soll. Somit ergibt sich folgendes DDL-Statement:</p>
+<pre><code>create table produkt (
+pnr int primary key,
+bezeichnung varchar(50),
+angelegt_am timestamp,
+verfuegbarkeit int not null,
+katid int not null,  -- dies ist die Fremdschlüsselspalte (FK)
+foreign key (katid) references kategorie(katid)  -- dies definiert das FK-Constraint
+);</code></pre>
+<aside class="special"><p><strong>Hinweis:</strong> Man könnte anstelle &#34;pnr int primary key&#34; auch den Primärschlüssel als Constraint definieren. Anstelle von &#34;pnr int primary key&#34; würden wir dann nur &#34;pnr int&#34; schreiben und eine weitere Zeile &#34;primary key (pnr)&#34; dem Statement hinzufügen. Schauen Sie sich dazu die CREATE-Table Dokumentation noch einmal an (auch im Hinblick auf UNIQUE-Constraints!). Bei zusammengesetzten Primärschlüsseln müssen wir diese Syntax nutzen Unsere bisherige Schreibweise eignet sich nur für Primärschlüssel, die aus einem Attribut bestehen!</p>
+</aside>
+<p>Wir fügen mittels folgenden Statements einen Beispieldatensatz ein:</p>
+<pre><code>insert into produkt values (1, &#39;Schokoladenpudding&#39;, &#39;2020-11-24 12:15:59&#39;, 100, 1); -- Zuordnung zu Kategorie &#34;Molkereiprodukte&#34;</code></pre>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun eine Tabelle mit Fremdschlüssel, weiteren Datentypen und mit einem Constraint (NOT NULL) zur Abbildung einer min-Kardinalität von 1 angelegt. </li>
+<li>Als nächstes legen wir eine Tabelle mit Hierarchie-Relationshiptyp an.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tabelle Abteilung" duration="3">
+        <p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Abteilung: (abtid INT, bezeichnung VARCHAR(50), uebergeordnet#abtid ???)</code></pre>
+<p>Wie angedeutet (???) müssen wir den Datentyp für den Fremdschlüssel noch herausfinden. Wir sehen diesen in diesem Fall natürlich direkt (INT), da Abteilung zur Abbildung der Hierarchie auf sich selbst referenziert. Somit ergibt sich folgendes DDL-Statement:</p>
+<pre><code>create table abteilung (
+abtid int primary key,
+bezeichnung varchar(50),
+uebergeordnet_abtid int, -- Fremdschlüssel hier nicht NOT NULL! Kardinalitäten der Hierarchie!
+foreign key (uebergeordnet_abtid) references abteilung (abtid)  -- Fremdschlüssel-Constraint
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements zwei Beispieldatensätze ein:</p>
+<pre><code>insert into abteilung values 
+(1, &#39;Unternehmensleitung&#39;, NULL),  -- oberstes Element der Hierarchie
+(2, &#39;Vertrieb&#39;, 1);  -- Vertrieb unter Unternehmensleitung einordnen</code></pre>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun eine Tabelle, die eine Hierarchie abbildet definiert. Darin ist somit ein  Fremdschlüssel enthalten, der auf die Tabelle selbst zeigt. Die min-Kardinalität von 0 zeigt sich darin, dass für den Fremdschlüssel kein NOT NULL angegeben wurde.</li>
+<li>Als nächstes legen wir die beiden Spezialisierungs-Tabellen (Mitarbeiter, Kunde) an und verweisen darin auf die Generalisierungs-Tabelle Benutzer.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tabellen Kunde und Mitarbeiter" duration="6">
+        <h2 is-upgraded><strong>Tabelle Kunde</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Kunde: (#email ???, kdnr INT (UNIQUE), strasse VARCHAR(50), hausnummer VARCHAR(10), plz VARCHAR(5), ort VARCHAR(50), geburtsdatum DATE)</code></pre>
+<p>Den Datentyp für email können wir leicht herausfinden: VARCHAR(100). Die einzigen Herausforderungen in dieser Tabellendefinition sind ein neues Constraint (UNIQUE) sowie die gleichzeitige Definition einer Spalte als Primär- und auch Fremdschlüssel (#email):</p>
+<pre><code>create table kunde (
+email varchar(100) primary key, -- Primärschlüssel und gleichzeitg Fremdschlüssel
+kdnr int unique,  -- Spalte soll eindeutig sein
+strasse varchar(50),
+hausnummer varchar(10),
+plz varchar(5),
+ort varchar(50),
+geburtsdatum date,
+foreign key (email) references benutzer (email)  -- Fremdschlüssel-Constraint
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements einen Kunden ein, indem wir für den Benutzer Peter Schulz einen entsprechenden Datensatz in der spezialisierenden Tabelle anlegen:</p>
+<pre><code>insert into kunde values 
+(&#39;peter.schulz@ab.de&#39;, 1, &#39;Hauptstr.&#39;, &#39;1a&#39;, &#39;12112&#39;, &#39;Berlin&#39;, &#39;1990-09-19&#39;);</code></pre>
+<h2 is-upgraded><strong>Tabelle Mitarbeiter</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Mitarbeiter: (#email ???, manr INT (UNIQUE), telefonnr  VARCHAR(30), #abtid INT (NOT NULL) )</code></pre>
+<p>Die Tabelle Mitarbeiter kann analog definiert werden, allerdings muss hier die min-Kardinalität des Relationshiptypen zur Abteilung berücksichtigt werden:</p>
+<pre><code>create table mitarbeiter (
+email varchar(100) primary key, -- Primärschlüssel und gleichzeitg Fremdschlüssel
+manr int unique,  -- Spalte soll eindeutig sein
+telefonnr varchar(30),
+abtid int not null,
+foreign key (email) references benutzer (email),  -- Fremdschlüssel-Constraint email
+foreign key (abtid) references abteilung (abtid)  -- Fremdschlüssel-Constraint abtid
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements einen Mitarbeiter ein, indem wir für die Benutzerin Julia Meier einen entsprechenden Datensatz in der spezialisierenden Tabelle anlegen:</p>
+<pre><code>insert into mitarbeiter values 
+(&#39;julia.meier@ab.de&#39;, 1, &#39;0721 555625&#39;, 2);  -- Julia Meier arbeitet im Vertrieb</code></pre>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun gelernt, wie Generalisierungs-Spezialisierungs-Beziehungen in SQL definiert werden können.</li>
+<li>Als nächstes legen wir die Tabelle Bestellung an, die einige Fremdschlüssel enthält und als Besonderheit für eine Spalte das automatische Hochzählen von Werten aktivieren soll.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tabelle Bestellung" duration="5">
+        <p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>Bestellung: (bestnr INT (AUTO_INCREMENT), bestelldatum TIMESTAMP, #kunde ??? (NOT NULL), bearbeitet#email ??? (NOT NULL), #statusid ??? (NOT NULL) )</code></pre>
+<p>Die Datentypen für die Fremdschlüssel zu ermitteln ist einfach (VARCHAR(100) für bearbeit#email sowie #kunde und INT für statusid, s.o.). Das einzige neue Konzept in dem zu erstellenden Statement ist das automatische Hochzählen einer Spalte. In der CREATE TABLE-Spezifikation finden wir das Schlagwort AUTO_INCREMENT, das auf Spaltenebene definiert werden kann:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\5e8ec7bdb0b39c29.png"></p>
+<p>Daneben nutzen wir auch noch FOREIGN-KEY Definitionen für die beiden Fremdschlüssel. Somit ergibt sich folgendes DDL-Statement:</p>
+<pre><code>create table bestellung ( 
+bestnr int auto_increment primary key, -- automatische Hochzählen aktivieren
+bestelldatum TIMESTAMP,
+bearbeitet_email varchar(100) not null,  -- min-Kardinalität 1
+foreign key (bearbeitet_email) references mitarbeiter(email), -- FK-Constraint
+kunde varchar(100) not null,  -- min-Kardinalität 1
+foreign key (kunde) references kunde(email), -- FK-Constraint
+statusid int not null, -- min-Kardinalität 1
+foreign key (statusid) references status(statusid) -- FK-Constraint
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements zwei Bestellungen, die von Julia Meier bearbeitet werden und den Status &#34;Offen&#34; haben, für den Kunden Peter Schulz ein. Die Bestellnummer (bestnr) lassen wir automatisch hochzählen, d.h. übergeben sie nicht, auch wenn dies zulässig wäre. Wenn wir für einzelne Spalten keine Werte übergeben möchten müssen wir folgende Notation verwenden, bei der die Spalten mit Werten vor dem &#34;values&#34;-Statement anzugeben sind. Zusätzlich nutzen wir eine Funktion von MySQL, über die wir das aktuelle Datum mit Uhrzeit erhalten (&#34;CURTIME()&#34;):</p>
+<pre><code>insert into bestellung (bestelldatum, bearbeitet_email, kunde, statusid) values
+(CURTIME(), &#39;julia.meier@ab.de&#39;, &#39;peter.schulz@ab.de&#39;, 1), 
+(CURTIME(), &#39;julia.meier@ab.de&#39;, &#39;peter.schulz@ab.de&#39;, 1);</code></pre>
+<p>Mit &#34;select * from bestellung&#34; können wir prüfen, ob das automatische Hochzählen funktioniert hat:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d08ab52b3399205b.png"></p>
+<aside class="special"><p><strong>Hinweis:</strong> Bei AUTO_INCREMENT merkt sich die Datenbank intern den Zähler. Sollten Sie beispielsweise beide Bestellungen mit &#34;DELETE FROM bestellung&#34; löschen und erneut einfügen, dann erhalten diese die Bestellnummern 3 und 4. Sollten Sie manuell bspw. die Bestellnummer 7 eingefügt haben, dann setzt die Datenbank dort auf und würde beim nächsten AUTO_INCREMENT Bestellnummer 8 vergeben. Sie können den Zähler manuell mittels folgenden Statements manipulieren: &#34;alter table bestellung AUTO_INCREMENT = 1;&#34;</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun gelernt, wie das automatische Hochzählen auf einzelnen Spalten definiert werden kann. Dies ist insbesondere nützlich für datenbankinterne IDs, die automatisch vergeben werden sollen.</li>
+<li>Abschließend legen wir nun noch die fehlenden Zuordnungstabellen an.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tabellen WarenkorbPosition, BestellPosition, GemeinsamerKauf" duration="12">
+        <h2 is-upgraded><strong>Tabelle WarenkorbPosition</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>WarenkorbPosition: (#email ???, #pnr ???, menge INT (NOT NULL) )</code></pre>
+<p>Wir haben somit einen zusammengesetzten Primärschlüssel zu bilden, dessen beiden Attribute gleichzeitig auch Fremdschlüssel sind. Folgendes DDL-Statement setzt diese Anforderungen und das Attribut &#34;menge&#34; um:</p>
+<pre><code>create table warenkorbposition (
+kunde_email varchar(100), -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
+foreign key (kunde_email) references kunde(email), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
+pnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
+foreign key (pnr) references produkt(pnr), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
+menge int,
+primary key (kunde_email, pnr) -- Definition eines zusammengesetzten Primärschlüssels
+);</code></pre>
+<p>Wir fügen mittels folgenden Statements eine Warenkorbposition für den Kunden Peter Schulz ein (3xSchokoladenpudding (pnr=1)):</p>
+<pre><code>insert into warenkorbposition values (&#39;peter.schulz@ab.de&#39;, 1, 3);</code></pre>
+<h2 is-upgraded><strong>Tabelle BestellPosition</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>BestellPosition: (#bestnr ???, #pnr ???, menge INT (NOT NULL) )</code></pre>
+<p>Auch hier haben wir einen zusammengesetzten Primärschlüssel zu bilden, dessen beiden Attribute gleichzeitig auch Fremdschlüssel sind. Folgendes DDL-Statement setzt diese Anforderungen und das Attribut &#34;menge&#34; um:</p>
+<pre><code>create table bestellposition (
+bestnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
+foreign key (bestnr) references bestellung(bestnr), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
+pnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
+foreign key (pnr) references produkt(pnr), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
+menge int,
+primary key (bestnr, pnr) -- Definition eines zusammengesetzten Primärschlüssels
+);</code></pre>
+<p>Wir weisen der Bestellung Nummer 1 mittels folgenden Statements eine Position zu (8xSchokoladenpudding (pnr=1)). Achtung: Sie sollten prüfen, ob Sie durch das AUTO_INCREMENT eine andere Bestellnummer eingefügt haben!</p>
+<pre><code>insert into bestellposition values (1, 1, 8);</code></pre>
+<h2 is-upgraded><strong>Tabelle GemeinsamerKauf</strong></h2>
+<p>Folgende Informationen stehen zur Verfügung:</p>
+<pre><code>GemeinsamerKauf: (k1#katid ???, k2#katid ???)</code></pre>
+<p>Analog zu den beiden anderen Zuordnungstabellen legen wir diese Tabelle nun an, deren Fremdschlüssel beide auf dieselbe Tabelle &#34;Kategorie&#34; zeigen. Mit dieser Definition bilden wir die &#34;Struktur&#34; ab, d.h. Beziehungen zwischen Kategorien, die anzeigen, dass diese Kategorien gerne gemeinsam gekauft werden:</p>
+<pre><code>create table gemeinsamerkauf (
+k1_katid int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
+foreign key (k1_katid) references kategorie(katid), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
+k2_katid int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
+foreign key (k2_katid) references kategorie(katid), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
+primary key (k1_katid, k2_katid) -- Definition eines zusammengesetzten Primärschlüssels
+);</code></pre>
+<p>Wir definieren nun, dass die Kategorien &#34;Molkereiprodukte&#34; (katid 1) und &#34;Eier&#34; (katid 2) gerne gemeinsam gekauft werden.</p>
+<pre><code>insert into gemeinsamerkauf values (1, 2);</code></pre>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun gelernt, zusammengesetzte Primärschlüssel für N-M-Zuordnungstabellen definiert werden können.</li>
+<li>Wir haben nun das gesamte relationale Modell unsere Webshops in eine Datenbank &#34;webshop&#34; überführt.</li>
+</ol>
+<aside class="special"><p><strong>Übungsaufgabe:</strong> Prüfen Sie, ob die Datenbank das Einfügen inkonsistenter Daten unterbindet. Beispiele: &#34;doppelter Primärschlüssel&#34;, &#34;fehlende über Fremdschlüssel referenzierte Instanz&#34;, &#34;Verletzung NOT NULL Constraint&#34;, &#34;Verletzung UNIQUE Constraint&#34;</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cloud SQL-Instanz herunterfahren und bisher verbrauchtes Guthaben prüfen" duration="2">
+        <h2 is-upgraded><strong>Herunterfahren der virtuellen Maschine</strong></h2>
+<p>Gehen Sie dazu im Bereich &#34;SQL&#34; in der Cloud Konsole auf Ihre Instanz und drücken Sie &#34;Stop&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7825778de6fbdd77.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Schalten Sie die Instanz über &#34;START&#34; wieder ein (vor den Vorlesungen/Übungen bzw.  wenn Sie üben möchten) und verbinden Sie sich neu aus DBeaver + Cloud SQL-Proxy/IP-Freigabe.</p>
+</aside>
+<h2 is-upgraded><strong>Prüfung des bisher verbrauchten Guthabens</strong></h2>
+<p>Um zu prüfen, wie viel Guthaben Sie bereits in GCP verbraucht haben klicken Sie im Menü auf Billing (Abrechnung): </p>
+<p class="image-container"><img style="width: 624.00px" src="img\8c895ff9dd3527b8.png"></p>
+<p>Im folgenden Fenster müssen Sie ggf. bestätigen, dass Sie zum verknüpften Abrechnungskonto wechseln möchten. Klicken Sie auf Reports und entfernen Sie die Haken bei &#34;Promotions and others&#34; sowie &#34;Promotions&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c4429956abc91f1b.png"></p>
+<p>Im Anschluss sollten Sie bereits die entstandenen Kosten sehen. Um eine detaillierte Übersicht zu erhalten wählen Sie unter &#34;Group by&#34; &#34;SKU&#34; aus. Sie können hier auch den Betrachtungszeitraum anpassen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\966d5427624acdb4.png"></p>
+<p>In der Tabelle unter dem Diagramm können Sie detailliert sehen, welche Kosten Ihnen entstanden sind.</p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun ein vollständiges Datenbankschema für eine Beispieldatenbank &#34;Webshop&#34; aufgebaut und dieses mit wenigen Beispieldaten gefüllt.</li>
+<li>Damit haben wir alle Vorbereitungen getroffen, mittels der DML weitere Daten einzufügen und im Anschluss mittels DQL Auswertungen auf den Daten vorzunehmen (Data Science &#34;betreiben&#34;).</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Glückwunsch" duration="1">
+        <p>Herzlichen Glückwunsch, Sie haben einen weiteren wichtigen Schritt für den Umgang mit relationalen Datenbanken erfolgreich umgesetzt.</p>
+<aside class="special"><p><strong>Hinweis: </strong>Sie können nun dieses Browser-Tab schließen.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
