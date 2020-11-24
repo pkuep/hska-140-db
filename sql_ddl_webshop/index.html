@@ -91,7 +91,9 @@ use webshop;  -- Datenbank verwenden</code></pre>
       <google-codelab-step label="Tabellen Status, Kategorie und Benutzer" duration="9">
         <h2 is-upgraded><strong>Tabelle Status</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Status: (statusid INT, bearbeitungsstatus  VARCHAR(50))</p>
+<p>Status: (statusid INT (PK), bearbeitungsstatus  VARCHAR(50))</p>
+<aside class="special"><p><strong>Hinweis</strong>: &#34;PK&#34; steht für Primary Key und markiert das bzw. die Attribute entsprechend, die zum Primärschlüssel gehören.</p>
+</aside>
 <p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) zeigt, dass wir für das Anlegen dieser Tabelle nur wenige Teile der möglichen CREATE-Statements verwenden werden:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\86a716917ee758bf.png"></p>
 <p>Es ergibt sich folgende DDL-Spezifikation der Tabelle Status:</p>
@@ -106,7 +108,7 @@ bearbeitungsstatus varchar(50)
 <p>Mit &#34;select * from status&#34; können Sie sich alle Inhalte dieser Tabelle anzeigen lassen.</p>
 <h2 is-upgraded><strong>Tabelle Kategorie</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Kategorie: (katid INT, bezeichnung VARCHAR(50))</p>
+<p>Kategorie: (katid INT (PK), bezeichnung VARCHAR(50))</p>
 <p>Die Tabelle Kategorie bedient sich somit derselben Konzepte wie die Tabelle Status. Es ergibt sich folgende DDL-Spezifikation:</p>
 <pre><code>create table kategorie (
 katid int primary key,
@@ -118,7 +120,7 @@ bezeichnung varchar(50)
 (2, &#39;Eier&#39;);</code></pre>
 <h2 is-upgraded><strong>Tabelle Benutzer</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Benutzer: (email VARCHAR(100), passwort VARCHAR(50) (NOT NULL), vorname VARCHAR(50) (NOT NULL), nachname VARCHAR(50) (NOT NULL) )</p>
+<p>Benutzer: (email VARCHAR(100) (PK), passwort VARCHAR(50) (NOT NULL), vorname VARCHAR(50) (NOT NULL), nachname VARCHAR(50) (NOT NULL) )</p>
 <p>Bei dieser Tabelle nutzen wir zusätzlich zu den bereits bekannten Konzepten das NOT NULL-Constraint um zu verhindern, dass für bestimmte Spalten kein Wert übergeben wird:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\9c5aa37a616569f2.png"></p>
 <pre><code>create table benutzer (
@@ -142,7 +144,7 @@ nachname varchar(50) not null
     
       <google-codelab-step label="Tabelle Produkt" duration="6">
         <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Produkt: (pnr INT, bezeichnung VARCHAR(50), angelegt_am TIMESTAMP, verfuegbarkeit INT (NOT NULL), #katid ??? (NOT NULL) )</p>
+<p>Produkt: (pnr INT (PK), bezeichnung VARCHAR(50), angelegt_am TIMESTAMP, verfuegbarkeit INT (NOT NULL), #katid ??? (NOT NULL) )</p>
 <p>Wie angedeutet (???) müssen wir den Datentyp für den Fremdschlüssel noch herausfinden. Wir wissen natürlich, dass es INT ist, da wir die Tabelle gerade angelegt haben. Sollte dies nicht bekannt sein, dann kann bspw. über die DBeaver-Hierarchie der Datentyp einzelner Spalten leicht ermittelt werden:</p>
 <p class="image-container"><img style="width: 315.11px" src="img\17c46039e2601606.png"></p>
 <p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) ist in diesem Fall etwas komplexer. </p>
@@ -171,7 +173,7 @@ foreign key (katid) references kategorie(katid)  -- dies definiert das FK-Constr
     
       <google-codelab-step label="Tabelle Abteilung" duration="3">
         <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Abteilung: (abtid INT, bezeichnung VARCHAR(50), uebergeordnet#abtid ???)</p>
+<p>Abteilung: (abtid INT (PK), bezeichnung VARCHAR(50), uebergeordnet#abtid ???)</p>
 <p>Wie angedeutet (???) müssen wir den Datentyp für den Fremdschlüssel noch herausfinden. Wir sehen diesen in diesem Fall natürlich direkt (INT), da Abteilung zur Abbildung der Hierarchie auf sich selbst referenziert. Somit ergibt sich folgendes DDL-Statement:</p>
 <pre><code>create table abteilung (
 abtid int primary key,
@@ -195,7 +197,7 @@ foreign key (uebergeordnet_abtid) references abteilung (abtid)  -- Fremdschlüss
       <google-codelab-step label="Tabellen Kunde und Mitarbeiter" duration="6">
         <h2 is-upgraded><strong>Tabelle Kunde</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Kunde: (#email ???, kdnr INT (UNIQUE), strasse VARCHAR(50), hausnummer VARCHAR(10), plz VARCHAR(5), ort VARCHAR(50), geburtsdatum DATE)</p>
+<p>Kunde: (#email ??? (PK), kdnr INT (UNIQUE), strasse VARCHAR(50), hausnummer VARCHAR(10), plz VARCHAR(5), ort VARCHAR(50), geburtsdatum DATE)</p>
 <p>Den Datentyp für email können wir leicht herausfinden: VARCHAR(100). Die einzigen Herausforderungen in dieser Tabellendefinition sind ein neues Constraint (UNIQUE) sowie die gleichzeitige Definition einer Spalte als Primär- und auch Fremdschlüssel (#email):</p>
 <pre><code>create table kunde (
 email varchar(100) primary key, -- Primärschlüssel und gleichzeitg Fremdschlüssel
@@ -212,7 +214,7 @@ foreign key (email) references benutzer (email)  -- Fremdschlüssel-Constraint
 (&#39;peter.schulz@ab.de&#39;, 1, &#39;Hauptstr.&#39;, &#39;1a&#39;, &#39;12112&#39;, &#39;Berlin&#39;, &#39;1990-09-19&#39;);</code></pre>
 <h2 is-upgraded><strong>Tabelle Mitarbeiter</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Mitarbeiter: (#email ???, manr INT (UNIQUE), telefonnr  VARCHAR(30), #abtid INT (NOT NULL) )</p>
+<p>Mitarbeiter: (#email ??? (PK), manr INT (UNIQUE), telefonnr  VARCHAR(30), #abtid INT (NOT NULL) )</p>
 <p>Die Tabelle Mitarbeiter kann analog definiert werden, allerdings muss hier die min-Kardinalität des Relationshiptypen zur Abteilung berücksichtigt werden:</p>
 <pre><code>create table mitarbeiter (
 email varchar(100) primary key, -- Primärschlüssel und gleichzeitg Fremdschlüssel
@@ -236,7 +238,7 @@ foreign key (abtid) references abteilung (abtid)  -- Fremdschlüssel-Constraint 
     
       <google-codelab-step label="Tabelle Bestellung" duration="5">
         <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Bestellung: (bestnr INT (AUTO_INCREMENT), bestelldatum TIMESTAMP, #kunde ??? (NOT NULL), bearbeitet#email ??? (NOT NULL), #statusid ??? (NOT NULL) )</p>
+<p>Bestellung: (bestnr INT (PK, AUTO_INCREMENT), bestelldatum TIMESTAMP, #kunde ??? (NOT NULL), bearbeitet#email ??? (NOT NULL), #statusid ??? (NOT NULL) )</p>
 <p>Die Datentypen für die Fremdschlüssel zu ermitteln ist einfach (VARCHAR(100) für bearbeit#email sowie #kunde und INT für statusid, s.o.). Das einzige neue Konzept in dem zu erstellenden Statement ist das automatische Hochzählen einer Spalte. In der CREATE TABLE-Spezifikation finden wir das Schlagwort AUTO_INCREMENT, das auf Spaltenebene definiert werden kann:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\5e8ec7bdb0b39c29.png"></p>
 <p>Daneben nutzen wir auch noch FOREIGN-KEY Definitionen für die beiden Fremdschlüssel. Somit ergibt sich folgendes DDL-Statement:</p>
@@ -270,7 +272,7 @@ foreign key (statusid) references status(statusid) -- FK-Constraint
       <google-codelab-step label="Tabellen WarenkorbPosition, BestellPosition, GemeinsamerKauf" duration="12">
         <h2 is-upgraded><strong>Tabelle WarenkorbPosition</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>WarenkorbPosition: (#email ???, #pnr ???, menge INT (NOT NULL) )</p>
+<p>WarenkorbPosition: (#email ??? (PK), #pnr ??? (PK), menge INT (NOT NULL) )</p>
 <p>Wir haben somit einen zusammengesetzten Primärschlüssel zu bilden, dessen beiden Attribute gleichzeitig auch Fremdschlüssel sind. Folgendes DDL-Statement setzt diese Anforderungen und das Attribut &#34;menge&#34; um:</p>
 <pre><code>create table warenkorbposition (
 kunde_email varchar(100), -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
@@ -284,7 +286,7 @@ primary key (kunde_email, pnr) -- Definition eines zusammengesetzten Primärschl
 <pre><code>insert into warenkorbposition values (&#39;peter.schulz@ab.de&#39;, 1, 3);</code></pre>
 <h2 is-upgraded><strong>Tabelle BestellPosition</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>BestellPosition: (#bestnr ???, #pnr ???, menge INT (NOT NULL) )</p>
+<p>BestellPosition: (#bestnr ??? (PK), #pnr ??? (PK), menge INT (NOT NULL) )</p>
 <p>Auch hier haben wir einen zusammengesetzten Primärschlüssel zu bilden, dessen beiden Attribute gleichzeitig auch Fremdschlüssel sind. Folgendes DDL-Statement setzt diese Anforderungen und das Attribut &#34;menge&#34; um:</p>
 <pre><code>create table bestellposition (
 bestnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
@@ -298,7 +300,7 @@ primary key (bestnr, pnr) -- Definition eines zusammengesetzten Primärschlüsse
 <pre><code>insert into bestellposition values (1, 1, 8);</code></pre>
 <h2 is-upgraded><strong>Tabelle GemeinsamerKauf</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p><strong>GemeinsamerKauf: (k1#katid ???, k2#katid ???)</strong></p>
+<p>GemeinsamerKauf: (k1#katid ??? (PK), k2#katid ??? (PK))</p>
 <p>Analog zu den beiden anderen Zuordnungstabellen legen wir diese Tabelle nun an, deren Fremdschlüssel beide auf dieselbe Tabelle &#34;Kategorie&#34; zeigen. Mit dieser Definition bilden wir die &#34;Struktur&#34; ab, d.h. Beziehungen zwischen Kategorien, die anzeigen, dass diese Kategorien gerne gemeinsam gekauft werden:</p>
 <pre><code>create table gemeinsamerkauf (
 k1_katid int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
