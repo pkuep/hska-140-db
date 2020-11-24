@@ -298,7 +298,7 @@ primary key (bestnr, pnr) -- Definition eines zusammengesetzten Primärschlüsse
 <pre><code>insert into bestellposition values (1, 1, 8);</code></pre>
 <h2 is-upgraded><strong>Tabelle GemeinsamerKauf</strong></h2>
 <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>GemeinsamerKauf: (k1#katid ???, k2#katid ???)</p>
+<p><strong>GemeinsamerKauf: (k1#katid ???, k2#katid ???)</strong></p>
 <p>Analog zu den beiden anderen Zuordnungstabellen legen wir diese Tabelle nun an, deren Fremdschlüssel beide auf dieselbe Tabelle &#34;Kategorie&#34; zeigen. Mit dieser Definition bilden wir die &#34;Struktur&#34; ab, d.h. Beziehungen zwischen Kategorien, die anzeigen, dass diese Kategorien gerne gemeinsam gekauft werden:</p>
 <pre><code>create table gemeinsamerkauf (
 k1_katid int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
