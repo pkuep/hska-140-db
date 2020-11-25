@@ -46,7 +46,7 @@
       <google-codelab-step label="Vorgaben aus dem Relationalen Modell und Anlegen der Datenbank" duration="4">
         <h2 is-upgraded><strong>Vorgaben</strong></h2>
 <p>Folgende Hinweise stehen Ihnen zusätzlich zum ERM zur Verfügung:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\8f7f9ab0f7d3a6f1.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\384ccdc49f77e6c3.png"></p>
 <p>Zusätzlich benötigen Sie die MySQL-DDL Dokumentation: <a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a> </p>
 <h2 is-upgraded><strong>Anlegen der Datenbank</strong></h2>
 <p>Verbinden Sie sich in DBeaver mit der MySQL-Instanz (siehe Codelab &#34;SQL - Teil 1: Setup&#34;) und erzeugen Sie ein neues SQL-Skript (bspw. &#34;DSCB140 - SQL1 - DDL Webshop.sql&#34;).</p>
@@ -68,7 +68,7 @@ use webshop;  -- Datenbank verwenden</code></pre>
         <h2 is-upgraded><strong>Hinweis</strong></h2>
 <p>Da Fremdschlüsselbeziehungen auf andere Tabellen verweisen ist es wichtig, dass die Tabellen in der entsprechenden Reihenfolge angelegt werden. Grundsätzlich sollte mit Tabellen begonnen werden, die keine Fremdschlüssel enthalten.</p>
 <p>Zur Wiederholung hier noch einmal das relationale Modell des Webshops. Die Datentypen und Constraints ignorieren wir zunächst und betrachten nur die Fremdschlüssel, um eine passende Reihenfolge zu erarbeiten.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\4d50e52e24f0195b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\65f77e5573da1488.png"></p>
 <h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
 <p>Folgende Reihenfolge wird empfohlen:</p>
 <ol type="1" start="1">
@@ -144,7 +144,7 @@ nachname varchar(50) not null
     
       <google-codelab-step label="Tabelle Produkt" duration="6">
         <p>Folgende Informationen stehen zur Verfügung:</p>
-<p>Produkt: (pnr INT (PK), bezeichnung VARCHAR(50), angelegt_am TIMESTAMP, verfuegbarkeit INT (NOT NULL), #katid ??? (NOT NULL) )</p>
+<p>Produkt: (pnr INT (PK), bezeichnung VARCHAR(50), angelegt_am TIMESTAMP, verfuegbarkeit INT (NOT NULL), , preis DECIMAL(6,2) (NOT NULL), #katid ??? (NOT NULL) )</p>
 <p>Wie angedeutet (???) müssen wir den Datentyp für den Fremdschlüssel noch herausfinden. Wir wissen natürlich, dass es INT ist, da wir die Tabelle gerade angelegt haben. Sollte dies nicht bekannt sein, dann kann bspw. über die DBeaver-Hierarchie der Datentyp einzelner Spalten leicht ermittelt werden:</p>
 <p class="image-container"><img style="width: 315.11px" src="img\17c46039e2601606.png"></p>
 <p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) ist in diesem Fall etwas komplexer. </p>
@@ -155,6 +155,7 @@ pnr int primary key,
 bezeichnung varchar(50),
 angelegt_am timestamp,
 verfuegbarkeit int not null,
+preis decimal(6,2) not null,
 katid int not null,  -- dies ist die Fremdschlüsselspalte (FK)
 foreign key (katid) references kategorie(katid)  -- dies definiert das FK-Constraint
 );</code></pre>
