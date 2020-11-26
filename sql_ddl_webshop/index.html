@@ -280,7 +280,7 @@ kunde_email varchar(100), -- wird Teil des Primärschlüssels (s.u.), daher NOT 
 foreign key (kunde_email) references kunde(email), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
 pnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
 foreign key (pnr) references produkt(pnr), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
-menge int,
+menge int not null,
 primary key (kunde_email, pnr) -- Definition eines zusammengesetzten Primärschlüssels
 );</code></pre>
 <p>Wir fügen mittels folgenden Statements eine Warenkorbposition für den Kunden Peter Schulz ein (3xSchokoladenpudding (pnr=1)):</p>
@@ -294,7 +294,7 @@ bestnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nö
 foreign key (bestnr) references bestellung(bestnr), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
 pnr int, -- wird Teil des Primärschlüssels (s.u.), daher NOT NULL nicht nötig
 foreign key (pnr) references produkt(pnr), -- gleichzeitig Teil vom Primärschlüssel und Fremdschlüssel
-menge int,
+menge int not null,
 primary key (bestnr, pnr) -- Definition eines zusammengesetzten Primärschlüssels
 );</code></pre>
 <p>Wir weisen der Bestellung Nummer 1 mittels folgenden Statements eine Position zu (8xSchokoladenpudding (pnr=1)). Achtung: Sie sollten prüfen, ob Sie durch das AUTO_INCREMENT eine andere Bestellnummer eingefügt haben!</p>
