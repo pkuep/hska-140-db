@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-11-26T13:42:49Z",
+  "id": "sql_dml_webshop",
+  "duration": 46,
+  "title": "Lab \"SQL - DML: Fallstudie Webshop\"",
+  "authors": "Peer Küppers",
+  "summary": "In diesem Codelab werden Sie die für die Fallstudie Webshop die notwendigen Daten in die Datenbank einfügen..",
+  "source": "1Io5n-BTHOSbzzf8kcxiN31M5R2Fkd7dMAuL95-kRfu4",
+  "theme": "einf-hrung",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Einführung"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "sql_dml_webshop"
+}

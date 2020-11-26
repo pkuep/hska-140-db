@@ -1,0 +1,246 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Lab &#34;SQL - DML: Fallstudie Webshop&#34;</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="None"
+                  id="sql_dml_webshop"
+                  title="Lab &#34;SQL - DML: Fallstudie Webshop&#34;"
+                  environment="web"
+                  feedback-link="https://p-kueppers.com">
+    
+      <google-codelab-step label="Einführung" duration="2">
+        <p>Wir werden nun in unserer GCP Cloud SQL-Instanz die Daten der im DDL-Codelab angelegten Tabellen des folgenden ERM einfügen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b03c499f2cacae5f.png"></p>
+<h2 is-upgraded><strong>Hintergrund</strong></h2>
+<p>Bisher haben wir uns &#34;von außen&#34; entweder über den Cloud SQL-Proxy (Variante 1) bzw. die Freigabe einzelner IP-Adressen (Variante 2) sicher mit der Datenbankinstanz verbinden können. Nun möchten wir eine weitere Verbindungsmöglichkeit kennenlernen: <strong>Zugriff auf die Datenbank aus Python </strong>(mittels eines Jupyter Notebooks, das im selben Projekt wie die Datenbank läuft). Wie in der folgenden Abbildung dargestellt ist der Hauptunterschied, dass wir nicht &#34;von außen&#34; über die sogenannte &#34;Public IP-Adresse&#34; der Datenbank zugreifen wollen, sondern uns von einer virtuellen Maschine im selben (privaten Cloud-) Netzwerk innerhalb unseres Projekts verbinden möchten. Diese Verbindungsart nennt sich &#34;Private IP&#34; und wir müssen zum einen unsere Cloud SQL-Instanz dafür vorbereiten und zum anderen lernen, wie man aus Python heraus im Jupyter Notebook Verbindungen zu der Datenbank herstellen kann.</p>
+<p class="image-container"><img style="width: 624.00px" src="img\c75195fcaa412720.png"></p>
+<h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
+<ul>
+<li>Anpassung der Datenbankinstanz: Hinzufügen von &#34;Private IP&#34;-Zugriff, so dass Sie aus anderen Komponenten von GCP und insbesondere aus Python heraus in den AI Platform-Notebooks leicht auf Ihre Datenbank zugreifen können.</li>
+<li>Anlegen einer AI Platform Notebook-Instanz mit Jupyterlab / Jupyter Notebooks.</li>
+<li>Laden von Jupyter Notebooks, die den Code zur Erstellung des gesamten Datenbankschemas sowie für das Einfügen beispielhafter Daten enthalten.</li>
+<li>Wir stellen also sicher, dass Sie vor dem Einfügen der Daten das richtige Datenbankschema verwenden (es gibt kleinere Anpassungen im Vergleich zu dem Code aus der Vorlesung).</li>
+<li>Einfügen beispielhafter (Zufalls-)Daten aus Python heraus (Achtung: alle Daten in der Datenbank werden dabei gelöscht und neu initialisiert).</li>
+</ul>
+<aside class="warning"><p><strong>Hinweis:</strong> Bitte denken Sie daran, die Cloud SQL-Instanz nun hochzufahren, sich mit dieser zu verbinden (Variante 1 Cloud SQL Proxy oder Variante 2 direkter Zugriff mittels IP-Freigabe) und am Ende der Übung wieder herunterzufahren!</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Anpassung der Datenbankinstanz (Zugriff &#34;Private IP&#34; erlauben)" duration="8">
+        <h2 is-upgraded><strong>Cloud SQL-Instanz anpassen</strong></h2>
+<p>Bitte gehen Sie in der Cloud Console in den Bereich &#34;SQL&#34; und wählen Sie Ihre Instanz aus.</p>
+<aside class="warning"><p><strong>Hinweis:</strong> Für die folgenden Schritte muss die Cloud SQL-Instanz bereits laufen.</p>
+</aside>
+<p>Klicken Sie im Bereich &#34;Overview&#34; auf &#34;Edit&#34;, um die Einstellungen der Instanz anzupassen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\35e1a40747efe4ee.png"></p>
+<p>Öffnen Sie &#34;Connectivity&#34; und setzen Sie den Haken bei &#34;Private IP&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\684b2c3ff7ec81fb.png"></p>
+<p>Belassen Sie das Feld &#34;Associated Networking&#34; auf &#34;Default&#34; und aktivieren Sie bei Bedarf die &#34;Service Networking API&#34;: </p>
+<p class="image-container"><img style="width: 624.00px" src="img\82c9299f514c21b7.png"></p>
+<p>Speichern Sie die Einstellungen.</p>
+<p class="image-container"><img style="width: 417.74px" src="img\d966c72b27b44b5d.png"></p>
+<aside class="special"><p><strong>Hinweis:</strong> Die Anpassung der Einstellungen kann ein paar Minuten in Anspruch nehmen.</p>
+</aside>
+<h2 is-upgraded><strong>Private IP der Cloud SQL-Instanz ermitteln</strong></h2>
+<p>Sobald die Anpassung der Cloud SQL-Instanz erfolgt ist können Sie die private IP-Adresse der MySQL-Maschine im Bereich Overview ermitteln bzw. in die Zwischenablage kopieren:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\845d1e9fde7649f4.png"></p>
+<aside class="warning"><p><strong>Achtung:</strong> Genau wie die &#34;Public IP address&#34; ändert sich die &#34;Private IP address&#34; der Instanz nach einem Neustart der Cloud SQL-Instanz. Wenn Sie sich aus einem Jupyter-Notebook verbinden möchten müssen Sie also die IP-Adresse im Quellcode anpassen (s.u.). </p>
+</aside>
+<h2 is-upgraded><strong>Ergebnis </strong></h2>
+<ol type="1" start="1">
+<li>Sie haben eine weitere Verbindungsmethode Ihrer Cloud SQL-Instanz hinzugefügt (Private IP).</li>
+<li>Sie haben die Private IP-Adresse der Cloud SQL-Instanz ermittelt.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Anlegen und Vorbereitung einer Jupyterlab-Instanz sowie Laden des vorgegebenen Quellcodes" duration="12">
+        <h2 is-upgraded><strong>Erstellung der Notebook-Instanz </strong></h2>
+<p>Bitte klicken Sie auf &#34;AI-Plattform&#34; unter &#34;Artificial Intelligence&#34; und dann auf Notebooks:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\96496d7014a1a0dd.png"></p>
+<p>Sie sollten die entsprechende API im ersten Codelab bereits aktiviert haben. Falls nicht, erhalten SIe eine Meldung, bei der SIe &#34;Enable API&#34; klicken müssen.</p>
+<p>Wir legen nun eine neue Instanz an. Eine Instanz ist in diesem Fall eine virtuelle Maschine, die gestartet wird, auf der Jupyter installiert wird und es wird eingestellt, dass wir auf extern auf die Jupyter Notebooks zugreifen können. Klicken Sie auf &#34;New Instance&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\be45e1b049252e75.png"></p>
+<p>Wählen Sie &#34;Python 2 and 3&#34; aus:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\943855e30814faf0.png"></p>
+<p>Benennen Sie die Instanz bspw. &#34;&lt;Ihre Initialien&gt;-notebook&#34;, in meinem Fall also bspw. &#34;pk-notebook&#34;. Selektieren Sie die Region &#34;us-central1&#34; - dies ist in vielen GCP-Diensten die Standardregion, in der wir alle Funktionen laufen lassen möchten:</p>
+<p class="image-container"><img style="width: 401.14px" src="img\5769a2a83848836e.png"></p>
+<p>Warten Sie so lange, bis in der Übersicht der Zugriff auf das Web Interface angezeigt wird:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d83b5f87758ca39.png"></p>
+<p>Klicken Sie auf &#34;Open Jupyterlab&#34;.</p>
+<aside class="warning"><p><strong>Warnung: </strong>Der Betrieb der Notebook-Instanz ist kostenpflichtig. Denken Sie daran, diese im Anschluss an diese Übung so wie die Cloud SQL-Instanz auszuschalten.</p>
+</aside>
+<h2 is-upgraded><strong>Zugriff auf das JupyterLab</strong></h2>
+<p>Wenn Sie auf &#34;Open Jupyterlab&#34; geklickt haben, sollte folgende Übersicht erscheinen. Bitte legen Sie ein neues &#34;Python 3&#34; Notebook an:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b5403da2c45b1c1d.png"></p>
+<p>Ein neues Tab sollte sich öffnen, in dem Sie nun mit der Programmierung loslegen können:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\643fe2185fb5098c.png"></p>
+<p>Speichern Sie das Notebook bitte unter dem Namen &#34;Setup&#34; ab, da wir im Folgenden ein paar Installations- und Konfigurationsbefehle nutzen möchten.</p>
+<h2 is-upgraded><strong>Installation des MySQL-Treibers</strong></h2>
+<p>Wir werden das Paket &#34;mysql-connector&#34; als MySQL-Treiber für Python verwenden. Dieses ist leider nicht im Standard auf der Jupyterlab-Instanz installiert. Geben Sie folgenden Code ein, um den Treiber über das Python Package Management (pip) zu installieren:</p>
+<pre><code># Installation des MySQL-Treibers für Python
+# Diese Zelle muss nur einmalig ausgeführt werden. Sollten Sie Ihre Instanz löschen
+# und eine neue anlegen, dann muss dieser Code erneut ausgeführt werden.
+!pip install mysql-connector</code></pre>
+<p>Folgendes sollte die Ausgabe sein:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4241dee115f3309a.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Diesen Befehl müssen Sie nur einmalig ausführen, es sei denn, Sie löschen die Instanz und legen eine neue an.</p>
+</aside>
+<h2 is-upgraded><strong>Laden des Quellcodes</strong></h2>
+<p>In GitHub (Plattform zum Code-Sharing und kollaborativen Entwickeln) finden sich zwei Jupyter-Notebooks und eine SQL-Codedatei (Repository <a href="https://github.com/pkuep/hska-dscb140-code" target="_blank">https://github.com/pkuep/hska-dscb140-code</a>), die wir im Folgenden für das Datenbank-Setup verwenden möchten. Mit folgendem Befehl, den Sie bitte in einer neuen Zelle im Notebook &#34;Setup&#34; ausführen, laden wir diese Dateien in ein neues Verzeichnis &#34;hska-dscb140-code&#34; herunter.</p>
+<pre><code># Initiales &#34;Klonen&#34; des GitHub-Repositories für DSCB140
+!git clone https://github.com/pkuep/hska-dscb140-code.git</code></pre>
+<p>Die Ausgabe sollte wie folgt aussehen (ein neuer Ordner sollte angelegt worden sein):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\133db3e086debcfa.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Diesen Befehl müssen Sie nur einmalig ausführen, es sei denn, Sie löschen die Instanz und legen eine neue an.</p>
+</aside>
+<h2 is-upgraded><strong>Duplizieren des Quellcodes für eigene Anpassungen</strong></h2>
+<p>Damit Ihnen über GitHub Aktualisierungen der Originaldateien zur Verfügung gestellt werden können (bspw. im Fall von Fehlern, s.u.) sollten Sie diese Dateien nicht editieren. Wir legen daher Kopien der beiden Notebook-Dateien an, bevor wir sie auf unsere Umgebung anpassen. Gehen Sie dazu im Jupyterlab-Dateibrowser in das Verzeichnis &#34;hska-dscb140-code&#34;, wählen Sie die beiden &#34;.ipynb&#34;-Dateien aus, klicken Sie auf die rechte Maustaste und führen Sie den Befehl &#34;Duplicate&#34; aus:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\76ba7f617a33a999.png"></p>
+<p>Danach sollte das Dateisystem wie folgt aussehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\522dc91f4acd289.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Editieren Sie bitte nur die beiden Kopien. Sollten Sie Probleme mit GitHub haben können Sie jederzeit das gesamte Verzeichnis &#34;hska-dscb140-code&#34; auf Ihrer Jupyter-Instanz löschen und im Notebook Setup.ipynb die Zelle &#34;!git clone ...&#34; erneut ausführen.</p>
+</aside>
+<h2 is-upgraded><strong>Aktualisierung des Quellcodes im Falle von Änderungen</strong></h2>
+<p>Sollten sich Änderungen im Originalquellcode auf GitHub ergeben (bspw. Korrekturen), dann können Sie diese über folgenden Befehl im Setup-Notebook einspielen lassen. Dies funktioniert nur, wenn Sie die Originaldateien nicht editiert haben, d.h. die Kopien im vorherigen Schritt angelegt haben:</p>
+<pre><code># Aktualisieren des GitHub-Repositories für DSCB140 (nur bei Bedarf nötig, wird angekündigt)
+!git -C ./hska-dscb140-code pull </code></pre>
+<p>Es wird Ihnen jetzt angezeigt, dass Ihr Verzeichnis aktuell ist:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8a5ed55bba060f10.png"></p>
+<p>Im Fall von Änderungen werden diese aufgelistet.</p>
+<h2 is-upgraded><strong>Ergebnisse</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun eine lauffähige Jupyterlab-Instanz angelegt und um einen MySQL-Treiber für Python erweitert.</li>
+<li>Zusätzlich haben Sie auf dieser Instanz in ein Verzeichnis (hska-dscb140-code) für diese Veranstaltung vorgegebenen Quellcode geladen.</li>
+<li>Zwei der Quellcode-Dateien müssen Sie im nächsten Schritt um eigene Angaben ergänzen, weshalb Sie zur Vermeidung von Konflikten im GitHub-Verzeichnis Kopien dieser Jupyter-Notebooks angelegt haben.</li>
+<li>Sie können nun das Notebook &#34;Setup&#34; schließen und in das Verzeichnis hska-dscb140-code wechseln (sofern nicht bereits geschehen).</li>
+<li>Als nächstes werden wir die Datenbankverbindung konfigurieren.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Anlegen der Datenbank und Tabellen mittels DDL (Python-basiert)" duration="6">
+        <h2 is-upgraded><strong>Verbindungsparameter einstellen und Verbindung testen</strong></h2>
+<p>Bitte öffnen Sie nun das Notebook &#34;DSCB140 - DDL - Setup Database Webshop-Copy1&#34;. Wir möchten im Folgenden sicherstellen, dass alle dieselbe Datenbankstruktur aufweisen.</p>
+<p>Dazu passen Sie die Zelle &#34;Notwendige Verbindungsparameter&#34; bitte so an, dass in der Variablen &#34;hostname&#34; die private IP (!) der Cloud SQL-Instanz eingefügt wird (wie Sie die private IP-Adresse herausfinden steht oben unter &#34;Anpassung der Datenbankinstanz (Zugriff &#34;Private IP&#34; erlauben)&#34;). Ihr root-Datenbank-Kennwort speichern Sie bitte in der Variablen &#34;password&#34;.</p>
+<p>Führen Sie im Anschluss die erste Zelle (import ...) bis hin zur Zelle &#34;Testen der Verbindung&#34; aus. Wenn alles funktioniert, sollte die Ausgabe wie folgt aussehen:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\48fc730dc0dfce6f.png"></p>
+<aside class="warning"><p><strong>Hinweis: </strong>Sollten Sie das Jupyter Notebook auf dem eigenen Rechner ausführen wollen, dann müssen Sie für Variante 1 (Cloud SQL-Proxy) unter hostname &#34;localhost&#34; eingeben. Bei Variante 2 wäre die Eingabe der &#34;Public IP&#34; Ihrer Cloud SQL-Instanz nötig.</p>
+</aside>
+<h2 is-upgraded><strong>Datenbank und Tabellen anlegen (lassen)</strong></h2>
+<p>Sofern die Verbindung erfolgreich hergestellt wurde können Sie nun alle folgendenZellen ausführen. In dem Notebook wird die Datei &#34;DSCB140 - Fallstudie Webshop - DDL.sql&#34; eingelesen und die darin befindlichen SQL-DDL-Befehle (Anlegen der Datenbank und Tabellen) ausgeführt. Diese beiden Zellen geben keine Ausgabe (außer im Fall von Fehlern). Die letzte Zelle gibt alle Tabellen in der Datenbank &#34;webshop&#34; aus und zeigt damit an, ob alles geklappt hat:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\cd8b309d3882c5ee.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun erstmals nicht aus DBeaver mit der Datenbank kommuniziert, sondern diese programmatisch über Python angesprochen. Dies ermöglicht uns insbesondere auch größere und zufällig generierte Daten in die Datenbank einzufügen.</li>
+<li>Sollte das Anlegen der Datenbank nicht funktioniert haben, können Sie den nächsten Schritt ausführen, in dem die Erzeugung der Datenstrukturen mittels DBeaver vorgestellt wird.</li>
+<li>Sollte bis hierhin alles geklappt haben, dann können SIe den nächsten Schritt überspringen.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="OPTIONAL: Anlegen der Datenbank und Tabellen mittels DDL (DBeaver)" duration="6">
+        <p>Sie können die Datenbank auch anlegen lassen, indem Sie die SQL-Datei &#34;DSCB140 - Fallstudie Webshop - DDL.sql&#34; entweder in Jupyterhub oder auch über den Browser (<a href="https://github.com/pkuep/hska-dscb140-code/blob/master/DSCB140%20-%20Fallstudie%20Webshop%20-%20DDL.sql" target="_blank">Link</a>) anzeigen lassen und alle Inhalte in die Zwischenablage kopieren:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\f08c3236c5ee39d2.png"></p>
+<p>Danach fügen Sie die Inhalte in DBeaver (aktive Datenbankverbindung vorausgesetzt) ein und führen das gesamte Skript mittels Alt-X oder den markierten Button aus:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\d8f8a7ca10323f4d.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Spätestens jetzt sollten Sie die notwendige Datenbankstruktur angelegt haben, so dass Sie mit dem Einfügen von Daten fortfahren können.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Einfügen von Daten mittels DML (Python-basiert)" duration="6">
+        <h2 is-upgraded><strong>Verbindungsparameter einstellen</strong></h2>
+<p>Bitte öffnen Sie nun das Notebook &#34;DSCB140 - DML - Insert Data into Webshop Database-Copy1&#34;. Wir möchten nun Daten in Ihre Datenbank einfügen, müssen jedoch zunächst noch einmal die Verbindungsparameter einstellen. Dazu passen Sie die Zelle &#34;Notwendige Verbindungsparameter&#34; bitte so an, dass in der Variablen &#34;hostname&#34; die private IP (!) der Cloud SQL-Instanz eingefügt wird (s.o.). Ihr root-Datenbank-Kennwort speichern Sie bitte in der Variablen &#34;password&#34;.</p>
+<p>Führen Sie die Zellen von der ersten Zelle (import ...) bis hin zum Einfügen der Daten &#34;Tabelle Status&#34; aus, um zu testen, ob alles funktioniert. Dies sollte die Ausgabe des ersten INSERT-Befehls sein:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\24d33922c482a6c9.png"></p>
+<p>Danach können Sie im Menü auf &#34;Run&#34; klicken und das Ausführen aller Zellen starten:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\81c1287f0d03214b.png"></p>
+<p>Wenn alles geklappt hat, dann sehen Sie in der letzten Zellausgabe, wie viele Datensätze in die jeweiligen Tabellen eingefügt wurde:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\fe73b4e078934be3.png"></p>
+<aside class="warning"><p><strong>Hinweis: </strong>Da die Warenkörbe sowie Bestellungen zufällig befüllt werden haben Sie ziemlich sicher eine andere Anzahl von eingefügten Zeilen in diesen Tabellen.</p>
+</aside>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben die Datenbank nun so vorbereitet, wie wir sie für Auswertungen gerne haben möchten.</li>
+<li>Wir werden uns einige Befehle im Code und die gesamte Logik nun noch einmal anschauen.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Jupyterlab- und Cloud SQL-Instanzen herunterfahren und Quota/Alert einstellen" duration="5">
+        <h2 is-upgraded><strong>Herunterfahren der virtuellen Maschine (Cloud SQL)</strong></h2>
+<p>Gehen Sie im Bereich &#34;SQL&#34; in der Cloud Konsole auf Ihre Instanz und drücken Sie &#34;Stop&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\7825778de6fbdd77.png"></p>
+<aside class="warning"><p><strong>Wichtig: </strong>Wenn Sie die Instanz erneut hochfahren wird sich die private IP (und auch die public IP) ändern, so dass Sie das Notebook anpassen müssen (falls Sie den Code erneut ausführen möchten).</p>
+</aside>
+<h2 is-upgraded><strong>Herunterfahren der virtuellen Maschine (Jupyterlab)</strong></h2>
+<p>Markieren Sie im Bereich &#34;AI platform → Notebooks&#34; in der Cloud Konsole Ihre Instanz und klicken Sie auf &#34;STOP&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\350c36553038a3e0.png"></p>
+<h2 is-upgraded><strong>Quota und Alert einstellen</strong></h2>
+<p>Im letzten Codelab haben Sie gelernt, wie Sie das verbleibende Guthaben prüfen können. Gehen Sie nun wieder in den Bereich Billing (Abrechnung)</p>
+<p class="image-container"><img style="width: 624.00px" src="img\8c895ff9dd3527b8.png"></p>
+<p>Als nächstes möchten wir lernen, wie wir von GCP informiert werden können, sobald das Guthaben gewisse Schwellwerte unterschreitet. Klicken Sie dazu auf &#34;Budgets &amp; alerts&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\58753bcb3f394f58.png"></p>
+<p>Legen Sie ein neues Budget an und nennen Sie es beliebig. Klicken Sie auf &#34;Next&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\b558afeb86fca000.png"></p>
+<p>Geben Sie im nächsten Schritt die 50$ ein, die Sie als Guthaben erhalten haben.</p>
+<aside class="warning"><p><strong>Wichtig: </strong>Wenn Sie es genauer haben möchten, dann geben Sie das noch verbleibende Guthaben ein, dass Sie unter Billing → Overview sehen können.</p>
+</aside>
+<p class="image-container"><img style="width: 353.00px" src="img\de9d3f21b3913145.png"></p>
+<p>Belassen Sie im nächsten Schritt die Standardeinstellungen. Dann erhalten Sie jeweils eine E-Mail, wenn Sie 25$, 45$ bzw. Das gesamte Guthaben aufgebraucht haben:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\4dfa645cbb55f40e.png"></p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben nun zusätzlich zum Budget-Reporting gelernt, wie Sie in einer Cloud-Umgebung Budget-Alerts einstellen, um insbesondere zu bemerken, ob versehentlich Instanzen noch laufen und zu viel Budget &#34;ziehen&#34;.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Glückwunsch" duration="1">
+        <p>Herzlichen Glückwunsch, Sie haben einen weiteren wichtigen Schritt für den Umgang mit relationalen Datenbanken erfolgreich umgesetzt.</p>
+<aside class="special"><p><strong>Hinweis: </strong>Sie können nun dieses Browser-Tab schließen.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

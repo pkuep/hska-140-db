@@ -14,3 +14,6 @@
 ### Data Definition Language
 [Fallstudie Webshop - Tabellenerzeugung](https://pkuep.github.io/hska-140-db/sql_ddl_webshop){:target="_blank" rel="noopener"}
 
+### Data Manipluation Language
+[Fallstudie Webshop - Befüllung der Tabellen (inkl. DDL-Vorgabe)](https://pkuep.github.io/hska-140-db/sql_dml_webshop){:target="_blank" rel="noopener"}
+
