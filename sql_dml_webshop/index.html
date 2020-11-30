@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Einführung" duration="2">
         <p>Wir werden nun in unserer GCP Cloud SQL-Instanz die Daten der im DDL-Codelab angelegten Tabellen des folgenden ERM einfügen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\b03c499f2cacae5f.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\9abf02061f2e9562.png"></p>
 <h2 is-upgraded><strong>Hintergrund</strong></h2>
 <p>Bisher haben wir uns &#34;von außen&#34; entweder über den Cloud SQL-Proxy (Variante 1) bzw. die Freigabe einzelner IP-Adressen (Variante 2) sicher mit der Datenbankinstanz verbinden können. Nun möchten wir eine weitere Verbindungsmöglichkeit kennenlernen: <strong>Zugriff auf die Datenbank aus Python </strong>(mittels eines Jupyter Notebooks, das im selben Projekt wie die Datenbank läuft). Wie in der folgenden Abbildung dargestellt ist der Hauptunterschied, dass wir nicht &#34;von außen&#34; über die sogenannte &#34;Public IP-Adresse&#34; der Datenbank zugreifen wollen, sondern uns von einer virtuellen Maschine im selben (privaten Cloud-) Netzwerk innerhalb unseres Projekts verbinden möchten. Diese Verbindungsart nennt sich &#34;Private IP&#34; und wir müssen zum einen unsere Cloud SQL-Instanz dafür vorbereiten und zum anderen lernen, wie man aus Python heraus im Jupyter Notebook Verbindungen zu der Datenbank herstellen kann.</p>
 <p class="image-container"><img style="width: 624.00px" src="img\c75195fcaa412720.png"></p>
