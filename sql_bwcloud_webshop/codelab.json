@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-12-07T13:45:56Z",
+  "id": "sql_bwcloud_webshop",
+  "duration": 10,
+  "title": "Lab \"SQL: Fallstudie Webshop - Verbindung zur Übungsdatenbank herstellen\"",
+  "authors": "Peer Küppers",
+  "summary": "In diesem Codelab werden Sie eine Verbindung zu der Übungsdatenbank herstellen, die Ihnen dauerhaft und ohne Kosten zu verursachen zur Verfügung steht.",
+  "source": "1gJrv0YvMiVy3ysMlqdfW-_dBVYp_1S3b1ZfJzRkccaI",
+  "theme": "einf-hrung",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Einführung"
+  ],
+  "tags": [
+    "pk"
+  ],
+  "feedback": "https://p-kueppers.com",
+  "ga": "None",
+  "url": "sql_bwcloud_webshop"
+}

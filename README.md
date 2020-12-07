@@ -17,3 +17,6 @@
 ### Data Manipluation Language
 [Fallstudie Webshop - Befüllung der Tabellen (inkl. DDL-Vorgabe)](https://pkuep.github.io/hska-140-db/sql_dml_webshop){:target="_blank" rel="noopener"}
 
+### Verbindung zur Übungsdatenbank herstellen (optional)
+[Einrichtung einer weiteren Datenbankverbindung zum Üben (Fallstudie Webshop)](https://pkuep.github.io/hska-140-db/sql_bwcloud_webshop){:target="_blank" rel="noopener"}
+
