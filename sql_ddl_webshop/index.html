@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Einführung" duration="2">
         <p>Wir werden nun in unserer GCP Cloud SQL-Instanz die entsprechenden Tabellen für folgendes ERM unter Verwendung der DDL und MySQL definieren:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9abf02061f2e9562.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9abf02061f2e9562.png"></p>
 <h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
 <ul>
 <li>Erzeugung einer Datenbank &#34;webshop&#34;.</li>
@@ -46,7 +46,7 @@
       <google-codelab-step label="Vorgaben aus dem Relationalen Modell und Anlegen der Datenbank" duration="4">
         <h2 is-upgraded><strong>Vorgaben</strong></h2>
 <p>Folgende Hinweise stehen Ihnen zusätzlich zum ERM zur Verfügung:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\cd65092d5a3df040.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cd65092d5a3df040.png"></p>
 <p>Zusätzlich benötigen Sie die MySQL-DDL Dokumentation: <a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a> </p>
 <h2 is-upgraded><strong>Anlegen der Datenbank</strong></h2>
 <p>Verbinden Sie sich in DBeaver mit der MySQL-Instanz (siehe Codelab &#34;SQL - Teil 1: Setup&#34;) und erzeugen Sie ein neues SQL-Skript (bspw. &#34;DSCB140 - SQL1 - DDL Webshop.sql&#34;).</p>
@@ -68,7 +68,7 @@ use webshop;  -- Datenbank verwenden</code></pre>
         <h2 is-upgraded><strong>Hinweis</strong></h2>
 <p>Da Fremdschlüsselbeziehungen auf andere Tabellen verweisen ist es wichtig, dass die Tabellen in der entsprechenden Reihenfolge angelegt werden. Grundsätzlich sollte mit Tabellen begonnen werden, die keine Fremdschlüssel enthalten.</p>
 <p>Zur Wiederholung hier noch einmal das relationale Modell des Webshops. Die Datentypen und Constraints ignorieren wir zunächst und betrachten nur die Fremdschlüssel, um eine passende Reihenfolge zu erarbeiten.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\ef2c07b1ac7fe332.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ef2c07b1ac7fe332.png"></p>
 <h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
 <p>Folgende Reihenfolge wird empfohlen:</p>
 <ol type="1" start="1">
@@ -95,7 +95,7 @@ use webshop;  -- Datenbank verwenden</code></pre>
 <aside class="special"><p><strong>Hinweis</strong>: &#34;PK&#34; steht für Primary Key und markiert das bzw. die Attribute entsprechend, die zum Primärschlüssel gehören.</p>
 </aside>
 <p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) zeigt, dass wir für das Anlegen dieser Tabelle nur wenige Teile der möglichen CREATE-Statements verwenden werden:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\86a716917ee758bf.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\86a716917ee758bf.png"></p>
 <p>Es ergibt sich folgende DDL-Spezifikation der Tabelle Status:</p>
 <pre><code>create table status (
 statusid int primary key,
@@ -122,7 +122,7 @@ bezeichnung varchar(50)
 <p>Folgende Informationen stehen zur Verfügung:</p>
 <p>Benutzer: (email VARCHAR(100) (PK), passwort VARCHAR(50) (NOT NULL), vorname VARCHAR(50) (NOT NULL), nachname VARCHAR(50) (NOT NULL) )</p>
 <p>Bei dieser Tabelle nutzen wir zusätzlich zu den bereits bekannten Konzepten das NOT NULL-Constraint um zu verhindern, dass für bestimmte Spalten kein Wert übergeben wird:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\9c5aa37a616569f2.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\9c5aa37a616569f2.png"></p>
 <pre><code>create table benutzer (
 email varchar(100) primary key,
 passwort varchar(50) not null,
@@ -146,9 +146,9 @@ nachname varchar(50) not null
         <p>Folgende Informationen stehen zur Verfügung:</p>
 <p>Produkt: (pnr INT (PK), bezeichnung VARCHAR(50), angelegt_am TIMESTAMP, verfuegbarkeit INT (NOT NULL), , preis DECIMAL(6,2) (NOT NULL), #katid ??? (NOT NULL) )</p>
 <p>Wie angedeutet (???) müssen wir den Datentyp für den Fremdschlüssel noch herausfinden. Wir wissen natürlich, dass es INT ist, da wir die Tabelle gerade angelegt haben. Sollte dies nicht bekannt sein, dann kann bspw. über die DBeaver-Hierarchie der Datentyp einzelner Spalten leicht ermittelt werden:</p>
-<p class="image-container"><img style="width: 315.11px" src="img\17c46039e2601606.png"></p>
+<p class="image-container"><img style="width: 315.11px" src="img\\17c46039e2601606.png"></p>
 <p>Die CREATE TABLE-Definition (<a href="https://dev.mysql.com/doc/refman/5.7/en/create-table.html" target="_blank">https://dev.mysql.com/doc/refman/5.7/en/create-table.html</a>) ist in diesem Fall etwas komplexer. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\d0fb582708ba0c7f.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d0fb582708ba0c7f.png"></p>
 <p>Wir benötigen eine Zeile für die Definition der Fremdschlüsselspalte (katid). Zusätzlich benötigen wir eine Zeile für die FOREIGN KEY-Definition um festzulegen, auf welche Tabelle der Fremdschlüssel zeigen soll. Somit ergibt sich folgendes DDL-Statement:</p>
 <pre><code>create table produkt (
 pnr int primary key,
@@ -241,7 +241,7 @@ foreign key (abtid) references abteilung (abtid)  -- Fremdschlüssel-Constraint 
         <p>Folgende Informationen stehen zur Verfügung:</p>
 <p>Bestellung: (bestnr INT (PK, AUTO_INCREMENT), bestelldatum TIMESTAMP, #kunde ??? (NOT NULL), bearbeitet#email ??? (NOT NULL), #statusid ??? (NOT NULL) )</p>
 <p>Die Datentypen für die Fremdschlüssel zu ermitteln ist einfach (VARCHAR(100) für bearbeit#email sowie #kunde und INT für statusid, s.o.). Das einzige neue Konzept in dem zu erstellenden Statement ist das automatische Hochzählen einer Spalte. In der CREATE TABLE-Spezifikation finden wir das Schlagwort AUTO_INCREMENT, das auf Spaltenebene definiert werden kann:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\5e8ec7bdb0b39c29.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5e8ec7bdb0b39c29.png"></p>
 <p>Daneben nutzen wir auch noch FOREIGN-KEY Definitionen für die beiden Fremdschlüssel. Somit ergibt sich folgendes DDL-Statement:</p>
 <pre><code>create table bestellung ( 
 bestnr int auto_increment primary key, -- automatische Hochzählen aktivieren
@@ -258,7 +258,7 @@ foreign key (statusid) references status(statusid) -- FK-Constraint
 (CURTIME(), &#39;julia.meier@ab.de&#39;, &#39;peter.schulz@ab.de&#39;, 1), 
 (CURTIME(), &#39;julia.meier@ab.de&#39;, &#39;peter.schulz@ab.de&#39;, 1);</code></pre>
 <p>Mit &#34;select * from bestellung&#34; können wir prüfen, ob das automatische Hochzählen funktioniert hat:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\d08ab52b3399205b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d08ab52b3399205b.png"></p>
 <aside class="special"><p><strong>Hinweis:</strong> Bei AUTO_INCREMENT merkt sich die Datenbank intern den Zähler. Sollten Sie beispielsweise beide Bestellungen mit &#34;DELETE FROM bestellung&#34; löschen und erneut einfügen, dann erhalten diese die Bestellnummern 3 und 4. Sollten Sie manuell bspw. die Bestellnummer 7 eingefügt haben, dann setzt die Datenbank dort auf und würde beim nächsten AUTO_INCREMENT Bestellnummer 8 vergeben. Sie können den Zähler manuell mittels folgenden Statements manipulieren: &#34;alter table bestellung AUTO_INCREMENT = 1;&#34;</p>
 </aside>
 <h2 is-upgraded><strong>Ergebnis</strong></h2>
@@ -326,16 +326,16 @@ primary key (k1_katid, k2_katid) -- Definition eines zusammengesetzten Primärsc
       <google-codelab-step label="Cloud SQL-Instanz herunterfahren und bisher verbrauchtes Guthaben prüfen" duration="2">
         <h2 is-upgraded><strong>Herunterfahren der virtuellen Maschine</strong></h2>
 <p>Gehen Sie dazu im Bereich &#34;SQL&#34; in der Cloud Konsole auf Ihre Instanz und drücken Sie &#34;Stop&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\7825778de6fbdd77.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7825778de6fbdd77.png"></p>
 <aside class="warning"><p><strong>Wichtig: </strong>Schalten Sie die Instanz über &#34;START&#34; wieder ein (vor den Vorlesungen/Übungen bzw.  wenn Sie üben möchten) und verbinden Sie sich neu aus DBeaver + Cloud SQL-Proxy/IP-Freigabe.</p>
 </aside>
 <h2 is-upgraded><strong>Prüfung des bisher verbrauchten Guthabens</strong></h2>
 <p>Um zu prüfen, wie viel Guthaben Sie bereits in GCP verbraucht haben klicken Sie im Menü auf Billing (Abrechnung): </p>
-<p class="image-container"><img style="width: 624.00px" src="img\8c895ff9dd3527b8.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8c895ff9dd3527b8.png"></p>
 <p>Im folgenden Fenster müssen Sie ggf. bestätigen, dass Sie zum verknüpften Abrechnungskonto wechseln möchten. Klicken Sie auf Reports und entfernen Sie die Haken bei &#34;Promotions and others&#34; sowie &#34;Promotions&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\c4429956abc91f1b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c4429956abc91f1b.png"></p>
 <p>Im Anschluss sollten Sie bereits die entstandenen Kosten sehen. Um eine detaillierte Übersicht zu erhalten wählen Sie unter &#34;Group by&#34; &#34;SKU&#34; aus. Sie können hier auch den Betrachtungszeitraum anpassen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\966d5427624acdb4.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\966d5427624acdb4.png"></p>
 <p>In der Tabelle unter dem Diagramm können Sie detailliert sehen, welche Kosten Ihnen entstanden sind.</p>
 <h2 is-upgraded><strong>Ergebnis</strong></h2>
 <ol type="1" start="1">

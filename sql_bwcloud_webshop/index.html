@@ -32,7 +32,7 @@
 <aside class="special"><p><strong>Hinweis</strong>: In Ihrer persönlichen Datenbank sind bereits die Webshop-Tabellen angelegt und mit Beispieldaten befüllt. Sie müssen also keine DDL/DML-Skripte ausführen und können direkt mit DQL-Abfragen loslegen. Zum Üben der DDL/DML wird weiterhin die Verwendung Ihrer eigenen Datenbankinstanz in GCP empfohlen.</p>
 </aside>
 <p>Wir werden uns nur mittels DBeaver mit dieser Datenbank verbinden (siehe &#34;DB1) in folgendem Schaubild:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\c75195fcaa412720.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c75195fcaa412720.png"></p>
 <aside class="warning"><p><strong>Wichtig</strong>: Wir werden auch in diesem Fall eine verschlüsselte Verbindung zur Datenbank aufbauen. Diese kann mit ein paar Vorbereitungen aber direkt aus DBeaver hergestellt werden und muss nicht über externe Tools (wie Cloud SQL-Proxy) angelegt werden.</p>
 </aside>
 <h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
@@ -52,16 +52,16 @@
 <p>Dies ist die Schlüsseldatei, die Sie benötigen, um sich mit der virtuellen Maschine, auf der die Datenbank läuft, verschlüsselt verbinden zu können. Legen Sie diese in einen beliebigen Ordner ab. Die Datei muss in diesem Ordner dann dauerhaft liegen.</p>
 <h2 is-upgraded>Herunterladen der Datei &#34;Informationen zur Übungsdatenbank.pdf&#34;</h2>
 <p>In dieser Datei finden Sie alle notwendigen Informationen, um sich mit der Übungsdatenbank zu verbinden:</p>
-<p class="image-container"><img style="width: 316.61px" src="img\e87b992cc21b0c88.png"></p>
+<p class="image-container"><img style="width: 316.61px" src="img\\e87b992cc21b0c88.png"></p>
 <h2 is-upgraded><strong>Anlegen der Datenbankverbindung in DBeaver</strong></h2>
 <p>Mit diesen Informationen und der key-Datei können Sie eine neue Verbindung in DBeaver anlegen. Klicken Sie dazu auf &#34;Neue Verbindung&#34;:</p>
-<p class="image-container"><img style="width: 350.50px" src="img\4b76cf9ed6d515a9.png"></p>
+<p class="image-container"><img style="width: 350.50px" src="img\\4b76cf9ed6d515a9.png"></p>
 <p>Wählen Sie MySQL 5 und klicken Sie auf Next:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\e77da8be598f09f8.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e77da8be598f09f8.png"></p>
 <p>Im Reiter &#34;Allgemein&#34; geben Sie die Informationen ein, die Sie in der Datei &#34;Informationen zur Übungsdatenbank.pdf&#34; sehen. Es wurde für Sie ein Nutzer sowie eine eigene Datenbank angelegt. Diese Datenbank enthält alle Webshop-Tabellen, die auch schon befüllt sind. Das Kennwort finden Sie ebenfalls in der PDF-Datei.</p>
 <p>Im Reiter &#34;SSH&#34; stellen Sie die verschlüsselte Verbindung zu der MySQL-Maschine her. Dazu müssen Sie die Authentifizierungsmethode auf &#34;Public Key&#34; einstellen und die Datei &#34;key&#34; auswählen. Darüber hinaus sind das Kennwort zu dieser Datei und oben die IP-Adresse der Maschine einzutragen. </p>
 <p>Testen Sie, ob die Verbindung hergestellt werden kann und klicken Sie dann auf &#34;Finish&#34;. Sie sollten nun analog zu den GCP-Verbindungen eine weitere Datenbank in der Hierarchie sehen und Zugriff auf alle Tabellen haben. Mit &#34;F2&#34; können Sie die Datenbank umbenennen.</p>
-<p class="image-container"><img style="width: 392.75px" src="img\16412c4e4cfed415.png"></p>
+<p class="image-container"><img style="width: 392.75px" src="img\\16412c4e4cfed415.png"></p>
 <h2 is-upgraded><strong>Ergebnis</strong></h2>
 <ol type="1" start="1">
 <li>Sie haben nun eine weitere Verbindung in DBeaver zu einer Datenbank hergestellt. Im Gegensatz zu den bisherigen Datenbanksystemen in GCP ist diese Datenbank aber bereits vorbereitet und mit Daten befüllt. </li>
