@@ -20,3 +20,6 @@
 ### Verbindung zur Übungsdatenbank herstellen (optional)
 [Einrichtung einer weiteren Datenbankverbindung zum Üben (Fallstudie Webshop)](https://pkuep.github.io/hska-140-db/sql_bwcloud_webshop){:target="_blank" rel="noopener"}
 
+### Transaktionen in relationalen Datenbanken
+[Zweck und Handling von Transaktionen (Fallstudie Webshop)](https://pkuep.github.io/hska-140-db/sql_transactions_webshop){:target="_blank" rel="noopener"}
+
