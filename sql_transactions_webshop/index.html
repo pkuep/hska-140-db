@@ -212,19 +212,181 @@ bestellstatus = 1 # Bestellung erhält status &#34;bestellt&#34;</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="Übungen zu Transaktionen (Notebook &#34;Übungen&#34;)" duration="10">
-        <h2 is-upgraded><strong>Basis: Definition der Transaktion</strong></h2>
-<p>Die Transaktion besteht aus drei SQL-Statements. Zuerst legen wir eine neue Bestellung für den Beispielkunden an. In DBeaver könnte dieses SQL-Statement unter Verwendung von Variablen so aussehen:</p>
-<pre><code>set @kunde = &#39;lea.schmidt@xy.de&#39;; -- store email in variable
-set @mitarbeiter = &#39;julia.meier@ab.de&#39;; 
+      <google-codelab-step label="Definition der Transaktion" duration="12">
+        <h2 is-upgraded><strong>Basis: Schritte der Transaktion</strong></h2>
+<p>Die Transaktion besteht aus mehreren SQL-Statements, die im Folgenden erklärt werden.</p>
+<h3 is-upgraded>Nutzung von Variablen in SQL</h3>
+<p>Zuerst legen wir drei SQL-Variablen an: eine für den Kunden, dessen Warenkorb überführt werden soll (@kunde), eine für den Mitarbeiter, der die neue Bestellung bearbeiten soll (@mitarbeiter), und eine Variable, die wir später nutzen werden, um die neu erzeugte Bestellnummer zwischenzuspeichern (@bestnr). Dies ist somit identisch zu dem Code in Jupyter unter &#34;Beispielkunde und Bearbeiter&#34;. Führen Sie die folgenden Zeilen aus:</p>
+<pre><code>set @kunde = &#39;lea.schmidt@xy.de&#39;; -- store kunde in variable
+set @mitarbeiter = &#39;julia.meier@ab.de&#39;; -- store mitarbeiter in variable
+set @bestnr = 0; -- this variable will be filled with the newly generated bestnr</code></pre>
+<h3 is-upgraded>Anlegen einer neuen Bestellung für die Kundin</h3>
+<p>Danach können wir eine neue Bestellung für die Kundin anlegen und die automatisch generierte Bestellnummer in der Variablen @bestnr speichern. Wir lassen sie uns auch noch anzeigen:</p>
+<pre><code>-- create order with auto-generated ID (timestamp &#34;now&#34;)
+insert into bestellung (bestelldatum, bearbeitet_email, kunde, statusid) 
+values (now(),@mitarbeiter, @kunde, 1);
+
+-- retrieve order ID and store it in variable @bestnr
+select last_insert_id() into @bestnr;
+
+-- show @bestnr
+select @bestnr;</code></pre>
+<h3 is-upgraded>Kopieren der Warenkorbpositionen in Bestellpositionen der neuen Bestellung</h3>
+<p>Als nächstes nutzen wir ein Subselect, um alle Warenkorbpositionen der Kundin zu erhalten und in die Tabelle Bestellposition unter Verwendung der neu erstellten Bestellnummer einzufügen. Hierzu nutzen wir die Möglichkeit in SQL, dass man konstante Werte in die SELECT-Abfrage aufnehmen kann. </p>
+<p>Führen Sie zuerst folgendes SELECT-Statement aus, um das Prinzip der Verwendung von @bestnr zu verstehen:</p>
+<pre><code>select @bestnr, pnr, menge 
+from warenkorbposition w
+where kunde_email = @kunde;</code></pre>
+<p>Wir lassen uns hier den Warenkorb der Kundin anzeigen, fügen jeder Zeile aber noch eine Spalte mit einem konstantem Wert (dem von @bestnr) hinzu. Damit hat diese Abfrage genau das Format der Tabelle &#34;bestellposition&#34;. </p>
+<p>Man kann in einem INSERT einfach die Ergebnisse eines SELECTs verwenden (anstelle von VALUES ...). Mit folgendem Statement lassen sich alle Warenkorbpositionen, inklusive der Referenz zur neuen @bestnr in die Tabelle Bestellposition einfügen:</p>
+<pre><code>insert into bestellposition 
+select @bestnr, pnr, menge 
+from warenkorbposition w
+where kunde_email = @kunde;
+</code></pre>
+<h3 is-upgraded><strong>Leeren des Warenkorbs</strong></h3>
+<p>Zum Schluss möchten wir noch den Warenkorb der Kundin leeren:</p>
+<pre><code>-- delete rows from basket
+delete from warenkorbposition 
+where kunde_email = @kunde;</code></pre>
+<h2 is-upgraded><strong>Definition der Transaktion in DBeaver</strong></h2>
+<p>Grundsätzlich arbeiten DBeaver und - falls nicht anders angegeben - auch der Python mysql-connector im sogenannten auto-commit Modus. Jedes SQL-Statement wird sofort nach dessen Ausführung versucht, in der Datenbank zu persistieren (zu &#34;committen&#34;). In DBeaver sehen wir dies oberhalb vom Code-Editor:</p>
+<p class="image-container"><img style="width: 322.18px" src="img\\6254f13763c4fb90.png"></p>
+<p>In Python haben wir dies explizit beim Verbindungsaufbau angegeben:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c251f08d49c756d7.png"></p>
+<p>Wenn wir nun die SQL-Statements ausführen ist somit nicht garantiert, dass diese als eine einzige, atomare Einheit angesehen werden. Das heißt, wenn bspw. Das letzte Statement nicht funktionieren sollte (die Gründe dafür sind hier irrelevant), dann wird nicht automatisch alles vorherige (Bestellung anlegen, Warenkorbpositionen kopieren) rückgängig gemacht. Somit ist in der Datenbank ein Zustand entstanden, den wir nicht vorliegen haben möchten!</p>
+<p>Davor kann uns eine Transaktion schützen. Wenn wir alle Befehle als eine atomare Einheit definieren möchten, dann können wir eine Transaktion mit &#34;start transaction&#34; starten und am Ende mit einem expliziten &#34;commit&#34; diese beenden.</p>
+<pre><code>-- Requirement: transfer customer basekt positions to a new order as one atomic operation that
+--                                 can be rolled back if any of the single operations fails
+start transaction;
 
 -- create order with auto-generated ID (timestamp &#34;now&#34;)
-insert into bestellung (bestelldatum, bearbeitet_email, kunde, statusid) values (now(),@mitarbeiter, @kunde, 1);
-</code></pre>
+insert into bestellung (bestelldatum, bearbeitet_email, kunde, statusid) 
+values (now(), @mitarbeiter, @kunde, 1);
+        
+-- retrieve order ID and store it in variable @bestnr
+select last_insert_id() into @bestnr;
+        
+-- insert all rows from basket into order positions using the retrieved order ID
+insert into bestellposition 
+select @bestnr, pnr, menge 
+from warenkorbposition w
+where kunde_email = @kunde;
+        
+        
+-- delete rows from basket
+delete from warenkorbposition 
+where kunde_email = @kunde;
+
+commit;</code></pre>
+<p>Achtung: in DBeaver müssen Sie alle Codezeilen markieren und dann als Block ausführen, damit dies im Auto-Commit-Modus als eine Transaktion angesehen wird:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2814278a156f7960.png"></p>
+<p>Mit folgendem Befehl lassen wir uns die neu angelegte Bestellung mit allen Positionen anzeigen:</p>
+<pre><code>-- show new order with positions
+select * 
+from bestellung b 
+left join bestellposition bp on b.bestnr = bp.bestnr
+where b.bestnr = @bestnr;</code></pre>
+<p>Es sollten nun alle Bestellpositionen und die neue Bestellnummer zu sehen sein (diese ist bei Ihnen sicherlich anders):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\35d7eea116726918.png"></p>
+<p>Da der Warenkorb der Beispielkundin nun wieder leer ist können Sie diesen entweder in Python (Zelle &#34;Warenkorb vorbereiten&#34;) oder mittels folgenden Statements wieder befüllen:</p>
+<h2 is-upgraded><strong>Ausführung der Transaktion in Python</strong></h2>
+<p>Dieselbe Logik, die wir in DBeaver angewendet haben, kann durch folgende Code-Zeilen in Python umgesetzt werden (Achtung: das time.sleep(0) wird später erläutert).</p>
+<pre><code>with tunnel:
+    # Verbindung aufbauen
+    conn = mysql.connector.connect(host=hostname_db, user=username_db, passwd=password_db, autocommit=False, database=database, auth_plugin=&#39;mysql_native_password&#39;)
+    cur = conn.cursor()
+    
+    try:
+        # Transaktion starten (alle folgenden Operationen gemeinsam als atomar betrachten)
+        conn.start_transaction()
+        print(&#34;Transaktion &#39;Warenkorb in Bestellung überführen&#39; begonnen&#34;)
+        
+        # Bestellung mit auto-generierte Bestellnummer anlegen
+        sql = f&#34;insert into bestellung (bestelldatum, bearbeitet_email, kunde, statusid) values &#34; \
+              f&#34;(now(), &#39;{bearbeiter}&#39;, &#39;{kunde}&#39;, {bestellstatus})&#34;
+        print(f&#34;Führe aus: {sql}&#34;)
+        cur.execute(sql)
+        
+        # ID der eingefügten Bestellung holen
+        new_order_id = cur.lastrowid
+        
+        # ALle Positionen aus dem Warenkorb als Bestellpositionen übernehmen
+        sql = f&#34;insert into bestellposition &#34; \
+              f&#34;select {new_order_id}, pnr, menge from warenkorbposition w where kunde_email = &#39;{kunde}&#39;&#34;
+        print(f&#34;Führe aus: {sql}&#34;)
+        cur.execute(sql)        
+        
+        time.sleep(0)
+        
+        # Warenkorbpositionen löschen
+        sql = f&#34;delete from warenkorbposition where kunde_email = &#39;{kunde}&#39;&#34;
+        print(f&#34;Führe aus: {sql}&#34;)
+        cur.execute(sql)
+        
+        # Transaktion abschließen (&#34;commit&#34;)
+        conn.commit()
+        print(f&#34;Transaktion &#39;Warenkorb in Bestellung überführen&#39; abgeschlossen. Neue Bestellnummer: {new_order_id}&#34;)
+        
+    except Exception as e:
+        # Im Fehlerfall die bisherigen Änderungen rückgängig machen (&#34;rollback&#34;)
+        print(f&#34;Fehler: {e}&#34;)
+        print(f&#34;Bisherige Änderungen rückgänig machen. Neue Bestellnummer nicht mehr im System: {new_order_id}&#34;)
+        conn.rollback()
+            
+    conn.close()</code></pre>
+<aside class="warning"><p><strong>Achtung</strong>: Der Warenkorb der Beispielkundin ist nun wieder leer. Führen Sie im Jupyter Notebook erneut die Zelle &#34;Warenkorb vorbereiten&#34; aus.</p>
+</aside>
 <h2 is-upgraded><strong>Ergebnis</strong></h2>
-<ol type="1" start="2">
-<li>Sie haben nun alle Vorbereitungen getroffen, so dass wir für einen Beispielkunden mit einer Transaktion einen Warenkorb in eine Bestellung überführen zu können.</li>
+<ol type="1" start="1">
+<li>Sie haben nun gelernt, wie Transaktionen sowohl in einem Tool wie DBeaver als auch aus einer Programmierumgebung wie Python gestartet werden können.</li>
+<li>Als nächstes schauen wir uns den Nutzen von Transaktionen in verschiedenen Szenarien genauer an.</li>
 </ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Fehler in Transaktion" duration="8">
+        <h2 is-upgraded><strong>Fehler in DBeaver-Transaktion</strong></h2>
+<p>Wir provozieren nun, dass das letzte SQL-Statement in unserer DBeaver-Transaktion nicht mehr funktioniert. Ändern Sie das Statement zum Beispiel wie folgt:</p>
+<pre><code>-- delete rows from basket --&gt; ERROR
+delete from warenkorbposition 
+where kunde_em = @kunde;  -- attribute kunde_em does not exist</code></pre>
+<p>Führen Sie die gesamte Transaktion erneut aus und prüfen Sie, ob die neue Bestellnummer angelegt wurde. Den auftretenden DBeaver &#34;Execution Error&#34; beantworten Sie bitte mit &#34;Stoppen&#34;:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\43d138a003949f14.png"></p>
+<p>Schauen Sie sich mit folgendem Statement alle Bestellungen der Kundin an. Prüfen Sie, ob die neue Bestellung in der Datenbank bereits enthalten ist:</p>
+<pre><code>select * 
+from bestellung b 
+left join bestellposition bp on b.bestnr = bp.bestnr
+where b.bestnr = @bestnr;</code></pre>
+<aside class="special"><p><strong>Erkenntnis</strong>: Offensichtlich schauen wir derzeit auf einen &#34;Zwischenzustand&#34; der Datenbank. Die neue Bestellung ist enthalten, obwohl sie aufgrund des Fehlers im letzten Statement nicht mehr hätte vorhanden sein sollen. Datenbanktools wie DBeaver machen nicht sofort automatisch alle vorherigen Statements rückgängig. Dies müssen wir explizit durch ein sogenanntes ROLLBACK vornehmen.</p>
+</aside>
+<p>Geben Sie in DBeaver folgendes Statement ein und führen Sie dieses aus. Prüfen Sie danach erneut, ob die neue Bestellung noch in der Datenbank vorhanden ist.</p>
+<pre><code>rollback;</code></pre>
+<aside class="special"><p><strong>Erkenntnis</strong>: Nach dem ROLLBACK ist die Datenbank wieder in einem von uns als konsistent definierten Zustand: Da beim Anlegen der Bestellung nicht alle Schritte sauber durchgelaufen sind, haben wir nun wieder keine Bestellung im System.</p>
+</aside>
+<h2 is-upgraded><strong>Fehler in Python-Transaktion</strong></h2>
+<p>Provozieren Sie denselben Fehler in der Python-Transaktion. Schauen Sie sich den Code genau an und versuchen Sie nachzuvollziehen, wie das Programm mit einem Fehler umgeht.</p>
+<aside class="special"><p><strong>Erkenntnis</strong>: In Python führt ein Fehler in einer Transaktion zu einem Ausnahmezustand (Exception). Diese Exception wird &#34;gefangen&#34; und im Fehlerfall wird das Rollback ausgeführt.</p>
+</aside>
+<p>Prüfen Sie in DBeaver, ob die in Python ausgegebene Bestellung wirklich nicht im System ist.</p>
+<h2 is-upgraded><strong>Zusammenfassung</strong></h2>
+<p>Im Falle von Fehlern erlaubt uns die Datenbank, alle Schritte bis zum Auftreten des Fehlers rückgängig zu machen (ROLLBACK). Damit werden inkonsistente und unerwünschte Zustände in unserem Datenmodell vermieden. Läuft alles einwandfrei durch, dann ist nach dem COMMIT die Transaktion abgeschlossen und die Daten sind vollständig konsistent.</p>
+<p>Offensichtlich kann es aber auch &#34;Zwischenzustände&#34; im Rahmen von Transaktionen geben. Dies schauen wir uns im Folgenden genauer an.</p>
+<h2 is-upgraded><strong>Ergebnis</strong></h2>
+<ol type="1" start="1">
+<li>Sie haben sowohl in DBeaver, als auch aus Python heraus in Ihrer Datenbank nun Transaktionen ausgeführt. Diese fassen mehrere atomare Operationen (SQL-Befehle) zu einer gesamten atomaren Operation zusammen. Schlägt einer der Befehle fehl, dann können wir durch ROLLBACK dennoch die Konsistenz sicherstellen. </li>
+<li>Die Anwendung (bspw. die Website), die die Datenbank verwendet, muss dann entsprechend reagieren (bspw. dem User eine Fehlermeldung anzeigen, dass die Bestellung nicht abgeschlossen werden konnte).</li>
+<li>Wir haben bisher absichtlich Fehler in den Code unserer Transaktion eingebaut. Dies ist natürlich ein Sonderfall, aber durch den Mehrbenutzerbetrieb und konkurrierenden Zugriff muss man bei Transaktionen immer damit rechnen, dass diese nicht vollständig erfolgreich durchlaufen kann.</li>
+<li>Transaktionen sind somit ein sehr mächtiges Mittel, das von sehr großem Nutzen für RDBMS und die Konsistenz von Datenbanken darstellt.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Konkurrierende Zugriffe und deren Handling in Transaktionen" duration="8">
+        <h2 is-upgraded><strong>TBD</strong></h2>
+<p>tbd</p>
 
 
       </google-codelab-step>
