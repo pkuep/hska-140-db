@@ -384,9 +384,62 @@ where b.bestnr = @bestnr;</code></pre>
 
       </google-codelab-step>
     
-      <google-codelab-step label="Konkurrierende Zugriffe und deren Handling in Transaktionen" duration="8">
-        <h2 is-upgraded><strong>TBD</strong></h2>
-<p>tbd</p>
+      <google-codelab-step label="Konkurrierende Zugriffe und deren Handling in Transaktionen" duration="10">
+        <h2 is-upgraded><strong>Künstliche Verzögerung der (fehlerhaften) Transaktion</strong></h2>
+<p>Um konkurrierende Zugriffe simulieren zu können werden wir nun die Transaktion in Python mittels &#34;sleep&#34;-Funktion verzögern. In der Zwischenzeit können wir in DBeaver testen, welche Auswirkungen unterschiedliche Isolationslevel haben.</p>
+<p>Stellen Sie die Verzögerung innerhalb der Transaktion bspw. auf 20s. Lassen Sie die Transaktion weiterhin scheitern (durch den zuvor eingeführten Fehler, siehe Screenshot), damit das Einfügen einer Bestellung rückgängig gemacht wird (rollback):</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\edc7e3ac783f98c3.png"></p>
+<h2 is-upgraded><strong>Einstellung Isolationsgrade (Fall 1: Lesezugriffe während Transaktion)</strong></h2>
+<p>Starten Sie die Transaktion in Python und prüfen Sie, welche Isolationsgrade zu einer Anomalie führen. Um welche Anomalie handelt es sich? Zur Erinnerung:</p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5bf842a3c2fcc3eb.png"></p>
+<h2 is-upgraded><strong>Einstellung Isolationsgrade (Fall 2: Transaktion zwischen Lesezugriffen)</strong></h2>
+<h3 is-upgraded><strong>Vorbereitungen</strong></h3>
+<p>Stellen Sie die Verzögerung im Python-Skript wieder auf 0s. Entfernen Sie den Fehler, so dass am Ende der Transaktion eine Bestellung angelegt wird (commit soll ausgeführt werden). </p>
+<p>Schalten Sie Ihre DBeaver Session um auf manuelles Commit und den Isolationsgrad auf &#34;Lesezugriff bestätigt&#34;:</p>
+<p class="image-container"><img style="width: 306.50px" src="img\\141c9bbabc152904.png"></p>
+<p>Fügen Sie folgenden Code in DBeaver ein, anhand dessen wir verschiedene Isolationsgrade testen möchten:</p>
+<pre><code>-- Vorbereitungen - Kunde setzen und Bestellhistorie leeren
+set @kunde = &#39;lea.schmidt@xy.de&#39;;
+delete from bestellung where kunde=@kunde;
+
+-- Start der Transaktion (start transaction nicht nötig, da DBeaver auf manuelles Commit eingestellt)
+
+-- erstes Lesen der Anzahl Bestellungen (leer)
+select * from bestellung where kunde=@kunde; 
+
+-- hier könnten weitere Befehle folgen 
+
+-- UPDATE der Bestellung funktioniert (vgl. # Updated Rows! Widerspruch!)
+update bestellung set bestelldatum = &#39;2000-01-01 00:00:01&#39; where kunde=@kunde;
+
+-- Ende der Transaktion (commit nicht nötig, wird in DBeaver durch den Button &#34;Commit&#34; ausgelöst)
+
+</code></pre>
+<p>Führen Sie die Vorbereitungen (die ersten zwei Statements) aus, d.h. setzen Sie die Variable @kunde und leeren Sie alle Bestellungen der Kundin. Drücken Sie in DBeaver auf Commit, damit das Leeren wirksam wird:</p>
+<p class="image-container"><img style="width: 192.00px" src="img\\56cb4be38ae8092b.png"></p>
+<h3 is-upgraded><strong>Nicht-blockerendes Lesen</strong></h3>
+<p>Führen Sie das erste &#34;select * from ...&#34; aus (Strg+Enter). Damit sollte eine Transaktion in DBeaver gestartet sein. Dies ist erkennbar an der Historie:</p>
+<p class="image-container"><img style="width: 370.00px" src="img\\c9d8540530083bca.png"></p>
+<p>Eine Query befindet sich somit bisher im Transaktions-Log. Wir haben darin die Bestellungen der Kundin ausgegeben. Da wir diese geleert haben ist die Ergebnismenge auch leer.</p>
+<p>Als nächstes führen wir die Transaktion in Python aus. Eine Bestellung wird angelegt und die Transaktion wird &#34;committed&#34; (siehe print-Ausgabe in Jupyter): </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6c4bf5a3c62eb03b.png"></p>
+<p>Danach gehen wir wieder in DBeaver und führen den Rest unserer dortigen Transaktion aus (update bestellung ...). </p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e3b8582d42792fc7.png"></p>
+<aside class="warning"><p><strong>Achtung</strong>: Wir befinden uns in derselben Transaktion und einmal wurden 0 Zeilen in Bestellung gelesen, im UPDATE wurde dann eine Zeile als aktualisierbar erkannt. Dies ist ein Widerspruch und ggf. könnte die Transaktionslogik zu langfristigen Inkonsistenzen führen.</p>
+</aside>
+<p>Die beobachtete Anomalie ist eine &#34;Phantom Row&#34;. Dieser Fall führt somit zu Inkonsistenzen in der DBeaver-Transaktion und es könnte Anwendungsfälle geben, bei denen dies kritisch ist. </p>
+<p>Am Ende &#34;committen&#34; wir diese Transaktion und schließen sie damit ab. </p>
+<p>Bitte löschen Sie erneut die Bestellungen der Kundin (denken Sie auch hier an das abschließende Commit).</p>
+<h3 is-upgraded><strong>Blockierendes Lesen</strong></h3>
+<p>Sollte das Ergebnis des ersten Lesevorgangs für die Konsistenz der gesamten Transaktion entscheidend sein, dann benötigen wir blockierendes Lesen, damit die &#34;Phantom Row&#34;-Problematik nicht auftreten kann.</p>
+<p>Stellen Sie dazu die DBeaver-Transaktion auf &#34;Serializable&#34; um:</p>
+<p class="image-container"><img style="width: 326.50px" src="img\\91acaf96faea734b.png"></p>
+<p>Führen Sie die Schritte aus &#34;Nicht-blockierendes Lesen&#34; erneut durch. Was beobachten Sie?</p>
+<p>Der nun eingestellte Modus erlaubt zwar das höchste Level an Konsistenz, jedoch kann sich die Blockierung von Transaktionen aufgrund von Lese-Statements negativ auf die Gesamtsystem-Latenz auswirken. Dies gilt insbesondere bei einer hohen Anzahl von Nutzern.</p>
+<h3 is-upgraded><strong>Vermeidung eines &#34;Dirty Write&#34;</strong></h3>
+<p>Abschließend möchten wir nun noch das Verhalten der Datenbank beobachten, durch das ein Schreibzugriff einer Transaktion sich auf den Zwischenzustand einer anderen Transaktion auswirkt. Dazu stellen wir time.sleep(20) ein, so dass die Python-Transaktion wieder zwischendrin 20s blockiert ist. Die DBeaver-Transaktion belassen wir auf &#34;Serialisierbar&#34;</p>
+<p>Als nächstes führen wir diese aus und führen dann den update-Befehl aus unserer DBeaver-Transaktion aus. </p>
+<p>Was beobachten Sie? Wie verhalten sich die anderen Isolationslevel?</p>
 
 
       </google-codelab-step>
@@ -406,7 +459,7 @@ where b.bestnr = @bestnr;</code></pre>
       </google-codelab-step>
     
       <google-codelab-step label="Glückwunsch" duration="1">
-        <p>Herzlichen Glückwunsch, Sie haben nun eine wichtige Funktionalität von relationalen Datenbankmanagementsystemen kennengelernt: Transaktionen.</p>
+        <p>Herzlichen Glückwunsch, Sie haben nun eine wichtige Funktionalität von relationalen Datenbankmanagementsystemen kennengelernt: Transaktionen und Ablaufkonsistenz.</p>
 <aside class="special"><p><strong>Hinweis: </strong>Sie können nun dieses Browser-Tab schließen.</p>
 </aside>
 
