@@ -71,22 +71,22 @@
       <google-codelab-step label="Normalisierung - 1. Normalform: Lösungsvorschlag" duration="4">
         <h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
 <p>Die folgende Tabelle stellt die 1. Normalform für die Quelldaten des Shop-Besitzers dar:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\fd9f019df76e565.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\12eb78fc7202cfcd.png"></p>
 <p>Der Primärschlüssel setzt sich aus drei Attributen (=Spalten) zusammen: Bestellnummer, Artikelnummer und KategorieID. Die Kombination dieser drei Attribute ist geeignet, jede Zeile eindeutig zu identifizieren. </p>
 <h2 is-upgraded><strong>Prüfung von Duplikaten in Excel</strong></h2>
 <p>Wenn Sie prüfen möchten, ob die Ausprägungen des Primärschlüssels in Excel wirklich eindeutig sind, d.h. keine Duplikate existieren, können Sie dies mit Excel umsetzen.</p>
 <h3 is-upgraded><strong>Vorbereitung: Generierung einer Schlüsselspalte</strong></h3>
 <p>Leider erlaubt es Excel nicht ohne Weiteres, über eine Kombination aus Spalten Duplikate zu finden. Eine einfache Möglichkeit ist aus den drei Schlüsselspalten eine weitere Spalte zu generieren, die die Schlüsselspalten einfach kombiniert.</p>
 <p>Legen Sie dazu eine Spalte bspw. mit der Bezeichnung &#34;Key&#34; an:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\d35e7d815acdf23a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f7e0baa90abe8e09.png"></p>
 <p>Tragen Sie in die erste Zelle der Spalte (hier A17) folgende Formel ein (Achtung: Zeilennummern ggf. anpassen):</p>
 <pre><code>=VERKETTEN(C17;D17;F17)</code></pre>
 <p>Das Ergebnis sollte so aussehen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\2619d9f8d59769ad.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\91d8e1dcb561b889.png"></p>
 <p>Setzen Sie die Formel über alle Zeilen fort, indem Sie wie im Screenshot dargestellt mit der Maus über die rechte untere Ecke der markierten Zelle gehen (der Mauszeiger wird dann zu einem schwarzen &#34;+&#34;) und doppelklicken. Es sollten jetzt alle Zeilen ausgefüllt sein. Markieren Sie diese und wählen Sie dann in &#34;Bedingte Formatierung&#34; das hervorheben doppelter Werte aus:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\367f6f4ef44ab8ce.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\bcd1aabb040b7a4e.png"></p>
 <p>Bestätigen Sie die Darstellung (&#34;hellrote Füllung&#34;). Es sollte kein doppelter Wert vorhanden sein. Wenn Sie einen Schlüssel gebildet hätten, der nicht jede Zeile eindeutig identifiziert (bspw. Bestellnummer und Artikelnummer), dann sind Duplikate sofort sichtbar und damit die Kombination aus Attributen als Primärschlüssel nicht geeignet. In diesem Beispiel wurden nur Bestellnummer und Artikelnummer gewählt:</p>
-<p class="image-container"><img style="width: 350.50px" src="img\\46acc9ee8be5465a.png"></p>
+<p class="image-container"><img style="width: 350.50px" src="img\\aafd32a3bd4296b0.png"></p>
 <p>Fahren Sie nun mit der Normalisierung fort, indem Sie die Tabelle in die zweite Normalform überführen.</p>
 <aside class="warning"><p><strong>Hinweis</strong>: Ihnen ist vielleicht schon aufgefallen, dass die Datenstruktur nicht wirklich gelungen zu sein scheint, auch wenn wir einen formell korrekten Primärschlüssel definiert haben. Dieses Problem schauen wir uns später an. Zunächst halten wir uns an die Vorgaben der Normalisierung, ohne die Daten weiter zu hinterfragen.</p>
 </aside>
@@ -117,15 +117,15 @@
 <li>Bestelldatum, Kundennummer, Kunde, Straße, PLZ, Ort → abhängig von Bestellnummer</li>
 </ul>
 <p>Damit verbleiben in der &#34;Originaltabelle&#34; noch vier Spalten und diese könnte fachlich als &#34;Bestellhistorie-und-Kategoriezuordnung&#34; bezeichnet werden. Mit diesem Vorgehen vermeiden wir zahlreiche Redundanzen im Hinblick auf Stammdaten (Artikeldaten, Kategoriedaten) sowie Bewegungsdaten (&#34;Kopfinformationen&#34; (=Kundendaten und Bestelldatum) zu Bestellungen). Es verbleiben noch die &#34;Positionsinformation&#34; der einzelnen Bestellungen (=bestellter Artikel und dessen Menge) sowie die Kategoriezuordnung:</p>
-<p class="image-container"><img style="width: 381.45px" src="img\\38f68684866f0b1f.png"></p>
+<p class="image-container"><img style="width: 381.45px" src="img\\3f286f8b7088edde.png"></p>
 <aside class="warning"><p><strong>Hinweis</strong>: Spätestens hier sollten wir sehen, dass diese Tabelle zwei unterschiedliche Aspekte (Bestellpositionen und Kategoriezuordnung) vermischt. Die Normalisierung &#34;stört&#34; dies bis hierhin jedoch nicht. Dazu später mehr.</p>
 </aside>
 <p>Die Spalten, die abhängig von Aritkelnummer sind, werden in eine Tabelle &#34;Artikel&#34; ausgelagert. Sie können die Duplikate leicht von Excel entfernen lassen. Kopieren Sie dazu die beiden Spalten &#34;Artikelnummer&#34; und &#34;Artikel&#34; komplett aus der Originaltabelle (inklusive Duplikaten). Markieren Sie die Zellen der Tabelle und wählen Sie aus dem Reiter &#34;Daten&#34; die Funktion &#34;Duplikate entfernen&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3c0575f32cd1f506.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7159a1793538e02a.png"></p>
 <p>Sie erhalten die Meldung, dass Duplikate entfernt wurden, so dass Ihre Relation &#34;Artikel&#34; nun so aussehen sollte:</p>
-<p class="image-container"><img style="width: 429.61px" src="img\\db823ff6933415ed.png"></p>
+<p class="image-container"><img style="width: 429.61px" src="img\\2af92ab44c770432.png"></p>
 <p>Analog können Sie mit den beiden Relationen &#34;Kategorie&#34; und &#34;Bestellung&#34; vorgehen, die wie folgt aussehen sollten:</p>
-<p class="image-container"><img style="width: 190.24px" src="img\\79cf2ab5363a7528.png"><img style="width: 624.00px" src="img\\2e8911b17135bf34.png"></p>
+<p class="image-container"><img style="width: 190.24px" src="img\\8348e7577470db5c.png"><img style="width: 624.00px" src="img\\4272c9481dca891e.png"></p>
 <p>Insgesamt haben wir nun also 4 Tabellen, die sich gemeinsam in der 2. Normalform befinden.</p>
 
 
@@ -149,14 +149,14 @@
       <google-codelab-step label="Normalisierung - 3. Normalform: Lösungsvorschlag" duration="4">
         <h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
 <p>Die folgenden Tabellen stellen die 3. Normalform für die Quelldaten des Shop-Besitzers dar. In der Tabelle Bestellung finden sich die Attribute Kunde, Straße, PLZ, Ort, die indirekt über das Attribut Kundennummer vom Primärschlüssel vom abhängen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\2181237e2d0c0c59.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\6663899edee50d58.png"></p>
 <p>Diese Attribute lagern wir somit in eine eigene Tabelle aus. Damit vermeiden wir im Beispiel die Redundanz, dass Daten über Kunde 147 (Meier) mehrfach gespeichert werden müssen (dieser Kunde hat im Beispiel als einziger zwei Bestellungen getätigt).</p>
 <p>Die Relation Bestellung wird somit aufgeteilt in zwei Relationen: Bestellung und Kunde. Die Relation Bestellung enthält noch folgende Attribute:</p>
-<p class="image-container"><img style="width: 300.50px" src="img\\a5a6ee0ed055d170.png"></p>
+<p class="image-container"><img style="width: 300.50px" src="img\\6a1398f3d66d85e2.png"></p>
 <p>Die Relation Kunde wird von Duplikaten bereinigt und sieht dann so aus:</p>
-<p class="image-container"><img style="width: 515.50px" src="img\\defe612781ab3b08.png"></p>
+<p class="image-container"><img style="width: 515.50px" src="img\\f299f72fd3e2daf8.png"></p>
 <p>Folgende Tabellen bilden somit gemeinsam die Quelldaten ab. Das Schema befindet nun in dritter Normalform:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\8771e9bcf5450e20.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d105aac59d53899a.png"></p>
 <h2 is-upgraded><strong>Ergebnisse</strong></h2>
 <ol type="1" start="1">
 <li>Sie haben nun eine Originaltabelle in die dritte Normalform überführt. </li>
@@ -176,11 +176,11 @@
       <google-codelab-step label="ERM aus Tabellen erstellen: Lösungsvorschlag" duration="4">
         <h2 is-upgraded>Lösungsvorschlag</h2>
 <p>Ein mögliches ERM könnte so aussehen. Achtung: die Kardinalitäten (insbesondere min-Kardinalitäten) können teilweise nicht eindeutig aus den Daten ermittelt werden. Die gewählten &#34;0&#34;-min-Kardinalitäten erkennt man so nicht in den Daten! Es könnte aber Kategorien und Artikel geben, die keiner Bestellung zugeordnet sind. Auch könnte es schon Kunden geben, die noch keine Bestellung getätigt haben.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\407b423eb4b7a455.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c50547d38d8a0262.png"></p>
 <h2 is-upgraded><strong>Frage</strong></h2>
 <p>Wie könnten die Daten sachlogisch besser modelliert werden, um weitere Redundanzen zu vermeiden und die abzubildenden Zusammenhänge korrekt wiederzugeben? Modellieren Sie ein entsprechendes ERM.</p>
 <p>Schauen Sie sich dazu beispielhaft die folgenden Zeilen der Tabelle &#34;Bestellhistorie-und-Kategoriezuordnung&#34; an:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\243f4d0391e85b28.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\486a3124549a445b.png"></p>
 
 
       </google-codelab-step>
@@ -189,7 +189,7 @@
         <h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
 <p>In der Originaltabelle wurden offensichtlich zwei voneinander sachlogisch unabhängige Aspekte des Geschäftsprozesses und der Stammdaten umgesetzt: die Kategoriezuordnung wurde mit der Zuordnung von Artikeln zu Bestellungen (sogenannte Bestellpositionen) vermischt. </p>
 <p>Eine Möglichkeit, diese &#34;Vermischung&#34; aufzulösen wäre im ERM die folgende:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\46c5c5647d4f44a6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1c650b2c3a7c332b.png"></p>
 <h2 is-upgraded><strong>Aufgabe</strong></h2>
 <p>Setzen Sie das oben dargestellte ERM in der Excel-Datei um. Einen Lösungsvorschlag finden Sie auf der nächsten Seite.</p>
 
@@ -199,7 +199,7 @@
       <google-codelab-step label="Weitere Optimierung der Datenstruktur - Umsetzung in Excel" duration="4">
         <h2 is-upgraded><strong>Lösungsvorschlag</strong></h2>
 <p>Die folgende Tabellenstruktur setzt das ERM um und hat die Redundanzen so gut es geht elimiert.</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\a07dc637a1ca9233.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\4b3063a46a137d5a.png"></p>
 <aside class="special"><p><strong>Hinweis</strong>: Derartige Probleme in der Datenhaltung werden im Rahmen der Normalisierung in auf die 3. NF folgenden Schritten (vgl. Hierzu zum Beispiel <a href="http://www.staud.info/rm/rm_f_12.htm" target="_blank">Boyce-Codd-Normalform</a>, <a href="http://www.staud.info/rm/rm_f_13.htm" target="_blank">4. NF</a> und <a href="http://www.staud.info/rm/rm_f_14.htm" target="_blank">5. NF</a>) behandelt. Wir gehen im Rahmen dieser Veranstaltung nicht weiter darauf ein merken uns aber, dass die 3. NF nicht alle &#34;Probleme&#34; der Datenhaltung lösen kann.</p>
 </aside>
 
@@ -209,17 +209,17 @@
       <google-codelab-step label="Ausblick: Verknüpfung von Tabellen in Excel" duration="10">
         <h2 is-upgraded><strong>Ziel</strong></h2>
 <p>Wir möchten eine Umsatzauswertung pro Artikel erstellen. Wir möchten zu jeder Bestellposition herausfinden, wie der Listenpreis des Artikels und die Artikelbezeichnung lauten. Durch die Normalisierung sind die Daten nun (korrekterweise) über verschiedene Tabellen verteilt:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\208bad6d8681d13a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\41af8cc502825b0c.png"></p>
 <h2 is-upgraded><strong>Vorgehen</strong></h2>
 <p>In einem RDBMS ist die Verknüpfung von Tabellen sehr leicht möglich (Joins). In Excel können wir dies auch erreichen: in der Tabelle Bestellposition können wir über einen sogenannten &#34;SVERWEIS&#34; die Daten aus der Tabelle Artikel für Analysezwecke abrufen. Wir möchten diese nicht manuell kopieren, sondern automatisch einen Verweis über den Fremdschlüssel &#34;#Artikelnummer&#34; auflösen lassen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\378d2f9aeff5e3b7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\396725a74833a1bc.png"></p>
 <p>Möchten wir den Artikelnamen zu einer Artikelnummer ermitteln, so können wir in Spalte D, Zeile 161 (in diesem Beispiel) folgendes eingeben:</p>
 <pre><code>=SVERWEIS(B161;$H$162:$J$168;2;FALSCH)</code></pre>
 <p>Wir möchten über den Fremdschlüssel (Zelle B161) aus der Tabelle Artikel (H162 bis J168; durch die Dollarzeichen wird dieser Bereich fixiert und wir können die Formel später leicht wiederverwenden) die zweite Spalte (Parameter &#34;2&#34;) bekommen. Der letzte Befehl &#34;FALSCH&#34; stellt ein, dass wir eine genaue Übereinstimmung der Artikelnummer fordern (keine &#34;ungefähre&#34; Übereinstimmung). Wenn Sie die Formel wie oben dargestellt auf die weiteren Zeilen erweitern, sollte folgendes angezeigt werden:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3897accbcd8f09c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d4f92458637de848.png"></p>
 <h2 is-upgraded><strong>Aufgabe</strong></h2>
 <p>Zeigen Sie in Spalte E den Listenpreis des Artikels mittels Verwendung von SVERWEIS an. Berechnen Sie zusätzlich auch den Umsatz je Bestellposition. Das Ergebnis sollte so aussehen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3e7ed92ea61440f6.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b5702c39271b05f.png"></p>
 <p><strong>Lösung</strong></p>
 <p>In Zelle E161 ist folgender Code einzutragen und auf die Folgezellen zu erweitern, um den Listenpreises des Artikels aus der Bestellposition &#34;zu holen&#34;:</p>
 <pre><code>=SVERWEIS(B161;$H$162:$J$168;3;FALSCH)</code></pre>
@@ -232,13 +232,13 @@
     
       <google-codelab-step label="Ausblick: Auswertung mit einer Pivottabelle" duration="13">
         <h2 is-upgraded><strong>Ziel</strong></h2>
-<p>Die Aufgabenstellung war: &#34;Wir möchten eine Umsatzauswertung pro Artikel erstellen. Wir möchten zu jeder Bestellposition herausfinden, wie der Listenpreis des Artikels und die Artikelbezeichnung lauten.&#34; Durch SVERWEIS konnten wir folgende Tabelle erzeugen. Bitte markieren Sie diese Tabelle und klicken Sie auf &#34;PivotTable&#34;:<img style="width: 624.00px" src="img\\9ca04fdcba650af3.png"></p>
+<p>Die Aufgabenstellung war: &#34;Wir möchten eine Umsatzauswertung pro Artikel erstellen. Wir möchten zu jeder Bestellposition herausfinden, wie der Listenpreis des Artikels und die Artikelbezeichnung lauten.&#34; Durch SVERWEIS konnten wir folgende Tabelle erzeugen. Bitte markieren Sie diese Tabelle und klicken Sie auf &#34;PivotTable&#34;:<img style="width: 624.00px" src="img\\2f834746055f2e16.png"></p>
 <p>Sie werden gefragt, wo die PivotTabelle angelegt werden soll. Standard ist ein neues Arbeitsblatt, was wir auch verwenden möchten:</p>
-<p class="image-container"><img style="width: 470.39px" src="img\\d1af84ba29fc107c.png"></p>
+<p class="image-container"><img style="width: 470.39px" src="img\\d78bba4f81f63e88.png"></p>
 <p>SIe können dann im Bereich &#34;PivotTable-Felder&#34; den Artikelnamen per Drag&amp;Drop in den Bereich &#34;ZEILEN&#34; bewegen. Wir möchten also eine Auswertung pro Artikel und jeder Artikel soll in einer Zeile angezeigt werden. Als Aggregation möchten wir die Summe des Umsatzes pro Artikel berechnen. Dazu ziehen wir Umsatz in den Bereich &#34;WERTE&#34;. Die Summe wird automatisch als Aggregationsfunktion verwendet. Ihre Tabelle sollte danach so aussehen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\68b12bbe54696acd.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\28ec56d91ad50357.png"></p>
 <p>Sie können die Aggregatsfunktion beispielsweise ändern, so dass die Anzahl an Bestellpositionen anstelle des Umsatzes je Artikel ermittelt wird. Klicken Sie dazu auf den Pfeil neben &#34;Summe von Umsatz&#34; (siehe folgender Screenshot), dann auf &#34;Wertfeldeinstellungen&#34; und dann wählen Sie Anzahl statt Summe aus. Die Auswertung sollte dann so aussehen (nach Umstellung des Zahlenformats von Währung auf &#34;Standard&#34;):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\e40c97703d0bd3f9.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\109a037b6044b04f.png"></p>
 
 
       </google-codelab-step>

@@ -48,27 +48,27 @@
 <p>Um direkt &#34;losprogrammieren&#34; zu können legen wir uns nun eine von Google Cloud leicht einzurichtende Data Science-Programmierumgebung an. Das &#34;Project Juypter&#34; (<a href="https://jupyter.org/" target="_blank">https://jupyter.org/</a>) bietet eine im Data Science-Umfeld vielfach verwendete Umgebung, mit der insbesondere in Python in einer Art &#34;Notizbuch&#34; programmiert werden kann. Wir können Text mit Code teilen und so gut lesbare Programme entwickeln. Achtung: diese eignen sich üblicherweise nicht für den produktiven Einsatz von Applikationen, sondern eher für die Datenexploration.</p>
 <h2 is-upgraded><strong>Anlegen eines Projekts</strong></h2>
 <p>Loggen Sie sich bitte unter <a href="https://console.cloud.google.com/" target="_blank">https://console.cloud.google.com</a> mit Ihrem Account ein. Sie sollten den bereitgestellten Voucher eingelöst und ein Projekt angelegt haben. Sollte das Projekt noch nicht existieren, so legen Sie dies bitte wie im Folgenden dargestellt an:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\acea4233653b5740.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ecd7d25dcc71b46c.png"></p>
 <h2 is-upgraded><strong>Erstellung der Notebook-Instanz in der AI-Plattform</strong></h2>
 <p>Bitte klicken Sie auf das &#34;Burger-Menü&#34; oben links und öffnen Sie die &#34;AI-Plattform&#34; unter &#34;Artificial Intelligence&#34; und dann klicken Sie auf Notebooks:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\96496d7014a1a0dd.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\87fa7358c26a76b2.png"></p>
 <p>Bitte klicken Sie auf &#34;Enable API&#34;, damit Sie Zugriff auf diese GCP-Funktion &#34;Notebooks API&#34; haben. Dies kann einen Moment dauern. Ggf. werden Sie auf die API-Übersicht weitergeleitet; klicken Sie erneut auf AI Platform → Notebooks.</p>
 <p>Wir legen nun eine neue Instanz an. Eine Instanz ist in diesem Fall eine virtuelle Maschine, die gestartet wird, auf der Jupyter installiert wird und es wird eingestellt, dass wir auf extern auf die Jupyter Notebooks zugreifen können. Klicken Sie auf &#34;New Instance&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\be45e1b049252e75.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2976d57c7eb7867b.png"></p>
 <p>Wählen Sie &#34;Python 2 and 3&#34; aus:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\943855e30814faf0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5e926345752d4063.png"></p>
 <p>Benennen Sie die Instanz bspw. &#34;&lt;Ihre Initialien&gt;-notebook&#34;, in meinem Fall also bspw. &#34;pk-notebook&#34;. Selektieren SIe die Region &#34;us-central1&#34; - dies ist in vielen GCP-Diensten die Standardregion, in der wir alle Funktionen laufen lassen möchten:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\5769a2a83848836e.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\619707c98dc9e96c.png"></p>
 <p>Warten Sie so lange, bis in der Übersicht der Zugriff auf das Web Interface angezeigt wird:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\d83b5f87758ca39.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3794ea6b4aab4415.png"></p>
 <p>Klicken Sie auf &#34;Open Jupyterlab&#34;.</p>
 <aside class="warning"><p><strong>Warnung: </strong>Der Betrieb der Notebook-Instanz ist kostenpflichtig und schmälert Ihr Budget. Lassen Sie die Instanz daher nur laufen, wenn Sie sie wirklich benötigen. Sie können sie im Anschluss an diese Übung löschen oder ausschalten. Wenn Sie den Quellcode später noch einmal wiederverwenden möchten, dann schalten Sie die Maschine nur aus (siehe letzter Schritt). Aber Achtung: nur wenn Sie die Maschine komplett löschen fallen gar keine Kosten mehr an. Auch ausgeschaltete Maschinen kosten etwas (aber nicht viel).</p>
 </aside>
 <h2 is-upgraded><strong>Zugriff auf das JupyterLab</strong></h2>
 <p>Wenn Sie auf &#34;Open Jupyterlab&#34; geklickt haben, sollte folgende Übersicht erscheinen. Bitte legen Sie ein neues &#34;Python 3&#34; Notebook an:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\b5403da2c45b1c1d.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cdf7bcd2620d4eea.png"></p>
 <p>Ein neues Tab sollte sich öffnen, in dem Sie nun mit der Programmierung loslegen können:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\643fe2185fb5098c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8d17d917de1e2e60.png"></p>
 <h2 is-upgraded><strong>Ergebnisse</strong></h2>
 <ol type="1" start="1">
 <li>Sie haben durch die Verwendung eines GCP Dienstes eine einfache Data Science-Programmierumgebung angelegt.</li>
@@ -84,9 +84,9 @@
 <pre><code># notwendige Bibliotheken importieren
 import pandas as pd</code></pre>
 <p>Führen Sie die Zelle aus, indem Sie Strg-Enter drücken. Es sollte keine Fehlermeldung auftreten, sondern links in den eckigen Klammern eine &#34;1&#34; stehen: </p>
-<p class="image-container"><img style="width: 298.50px" src="img\\3b4ee6071cfc1c2c.png"></p>
+<p class="image-container"><img style="width: 298.50px" src="img\\5b21d3acab93bb13.png"></p>
 <p>Anstelle von Strg-Enter können Sie auch auf den Pfeil-Button klicken:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\42f79e577d0ae2e0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\dddeb83c17152249.png"></p>
 <p>Der Vorteil dabei ist, dass direkt die nächste Zelle angelegt wird (dies können Sie mit Umschalttaste-Enter auch erreichen).</p>
 <h2 is-upgraded><strong>Initiale Lagerbestände anlegen</strong></h2>
 <p>Wir simulieren zwei Produkte &#34;Apfel&#34; und &#34;Banane&#34;. Für beide speichern wir jeweils den Lagerbestand in einer einfachen Textdatei. Initial haben beide Produkte einen Lagerbestand von 50 Stück. Durch folgenden Code legen wir die Datenstruktur (einen sogenannten DataFrame, das ist so etwas wie eine Tabelle) im Hauptspeicher der Notebook-Instanz an und lassen sie uns anzeigen. </p>
@@ -103,11 +103,11 @@ lagerbestand.to_csv(&#34;lagerbestand.csv&#34;, index=False)  # die Bedeutung de
 <p>Nach dem Ausführen dieser Zelle sollten Sie eine Datei im Datei-Browser sehen:</p>
 <p class="image-container"><img style="width: 624.00px" src="img\\e644ac5d62bd4e45.png"></p>
 <p>Mit einem Doppelklick auf die Datei werden die Inhalte angezeigt:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\7b73d17277d62ddc.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cd8c1a9f2aa25ca0.png"></p>
 <h2 is-upgraded><strong>Umbenennen und Speichern des Notebooks</strong></h2>
 <p>Wir simulieren, dass unser Notebook so etwas wie die &#34;Lagerverwaltungssoftware&#34; ist. Das heißt wir haben ein Programm, über das Benutzer eingeben können, wie viel von einem Produkt auf Lager liegt und Ein- sowie Auslagerungen vorgenommen werden können (d.h. der Lagerbestand erhöht bzw. reduziert wird).</p>
 <p>Klicken Sie mit der rechten Maustaste auf das Notebook &#34;Untitled.ipynb&#34; und selektieren Sie danach &#34;Rename Notebook&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\4392e40aee390d7c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3325bcabd0b8494c.png"></p>
 <p>Nennen Sie das Notebook &#34;Lagerverwaltung (Initialisierung)&#34;:</p>
 <h2 is-upgraded>Ergebnisse</h2>
 <ol type="1" start="1">
@@ -122,46 +122,46 @@ lagerbestand.to_csv(&#34;lagerbestand.csv&#34;, index=False)  # die Bedeutung de
       <google-codelab-step label="Problem 1 (Mehrbenutzerbetrieb): Konkurrierender Dateizugriff" duration="6">
         <h2 is-upgraded><strong>Ziel</strong></h2>
 <p>Wir werden nun das Initialisierungs-Notebook zweimal duplizieren und so anpassen, dass ein Notebook Einlagerungen simuliert während das andere Notebook Auslagerungen simuliert. WIr werden die folgenden beiden Anwendungsfälle simulieren: ein Ablauf ohne Konflikt und ein Ablauf mit konkurrierendem Zugriff auf die Lagerbestand-Datei. Vergleiche dazu folgende Abbildung, die den Ablauf veranschaulicht:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\ee8d06712507f106.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\31a17f78342ddf4d.png"></p>
 <h2 is-upgraded><strong>Programmierung einer Einlagerung</strong></h2>
 <h3 is-upgraded><strong>Notebook duplizieren</strong></h3>
 <p>Wir duplizieren nun das Initialisierungs-Notebook zweimal. </p>
-<p class="image-container"><img style="width: 453.00px" src="img\\4918c7e680e6928e.png"></p>
+<p class="image-container"><img style="width: 453.00px" src="img\\701214fb10f9549e.png"></p>
 <p>Benennen Sie die Kopie &#34;Lagerverwaltung (Einlagerung)&#34;. Löschen Sie die zweite Zelle, so dass nur Zellen 1 und 3 übrig bleiben, indem Sie auf die zweite Zelle mit der rechten Maustaste klicken und diese löschen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3c53290be9acb8b8.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\66cf8a28d4ef89de.png"></p>
 <p>Klicken Sie auf die erste Zelle und fügen Sie eine weitere Zelle zwischen der ersten und jetzt zweiten ein:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\aaddfb6646400474.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\eca8b6266c7d7db1.png"></p>
 <p>Fügen Sie den folgenden Code in die Zelle ein. Wir lesen die Lagerbestand-Datei ein und dann erhöhen wir den Bestand um 10.</p>
 <pre><code>lagerbestand = pd.read_csv(&#34;lagerbestand.csv&#34;)  # Einlesen der Lagerbestands-Datei
 lagerbestand.loc[lagerbestand.Produkt==&#39;Apfel&#39;, &#39;Lagerbestand&#39;] += 10  # Erhöhen des Apfel-Lagerbestands um +10
 lagerbestand</code></pre>
 <p>Die Ausgabe dieser Zelle sollte so aussehen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\8996d671ad87bcf9.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\c237f5b66ba4ddd8.png"></p>
 <p>Als nächstes führen wir die dritte Zelle aus, die so wie bei der Initialisierung die Lagerbestand-Tabelle (also den DataFrame lagerbestand) auf die Festplatte schreibt:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\3b118bff72ecaa71.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\81012b3edf6657d9.png"></p>
 <p>Wenn wir die Datei &#34;lagerbestand.csv&#34; nun öffnen, sehen wir die erfolgreiche Einlagerung der Äpfel:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\95fc44f7d62e8f83.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\d40d809d4ad48759.png"></p>
 <h2 is-upgraded>Programmierung einer Auslagerung</h2>
 <p>Duplizieren Sie die Datei &#34;Lagerverwaltung (Einlagerung)&#34; und nennen Sie das neue Notebook &#34;Lagerverwaltung (Auslagerung)&#34;. Führen Sie die erste Zelle aus. Ändern Sie die zweite Zelle, so dass wir nun die Auslagerung von 10 Bananen programmieren:</p>
 <pre><code>lagerbestand = pd.read_csv(&#34;lagerbestand.csv&#34;)  # Einlesen der Lagerbestands-Datei
 lagerbestand.loc[lagerbestand.Produkt==&#39;Banane&#39;, &#39;Lagerbestand&#39;] -= 10  # Verringern des Banane-Lagerbestands um 10
 lagerbestand</code></pre>
 <p>Führen Sie die Zelle aus. Die Ausgabe sollte so aussehen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\7eda0c5a946b0a05.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\e57d12d0389f5cb0.png"></p>
 <p>Bei einem Blick auf die csv-Datei (schließen und neu öffnen) sehen wir, dass die Auslagerung erfolgreich war:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\c9a294295c0b2b3b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\7565f86a08af4636.png"></p>
 <h2 is-upgraded><strong>Simulation des konkurrierenden Zugriffs</strong></h2>
 <p>Bisher haben wir die ersten zwei Schritte des Ablaufs simuliert:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\ee8d06712507f106.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\31a17f78342ddf4d.png"></p>
 <p>Jetzt möchten wir die nächsten beiden Schritte ausführen indem wir bei der Einlagerung simulieren, dass eine Verzögerung zwischen Einlesen, Berechnen und Datei-Schreiben auftritt.</p>
 <p>Öffnen Sie das Notebook Einlagerung. Führen Sie die zweite Zelle aus:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\1c98f834572a1a8a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\a8a586ec633f4de0.png"></p>
 <p>Speichern Sie die Datei noch nicht, d.h. Führen Sie noch nicht die letzte Zelle aus (DIES IST NUN DIE VERZÖGERUNG). Wechseln Sie stattdessen in das Notebook &#34;Auslagerung&#34; und führen Sie alle Zellen aus:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\6ecaa9d294fcf940.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b092d55cba03a7d6.png"></p>
 <p>Wechseln Sie anschließend zurück in die &#34;Einlagerung&#34; und führen Sie die letzte Zelle aus (Speichern der Änderung)</p>
 <h2 is-upgraded><strong>Analyse der Ergebnisse </strong></h2>
 <p>Wenn Sie die csv-Datei nun öffnen werden Sie sehen, dass die 10 ausgelagerten Bananen nicht berücksichtigt wurden und immer noch ein Bestand von 40 angegeben wird:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\2d4edd8a609db3d1.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1d68c7912df8fe0.png"></p>
 <p>Dies ist der Konflikt, der durch den simulierten &#34;Mehrbenutzerbetrieb&#34; bei der Speicherung von Daten in einer Datei auftreten kann.</p>
 <aside class="warning"><p><strong>Wichtig</strong>: Auch wenn wir eine lange Verzögerung im Prozess &#34;Einlagerung&#34; manuell simuliert haben so ist dies durchaus ein realistisches Szenario. Denken Sie an ein großes automatisches Lager, bei dem pro Minute hunderte Ein- und Auslagerungen auftreten. Dann muss die Verzögerung gar nicht lang sein, damit ein Konflikt wie der dargestellte auftritt.</p>
 </aside>
@@ -182,7 +182,7 @@ lagerbestand</code></pre>
 <p>Wir möchten unsere Datenhaltung nun erweitern. Es sollen Bestellungen von Kunden gespeichert werden. Pro Bestellung soll die Bestellnummer, der Vor- und Nachname des Kunden, das Bestelldatum und das bestellte Produkt sowie die Bestellmenge hinterlegt werden.</p>
 <h2 is-upgraded><strong>Erster Lösungsansatz</strong></h2>
 <p>Wir speichern die Bestellinformationen in einer csv-Datei, die so aussehen könnte:</p>
-<p class="image-container"><img style="width: 527.50px" src="img\\1dfccf586d6ef57f.png"></p>
+<p class="image-container"><img style="width: 527.50px" src="img\\9d5c80ffa74ef9f2.png"></p>
 <p>Diese Lösung ließe sich in Python wie folgt umsetzen: Legen Sie ein neues Notebook an und speichern Sie es unter dem Namen &#34;Bestellungen&#34;. Importieren Sie in einer Zelle die notwendige Bibliothek pandas, legen Sie den DataFrame (= die Bestelltabelle) an und lassen Sie diese anzeigen:</p>
 <pre><code>import pandas as pd
 
@@ -213,7 +213,7 @@ bestellungen</code></pre>
 <h2 is-upgraded><strong>Redundanzen</strong></h2>
 <h3 is-upgraded><strong>Problem</strong></h3>
 <p>Einige Informationen werden doppelt (=redundant) gespeichert: </p>
-<p class="image-container"><img style="width: 507.50px" src="img\\71416e1a8099a3cb.png"></p>
+<p class="image-container"><img style="width: 507.50px" src="img\\7302f23f69295aea.png"></p>
 <h3 is-upgraded><strong>Konsequenzen</strong></h3>
 <ul>
 <li>Wir verbrauchen mehr Speicher als nötig.</li>
@@ -233,7 +233,7 @@ bestellungen = pd.DataFrame([[1, &#39;1.10.2020&#39;, 1, &#39;Apfel&#39;, 5], \
               [3, &#39;3.10.2020&#39;, 1, &#39;Zitrone&#39;, 2]], \
               columns=[&#39;Bestellnummer&#39;, &#39;Bestelldatum&#39;, &#39;KundeID&#39;, &#39;Produkt&#39;, &#39;Bestellmenge&#39;])</code></pre>
 <p>Wenn wir uns beide Tabellen anzeigen lassen, dann sind die Redundanzen schon weniger geworden:</p>
-<p class="image-container"><img style="width: 475.50px" src="img\\ddebf076a8cb6957.png"></p>
+<p class="image-container"><img style="width: 475.50px" src="img\\5d5e41af80689cb5.png"></p>
 <h2 is-upgraded><strong>Inkonsistenzen zwischen Tabellen</strong></h2>
 <h3 is-upgraded><strong>Problem</strong></h3>
 <p>Ein Problem ist zum Beispiel, dass im Lagerbestand das Produkt Zitrone nicht existiert. Unsere Form der Datensicherung erlaubt uns also nicht, derartige Situationen wie die folgende ohne Weiteres zu vermeiden:</p>
@@ -242,7 +242,7 @@ bestellungen = bestellungen.append(pd.DataFrame([[4, &#39;4.10.2020&#39;, 3, &#3
 bestellungen</code></pre>
 <h3 is-upgraded><strong>Konsequenzen</strong></h3>
 <p>Die Bestelltabelle enthält nun zwei Inkonsistenzen: ein Produkt, das im Lagerbestand nicht enthalten ist sowie eine KundeID, die im Kundestamm fehlt:</p>
-<p class="image-container"><img style="width: 486.50px" src="img\\b4b3c3472fa56c2b.png"></p>
+<p class="image-container"><img style="width: 486.50px" src="img\\20c012aacb1b9606.png"></p>
 <h3 is-upgraded><strong>Lösungsansatz</strong></h3>
 <p>Wir könnten nun in Python (also unserer Anwendung) programmieren, dass beim Einfügen einer Bestellung geprüft wird, ob das Produkt sowie der Kunde in den anderen Tabellen enthalten ist. Dies ist aufwändig und wäre für jeden Anwendungsfall neu zu entwickeln.</p>
 <p>Für u.a. dieses Problem gibt es relationale Datenbanken und wir werden später sehen, wie sie das Problem von Inkonsistenzen lösen (durch sogenannte <strong>Fremdschlüssel</strong>).</p>
@@ -256,7 +256,7 @@ bestellungen</code></pre>
 </aside>
 <h3 is-upgraded><strong>Konsequenzen</strong></h3>
 <p>Die Bestelltabelle enthält nun neben den Inkonsistenzen in Bezug auf andere Tabellen auch noch in sich Widersprüche:</p>
-<p class="image-container"><img style="width: 419.50px" src="img\\125b7662a3b42591.png"></p>
+<p class="image-container"><img style="width: 419.50px" src="img\\2dc4ace13506a93a.png"></p>
 <p>Die Bestellnummer sollte eindeutig sein und der Datentyp der Bestellmenge sollte numerisch (und eventuell auch größer oder gleich 0) sein.</p>
 <h3 is-upgraded><strong>Lösungsansatz</strong></h3>
 <p>Wir könnten nun wiederum in unserer Anwendung programmieren, dass beim Einfügen einer Bestellung geprüft wird, ob die Bestellnummer schon existiert (das dauert eventuell lange, Laufzeitproblem!) sowie ob die Bestellmenge eine Zahl (und ggf. auch größer 0) ist. Dies ist aufwändig und wäre für jeden Anwendungsfall neu zu entwickeln.</p>
@@ -285,7 +285,7 @@ conn = sqlite3.connect(&#39;shop.db&#39;)
 conn.execute(&#34;PRAGMA foreign_keys = 1&#34;)  # dies wird später erläutert
 conn.commit()</code></pre>
 <p>Wenn Sie diese Zelle ausführen, dann sollten Sie im Dateisystem eine neue Datei &#34;shop.db&#34; sehen. </p>
-<p class="image-container"><img style="width: 250.36px" src="img\\669d870cbb925950.png"></p>
+<p class="image-container"><img style="width: 250.36px" src="img\\f94734421af16b6.png"></p>
 <p>Dies ist die von SQLite angelegte Datei der Datenbank, in der unsere Daten gespeichert werden. &#34;Große&#34; RDBMS sind deutlich komplexer, aber das reicht uns zunächst.</p>
 <aside class="warning"><p><strong>Achtung</strong>: Sollten Sie aufgrund mehrmaliger Ausführung o.ä. Fehlermeldungen bekommen können Sie immer neu mit dem Anlegen der Datenbank beginnen. Löschen Sie dazu zunächst die Datei shop.db (rechte Maustaste und &#34;Delete&#34;).</p>
 </aside>
@@ -324,16 +324,16 @@ for table in tables:  # über alle drei Tabellen einzeln iterieren
         print(row)  # Zeile komplett ausgeben
     print(&#34;----------------------------&#34;)</code></pre>
 <p>Folgendes sollte die Ausgabe sein:</p>
-<p class="image-container"><img style="width: 297.62px" src="img\\8e61db3ad15b9cf.png"></p>
+<p class="image-container"><img style="width: 297.62px" src="img\\4c88a7108b3964f9.png"></p>
 <p>Wir haben derzeit also einen konsistenten Zustand unserer Daten. </p>
 <h3 is-upgraded><strong>Inkonsistenzen versuchen herzustellen (Teil 1 - Fremdschlüssel)</strong></h3>
 <p>Wir versuchen nun die Probleme, die wir in der dateibasierten Datenhaltung hatten in der Datenbank zu rekonstruieren. Wir starten mit dem &#34;fehlenden Produkt Zitrone&#34; sowie der &#34;fehlenden KundeID 3&#34;:</p>
-<p class="image-container"><img style="width: 486.50px" src="img\\b4b3c3472fa56c2b.png"></p>
+<p class="image-container"><img style="width: 486.50px" src="img\\20c012aacb1b9606.png"></p>
 <p>Wir versuchen zuerst, die Bestellung mit Bestellnummer 3 und dem fehlenden Produkt Zitrone einzufügen:</p>
 <pre><code># Versuch, eine Bestellung mit einem Produkt einzufügen, das im Artikelstamm nicht existiert
 c.execute(&#34;INSERT INTO bestellung VALUES (3, &#39;2020-10-03&#39;, 1, &#39;Zitrone&#39;, 7)&#34;)</code></pre>
 <p>Wir erhalten einen &#34;IntegrityError&#34; (also einen Fehler, dass die Datenintegrität nicht korrekt ist) mit einer Fehlermeldung &#34;FOREIGN KEY constraint failed&#34;. </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\16242db5e389f603.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\b580ef5a5fbfbd9c.png"></p>
 <p>Das bedeutet, dass in der Tabelle Produkt die &#34;Zitrone&#34; nicht gefunden wurde. Wenn Sie sich noch einmal alle Inhalte der Tabellen mit dem Statement oben anzeigen lassen werden Sie sehen, dass die Bestellung also nicht eingefügt werden konnte.</p>
 <p>Dieselbe Fehlermeldung erhalten wir, wenn wir versuchen, auf einen fehlenden Kunden zu referenzieren:</p>
 <pre><code># Versuch, eine Bestellung mit einem Kunden einzufügen, der im Kundenstamm nicht existiert
@@ -349,12 +349,12 @@ c.execute(&#34;INSERT INTO bestellung VALUES (4, &#39;2020-10-04&#39;, 2, &#39;A
 <p>Die Datenbank befindet sich nun also weiterhin in einem konsistenten Zustand.</p>
 <h3 is-upgraded><strong>Inkonsistenzen versuchen herzustellen (Teil 2 - Primärschlüssel und Datentypen)</strong></h3>
 <p>Wir versuchen nun die weiteren Probleme, die wir in der dateibasierten Datenhaltung provoziert haben, in der Datenbank herzustellen:</p>
-<p class="image-container"><img style="width: 419.50px" src="img\\125b7662a3b42591.png"></p>
+<p class="image-container"><img style="width: 419.50px" src="img\\2dc4ace13506a93a.png"></p>
 <p>Zuerst probieren wir, eine doppelte Bestellnummer einzufügen (ohne das Datentypproblem &#34;zehn&#34;):</p>
 <pre><code># Versuch, eine Bestellung einzufügen, deren Bestellnummer schon existiert
 c.execute(&#34;INSERT INTO bestellung VALUES (4, &#39;2020-10-05&#39;, 2, &#39;Apfel&#39;, 10)&#34;)</code></pre>
 <p>Auch hier erhalten wir einen &#34;IntegrityError&#34; mit der Fehlermeldung &#34;UNIQUE constraint failed&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\9a41d38f4110c3d4.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\78bc6bb3494fa02c.png"></p>
 <p>Die Datenbank merkt also, dass wir eine doppelte Bestellung einfügen wollen und verhindert dies.</p>
 <aside class="special"><p><strong>Vorgriff</strong>: Wir haben beim Anlegen der Tabellen über den Befehl &#34;PRIMARY KEY&#34; der Datenbank beigebracht, dass in allen drei Tabellen eine Spalte dafür genutzt werden soll, Datensätze (also Zeilen ) eindeutig zu identifizieren (dies nennt man Primärschlüssel). Damit stellt die Datenbank die Konsistenz sicher indem sie doppelte Werte in den Spalten &#34;Bezeichnung&#34; (Tabelle produkt), &#34;KundeID&#34; (Tabelle kunde), sowie &#34;Bestellnummer&#34; (Tabelle bestellung) unterbindet.</p>
 </aside>
@@ -376,9 +376,9 @@ c.execute(&#34;INSERT INTO bestellung VALUES (5, &#39;2020-10-05&#39;, 2, &#39;A
       <google-codelab-step label="Code sichern und aufräumen" duration="1">
         <h2 is-upgraded><strong>Code-Sicherung</strong></h2>
 <p>Wenn Sie die AI Platform Notebook-Instanz löschen möchten können Sie den Code (also die Notebooks) wie folgt auf Ihren Rechner herunterladen: rechts klicken auf das Notebook und dann Download:</p>
-<p class="image-container"><img style="width: 324.27px" src="img\\a6334067ddca0077.png"></p>
+<p class="image-container"><img style="width: 324.27px" src="img\\84aad748aa8d2e65.png"></p>
 <p>Hochladen von Notebooks in einer neuen Instanz können Sie über den Upload Files-Button:</p>
-<p class="image-container"><img style="width: 456.00px" src="img\\1e52b7b4bdbeefb0.png"></p>
+<p class="image-container"><img style="width: 456.00px" src="img\\ff7dff1e6992d931.png"></p>
 <p>Wenn Sie die Instanz nur ausschalten (und geringe Kosten dafür in Kauf nehmen), dann müssen Sie die Notebooks nicht herunterladen.</p>
 <h2 is-upgraded><strong>Ausschalten oder Löschen der Instanz</strong></h2>
 <p>Gehen Sie zurück in die GCP Cloud Console (dort wo Sie auf &#34;Open Jupyterlab&#34; geklickt haben). Wenn Sie die Instanz komplett löschen möchten, dann selektieren Sie die Instanz und klicken auf Delete:</p>

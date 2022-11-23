@@ -29,7 +29,7 @@
     
       <google-codelab-step label="Einführung" duration="2">
         <p>Wir arbeiten weiterhin mit der Webshop-Datenbank und diesem Schema:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\9abf02061f2e9562.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3ddc71d3b3fd5441.png"></p>
 <h2 is-upgraded><strong>Motivation</strong></h2>
 <p>In der Vorlesung haben wir einige Herausforderungen kennengelernt, die sich durch den Mehrbenutzerbetrieb in der notwendigen Synchronisation von Datenbankoperationen ergeben. In diesem Codelab möchten wir einige dieser Herausforderungen an unserem Webshop-Beispiel kennenlernen. </p>
 <p>Insbesondere werden wir eine Transaktion definieren, die die folgenden vier Schritte zu einer atomaren Operation zusammenfasst. Schlägt einer dieser Schritte fehl (bspw. durch einen Programmierfehler aber vor allem durch externe Einflüsse, d.h. konkurrierende Zugriffe auf dieselben Daten in der Datenbank), so soll die gesamte Transaktion fehlschlagen und alle bisherigen Änderungen rückgängig gemacht werden (rollback).</p>
@@ -40,7 +40,7 @@
 <li>Überführen aller Warenkorbpositionen in Bestellpositionen (d.h. Kopieren der Einträge aus Tabelle Warenkorbposition in Bestellposition mit korrekter Zuordnung zur neuen Bestellung) und letztlich</li>
 <li>Löschen der Warenkorbpositionen, d.h. Leeren des Warenkorbs.</li>
 </ol>
-<p class="image-container"><img style="width: 624.00px" src="img\\4dfa02962911239.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\df8fc2bd8e46844d.png"></p>
 <p>Wir werden diese Schritte in einer Transaktion definieren und betrachten verschiedene Möglichkeiten des Transaktionsmanagements und der &#34;Isolation&#34; von Datenmanipulationen in der Datenbank.</p>
 <h2 is-upgraded><strong>Dies werden Sie umsetzen</strong></h2>
 <ul>
@@ -60,24 +60,24 @@
 <p>Im <a href="https://pkuep.github.io/hska-140-db/sql_dml_webshop/" target="_blank">Codelab zur DML</a> haben wir eine Jupyter Notebook-Instanz angelegt. Falls diese noch existiert, dann starten Sie sie bitte. Sie können dann zum nächsten Schritt wechseln. Ansonsten fahren Sie bitte mit den folgenden Schritten fort.</p>
 <h2 is-upgraded><strong>Erstellung der Notebook-Instanz </strong></h2>
 <p>Bitte klicken Sie auf &#34;AI-Plattform&#34; unter &#34;Artificial Intelligence&#34; und dann auf Notebooks:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\96496d7014a1a0dd.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\87fa7358c26a76b2.png"></p>
 <p>Sie sollten die entsprechende API im ersten Codelab bereits aktiviert haben. Falls nicht, erhalten SIe eine Meldung, bei der SIe &#34;Enable API&#34; klicken müssen.</p>
 <p>Wir legen nun eine neue Instanz an. Eine Instanz ist in diesem Fall eine virtuelle Maschine, die gestartet wird, auf der Jupyter installiert wird und es wird eingestellt, dass wir auf extern auf die Jupyter Notebooks zugreifen können. Klicken Sie auf &#34;New Instance&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\be45e1b049252e75.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\2976d57c7eb7867b.png"></p>
 <p>Wählen Sie &#34;Python 2 and 3&#34; aus:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\943855e30814faf0.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5e926345752d4063.png"></p>
 <p>Benennen Sie die Instanz bspw. &#34;&lt;Ihre Initialien&gt;-notebook&#34;, in meinem Fall also bspw. &#34;pk-notebook&#34;. Selektieren Sie die Region &#34;us-central1&#34; - dies ist in vielen GCP-Diensten die Standardregion, in der wir alle Funktionen laufen lassen möchten:</p>
-<p class="image-container"><img style="width: 401.14px" src="img\\5769a2a83848836e.png"></p>
+<p class="image-container"><img style="width: 401.14px" src="img\\619707c98dc9e96c.png"></p>
 <p>Warten Sie so lange, bis in der Übersicht der Zugriff auf das Web Interface angezeigt wird:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\d83b5f87758ca39.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\3794ea6b4aab4415.png"></p>
 <p>Klicken Sie auf &#34;Open Jupyterlab&#34;.</p>
 <aside class="warning"><p><strong>Warnung: </strong>Der Betrieb der Notebook-Instanz ist kostenpflichtig. Denken Sie daran, diese im Anschluss an diese Übung so wie die Cloud SQL-Instanz auszuschalten.</p>
 </aside>
 <h2 is-upgraded><strong>Zugriff auf das JupyterLab</strong></h2>
 <p>Wenn Sie auf &#34;Open Jupyterlab&#34; geklickt haben, sollte folgende Übersicht erscheinen. Bitte legen Sie ein neues &#34;Python 3&#34; Notebook an:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\b5403da2c45b1c1d.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cdf7bcd2620d4eea.png"></p>
 <p>Ein neues Tab sollte sich öffnen, in dem Sie nun mit der Programmierung loslegen können:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\643fe2185fb5098c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\8d17d917de1e2e60.png"></p>
 <p>Speichern Sie das Notebook bitte unter dem Namen &#34;Setup&#34; ab, da wir im Folgenden ein paar Installations- und Konfigurationsbefehle nutzen möchten.</p>
 <h2 is-upgraded><strong>Installation des MySQL-Treibers</strong></h2>
 <p>Wir werden das Paket &#34;mysql-connector&#34; als MySQL-Treiber für Python verwenden. Dieses ist leider nicht im Standard auf der Jupyterlab-Instanz installiert. Geben Sie folgenden Code ein, um den Treiber über das Python Package Management (pip) zu installieren:</p>
@@ -86,7 +86,7 @@
 # und eine neue anlegen, dann muss dieser Code erneut ausgeführt werden.
 !pip install mysql-connector</code></pre>
 <p>Folgendes sollte die Ausgabe sein:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\4241dee115f3309a.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\fb7b35b7233bc3da.png"></p>
 <aside class="warning"><p><strong>Wichtig: </strong>Diesen Befehl müssen Sie nur einmalig ausführen, es sei denn, Sie löschen die Instanz und legen eine neue an.</p>
 </aside>
 <h2 is-upgraded><strong>Laden des Quellcodes</strong></h2>
@@ -99,9 +99,9 @@
 </aside>
 <h2 is-upgraded><strong>Duplizieren des Quellcodes für eigene Anpassungen</strong></h2>
 <p>Damit Ihnen über GitHub Aktualisierungen der Originaldateien zur Verfügung gestellt werden können (bspw. im Fall von Fehlern, s.u.) sollten Sie diese Dateien nicht editieren. Wir legen daher Kopien der beiden Notebook-Dateien an, bevor wir sie auf unsere Umgebung anpassen. Gehen Sie dazu im Jupyterlab-Dateibrowser in das Verzeichnis &#34;hska-dscb140-code&#34;, wählen Sie die beiden &#34;.ipynb&#34;-Dateien aus, klicken Sie auf die rechte Maustaste und führen Sie den Befehl &#34;Duplicate&#34; aus:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\76ba7f617a33a999.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1b51a95c0eb7c9e9.png"></p>
 <p>Danach sollte das Dateisystem wie folgt aussehen:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\522dc91f4acd289.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\561e5c7bcceff2e5.png"></p>
 <aside class="warning"><p><strong>Wichtig: </strong>Editieren Sie bitte nur die beiden Kopien. Sollten Sie Probleme mit GitHub haben können Sie jederzeit das gesamte Verzeichnis &#34;hska-dscb140-code&#34; auf Ihrer Jupyter-Instanz löschen und im Notebook Setup.ipynb die Zelle &#34;!git clone ...&#34; erneut ausführen.</p>
 </aside>
 <h2 is-upgraded><strong>Aktualisierung des Quellcodes im Falle von Änderungen</strong></h2>
@@ -109,7 +109,7 @@
 <pre><code># Aktualisieren des GitHub-Repositories für DSCB140 (nur bei Bedarf nötig, wird angekündigt)
 !git -C ./hska-dscb140-code pull </code></pre>
 <p>Es wird Ihnen jetzt angezeigt, dass Ihr Verzeichnis aktuell ist:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\8a5ed55bba060f10.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\cc3c885f9859d1a3.png"></p>
 <p>Im Fall von Änderungen werden diese aufgelistet.</p>
 <h2 is-upgraded><strong>Ergebnisse</strong></h2>
 <ol type="1" start="1">
@@ -134,7 +134,7 @@
 <pre><code># Aktualisieren des GitHub-Repositories für DSCB140 (nur bei Bedarf nötig, wird angekündigt)
 !git -C ./hska-dscb140-code pull</code></pre>
 <p>Im Fall von Änderungen werden diese aufgelistet:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\be466c04234eb44c.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\76e6a954e20a8089.png"></p>
 <aside class="warning"><p>Sollte das Update nicht funktionieren, dann löschen Sie bitte den Ordner &#34;hska-dscb140-code&#34; komplett und führen Sie im Notebook &#34;Setup&#34; noch einmal &#34;!git clone <a href="https://github.com/pkuep/hska-dscb140-code.git" target="_blank">https://github.com/pkuep/hska-dscb140-code.git</a>&#34; aus.</p>
 </aside>
 <h2 is-upgraded><strong>Ergebnisse</strong></h2>
@@ -151,7 +151,7 @@
 <p>Bitte legen Sie Duplikate (rechte Maustaste → duplicate) der beiden Notebooks &#34;DSCB140 - Transaktionen - Verbindung herstellen&#34; sowie &#34;DSCB140 - Transaktionen - Übungen&#34; an. Arbeiten Sie bitte nur in den Kopien. </p>
 <h2 is-upgraded><strong>Upload der SSH-Schlüsseldatei</strong></h2>
 <p>In ILIAS finden Sie im Materialordner &#34;Infos zur Übungsdatenbank&#34; und darin eine Datei &#34;key&#34;. Laden Sie diese in Ihrer JupyterHub-Instanz in den Ordner &#34;hska-dscb140-code&#34; über Klick auf folgenden Button hoch:</p>
-<p class="image-container"><img style="width: 504.60px" src="img\\755a4eb73f29a61.png"></p>
+<p class="image-container"><img style="width: 504.60px" src="img\\d31fd4fb789a6ecb.png"></p>
 <p>Die Datei muss im selben Ordner liegen wie die Jupyter Notebooks (also hska-dscb140-code).</p>
 <h2 is-upgraded><strong>Test der Datenbankverbindung</strong></h2>
 <p>Öffnen Sie Ihre Kopie des Notebooks &#34;DSCB140 - Transaktionen - Verbindung herstellen&#34;. Führen Sie die erste Zelle (imports) aus, damit alle notwendigen Pakete geladen sind.</p>
@@ -159,9 +159,9 @@
 <li>In der Zelle unter &#34;Notwendige Verbindungsparameter eingeben&#34; finden Sie folgende Variablen, für die Sie die Werte aus ILIAS ermitteln müssen (bzw. diese bereits aus der DBeaver-Einstellung kennen). In Bezug zur verschlüsselten SSH-Verbindung sind dies: (1) username_ssh, (2) password_ssh und (3) host_ssh. Diese Werte sind für alle Studierenden identisch.  </li>
 <li>Die datenbankbezogenen Werte gelten pro Studierendem, d.h. (4) username_db, (5) password_db sowie (6) database sind individuell nach den Vorgaben in ILIAS analog zu DBeaver einzugeben. Folgende Abbildung zeigt den Zusammenhang der Informationen in ILIAS zu denen in Jupyter:</li>
 </ul>
-<p class="image-container"><img style="width: 624.00px" src="img\\6aa1da89fc696315.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\101c9ce76e116d24.png"></p>
 <p>Wenn Sie diese Zelle und die folgenden beiden Zellen zum Test der Verbindung ausführen, so sollten Ihnen zwei Datenbanken angezeigt werden:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\4298aa504c5adfa8.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\5feb2e9135cd3c6f.png"></p>
 <aside class="special"><p><strong>Aufgabe</strong>: Kopieren Sie nun den Code aus &#34;Notwendige Verbindungsparameter&#34; in die Zwischenablage und fügen Sie ihn in die entsprechende Zelle in der Kopie des Notebooks &#34;DSCB140 - Transaktionen - Übungen&#34;. </p>
 </aside>
 <h2 is-upgraded><strong>Neu Aufsetzen der Datenbank (DDL-Struktur &amp; DML-Daten) - optional!</strong></h2>
@@ -251,9 +251,9 @@ delete from warenkorbposition
 where kunde_email = @kunde;</code></pre>
 <h2 is-upgraded><strong>Definition der Transaktion in DBeaver</strong></h2>
 <p>Grundsätzlich arbeiten DBeaver und - falls nicht anders angegeben - auch der Python mysql-connector im sogenannten auto-commit Modus. Jedes SQL-Statement wird sofort nach dessen Ausführung versucht, in der Datenbank zu persistieren (zu &#34;committen&#34;). In DBeaver sehen wir dies oberhalb vom Code-Editor:</p>
-<p class="image-container"><img style="width: 322.18px" src="img\\6254f13763c4fb90.png"></p>
+<p class="image-container"><img style="width: 322.18px" src="img\\5c3e2ae9a25e9975.png"></p>
 <p>In Python haben wir dies explizit beim Verbindungsaufbau angegeben:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\c251f08d49c756d7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\afbbe10532d53cfa.png"></p>
 <p>Wenn wir nun die SQL-Statements ausführen ist somit nicht garantiert, dass diese als eine einzige, atomare Einheit angesehen werden. Das heißt, wenn bspw. Das letzte Statement nicht funktionieren sollte (die Gründe dafür sind hier irrelevant), dann wird nicht automatisch alles vorherige (Bestellung anlegen, Warenkorbpositionen kopieren) rückgängig gemacht. Somit ist in der Datenbank ein Zustand entstanden, den wir nicht vorliegen haben möchten!</p>
 <p>Davor kann uns eine Transaktion schützen. Wenn wir alle Befehle als eine atomare Einheit definieren möchten, dann können wir eine Transaktion mit &#34;start transaction&#34; starten und am Ende mit einem expliziten &#34;commit&#34; diese beenden.</p>
 <pre><code>-- Requirement: transfer customer basekt positions to a new order as one atomic operation that
@@ -280,7 +280,7 @@ where kunde_email = @kunde;
 
 commit;</code></pre>
 <p>Achtung: in DBeaver müssen Sie alle Codezeilen markieren und dann als Block ausführen, damit dies im Auto-Commit-Modus als eine Transaktion angesehen wird:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\2814278a156f7960.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\da97a685a4d57dfc.png"></p>
 <p>Mit folgendem Befehl lassen wir uns die neu angelegte Bestellung mit allen Positionen anzeigen:</p>
 <pre><code>-- show new order with positions
 select * 
@@ -288,7 +288,7 @@ from bestellung b
 left join bestellposition bp on b.bestnr = bp.bestnr
 where b.bestnr = @bestnr;</code></pre>
 <p>Es sollten nun alle Bestellpositionen und die neue Bestellnummer zu sehen sein (diese ist bei Ihnen sicherlich anders):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\35d7eea116726918.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\598aae208247cc0e.png"></p>
 <p>Da der Warenkorb der Beispielkundin nun wieder leer ist können Sie diesen entweder in Python (Zelle &#34;Warenkorb vorbereiten&#34;) oder mittels folgenden Statements wieder befüllen:</p>
 <h2 is-upgraded><strong>Ausführung der Transaktion in Python</strong></h2>
 <p>Dieselbe Logik, die wir in DBeaver angewendet haben, kann durch folgende Code-Zeilen in Python umgesetzt werden (Achtung: das time.sleep(0) wird später erläutert).</p>
@@ -353,7 +353,7 @@ where b.bestnr = @bestnr;</code></pre>
 delete from warenkorbposition 
 where kunde_em = @kunde;  -- attribute kunde_em does not exist</code></pre>
 <p>Führen Sie die gesamte Transaktion erneut aus und prüfen Sie, ob die neue Bestellnummer angelegt wurde. Den auftretenden DBeaver &#34;Execution Error&#34; beantworten Sie bitte mit &#34;Stoppen&#34;:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\43d138a003949f14.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\ca91887455326a96.png"></p>
 <p>Schauen Sie sich mit folgendem Statement alle Bestellungen der Kundin an. Prüfen Sie, ob die neue Bestellung in der Datenbank bereits enthalten ist:</p>
 <pre><code>select * 
 from bestellung b 
@@ -388,15 +388,15 @@ where b.bestnr = @bestnr;</code></pre>
         <h2 is-upgraded><strong>Künstliche Verzögerung der (fehlerhaften) Transaktion</strong></h2>
 <p>Um konkurrierende Zugriffe simulieren zu können werden wir nun die Transaktion in Python mittels &#34;sleep&#34;-Funktion verzögern. In der Zwischenzeit können wir in DBeaver testen, welche Auswirkungen unterschiedliche Isolationslevel haben.</p>
 <p>Stellen Sie die Verzögerung innerhalb der Transaktion bspw. auf 20s. Lassen Sie die Transaktion weiterhin scheitern (durch den zuvor eingeführten Fehler, siehe Screenshot), damit das Einfügen einer Bestellung rückgängig gemacht wird (rollback):</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\edc7e3ac783f98c3.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\24d474b72534217a.png"></p>
 <h2 is-upgraded><strong>Einstellung Isolationsgrade (Fall 1: Lesezugriffe während Transaktion)</strong></h2>
 <p>Starten Sie die Transaktion in Python und prüfen Sie, welche Isolationsgrade zu einer Anomalie führen. Um welche Anomalie handelt es sich? Zur Erinnerung:</p>
-<p class="image-container"><img style="width: 624.00px" src="img\\5bf842a3c2fcc3eb.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f54c108f0059e35a.png"></p>
 <h2 is-upgraded><strong>Einstellung Isolationsgrade (Fall 2: Transaktion zwischen Lesezugriffen)</strong></h2>
 <h3 is-upgraded><strong>Vorbereitungen</strong></h3>
 <p>Stellen Sie die Verzögerung im Python-Skript wieder auf 0s. Entfernen Sie den Fehler, so dass am Ende der Transaktion eine Bestellung angelegt wird (commit soll ausgeführt werden). </p>
 <p>Schalten Sie Ihre DBeaver Session um auf manuelles Commit und den Isolationsgrad auf &#34;Lesezugriff bestätigt&#34;:</p>
-<p class="image-container"><img style="width: 306.50px" src="img\\141c9bbabc152904.png"></p>
+<p class="image-container"><img style="width: 306.50px" src="img\\5180deffe724384e.png"></p>
 <p>Fügen Sie folgenden Code in DBeaver ein, anhand dessen wir verschiedene Isolationsgrade testen möchten:</p>
 <pre><code>-- Vorbereitungen - Kunde setzen und Bestellhistorie leeren
 set @kunde = &#39;lea.schmidt@xy.de&#39;;
@@ -416,15 +416,15 @@ update bestellung set bestelldatum = &#39;2000-01-01 00:00:01&#39; where kunde=@
 
 </code></pre>
 <p>Führen Sie die Vorbereitungen (die ersten zwei Statements) aus, d.h. setzen Sie die Variable @kunde und leeren Sie alle Bestellungen der Kundin. Drücken Sie in DBeaver auf Commit, damit das Leeren wirksam wird:</p>
-<p class="image-container"><img style="width: 192.00px" src="img\\56cb4be38ae8092b.png"></p>
+<p class="image-container"><img style="width: 192.00px" src="img\\e6bbe1fb37b37815.png"></p>
 <h3 is-upgraded><strong>Nicht-blockerendes Lesen</strong></h3>
 <p>Führen Sie das erste &#34;select * from ...&#34; aus (Strg+Enter). Damit sollte eine Transaktion in DBeaver gestartet sein. Dies ist erkennbar an der Historie:</p>
-<p class="image-container"><img style="width: 370.00px" src="img\\c9d8540530083bca.png"></p>
+<p class="image-container"><img style="width: 370.00px" src="img\\3a6d32bd427a76c5.png"></p>
 <p>Eine Query befindet sich somit bisher im Transaktions-Log. Wir haben darin die Bestellungen der Kundin ausgegeben. Da wir diese geleert haben ist die Ergebnismenge auch leer.</p>
 <p>Als nächstes führen wir die Transaktion in Python aus. Eine Bestellung wird angelegt und die Transaktion wird &#34;committed&#34; (siehe print-Ausgabe in Jupyter): </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\6c4bf5a3c62eb03b.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\f5ab0b0b8d36f01a.png"></p>
 <p>Danach gehen wir wieder in DBeaver und führen den Rest unserer dortigen Transaktion aus (update bestellung ...). </p>
-<p class="image-container"><img style="width: 624.00px" src="img\\e3b8582d42792fc7.png"></p>
+<p class="image-container"><img style="width: 624.00px" src="img\\1e4905801a82e017.png"></p>
 <aside class="warning"><p><strong>Achtung</strong>: Wir befinden uns in derselben Transaktion und einmal wurden 0 Zeilen in Bestellung gelesen, im UPDATE wurde dann eine Zeile als aktualisierbar erkannt. Dies ist ein Widerspruch und ggf. könnte die Transaktionslogik zu langfristigen Inkonsistenzen führen.</p>
 </aside>
 <p>Die beobachtete Anomalie ist eine &#34;Phantom Row&#34;. Dieser Fall führt somit zu Inkonsistenzen in der DBeaver-Transaktion und es könnte Anwendungsfälle geben, bei denen dies kritisch ist. </p>
@@ -433,7 +433,7 @@ update bestellung set bestelldatum = &#39;2000-01-01 00:00:01&#39; where kunde=@
 <h3 is-upgraded><strong>Blockierendes Lesen</strong></h3>
 <p>Sollte das Ergebnis des ersten Lesevorgangs für die Konsistenz der gesamten Transaktion entscheidend sein, dann benötigen wir blockierendes Lesen, damit die &#34;Phantom Row&#34;-Problematik nicht auftreten kann.</p>
 <p>Stellen Sie dazu die DBeaver-Transaktion auf &#34;Serializable&#34; um:</p>
-<p class="image-container"><img style="width: 326.50px" src="img\\91acaf96faea734b.png"></p>
+<p class="image-container"><img style="width: 326.50px" src="img\\8c335862e3072a34.png"></p>
 <p>Führen Sie die Schritte aus &#34;Nicht-blockierendes Lesen&#34; erneut durch. Was beobachten Sie?</p>
 <p>Der nun eingestellte Modus erlaubt zwar das höchste Level an Konsistenz, jedoch kann sich die Blockierung von Transaktionen aufgrund von Lese-Statements negativ auf die Gesamtsystem-Latenz auswirken. Dies gilt insbesondere bei einer hohen Anzahl von Nutzern.</p>
 <h3 is-upgraded><strong>Vermeidung eines &#34;Dirty Write&#34;</strong></h3>
